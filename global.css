@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    /* ... other variables ... */
+  }
+
+  /* Force sans-serif globally for native compatibility */
+  * {
+    font-family: 'Inter-Regular';
+  }
+}
+
+@layer utilities {
+  .font-inter {
+    font-family: 'Inter-Regular';
+    font-weight: normal;
+  }
+  .font-inter-semibold {
+    font-family: 'Inter-SemiBold';
+    font-weight: normal;
+  }
+  .font-inter-bold {
+    font-family: 'Inter-Bold';
+    font-weight: normal;
+  }
+  .font-outfit {
+    font-family: 'Outfit-Regular';
+    font-weight: normal;
+  }
+  .font-outfit-semibold {
+    font-family: 'Outfit-SemiBold';
+    font-weight: normal;
+  }
+  .font-outfit-bold {
+    font-family: 'Outfit-Bold';
+    font-weight: normal;
+  }
+  .font-grenze {
+    font-family: 'GrenzeGotisch-Regular';
+    font-weight: normal;
+  }
+  .font-grenze-semibold {
+    font-family: 'GrenzeGotisch-SemiBold';
+    font-weight: normal;
+  }
+  .font-grenze-bold {
+    font-family: 'GrenzeGotisch-Bold';
+    font-weight: normal;
+  }
+  .font-grenze-black {
+    font-family: 'GrenzeGotisch-Black';
+    font-weight: normal;
+  }
+  .font-cinzel {
+    font-family: 'Cinzel-Regular';
+    font-weight: normal;
+  }
+  .font-cinzel-semibold {
+    font-family: 'Cinzel-SemiBold';
+    font-weight: normal;
+  }
+  .font-cinzel-bold {
+    font-family: 'Cinzel-Bold';
+    font-weight: normal;
+  }
+  .font-cinzel-black {
+    font-family: 'Cinzel-Black';
+    font-weight: normal;
+  }
+  .italic {
+    font-style: italic;
+  }
+}
