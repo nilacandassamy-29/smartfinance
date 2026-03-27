@@ -6,21 +6,24 @@ import Expenses from '../screens/Expenses';
 import Schemes from '../screens/Schemes';
 import Profile from '../screens/Profile';
 import { View } from 'react-native';
+import { useTheme } from '../context/ThemeContext';
 
 const Tab = createBottomTabNavigator();
 
 export default function MainTabNavigator() {
+    const { theme } = useTheme();
+
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
                 headerShown: false,
                 tabBarShowLabel: true,
                 tabBarActiveTintColor: '#2563eb',
-                tabBarInactiveTintColor: '#64748b',
+                tabBarInactiveTintColor: theme.subText,
                 tabBarStyle: {
-                    backgroundColor: '#ffffff',
+                    backgroundColor: theme.tabBar,
                     borderTopWidth: 1,
-                    borderTopColor: '#f1f5f9',
+                    borderTopColor: theme.tabBarBorder,
                     elevation: 10,
                     height: 85,
                     paddingBottom: 25,

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, StatusBar, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { MotiView } from 'moti';
 
 export default function RegisterScreen({ navigation }) {
@@ -10,6 +11,7 @@ export default function RegisterScreen({ navigation }) {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const { register } = useAuth();
+    const { theme, isDarkMode } = useTheme();
 
     const handleRegister = async () => {
         if (!name || !email || !password) {
@@ -28,25 +30,25 @@ export default function RegisterScreen({ navigation }) {
 
     const Field = ({ label, value, onChange, placeholder, type, secure }) => (
         <View>
-            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: '#374151', marginBottom: 8 }}>{label}</Text>
+            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: theme.text, marginBottom: 8 }}>{label}</Text>
             <TextInput
                 value={value} onChangeText={onChange}
                 placeholder={placeholder} keyboardType={type || 'default'}
                 autoCapitalize="none" secureTextEntry={secure}
-                placeholderTextColor='#64748b'
+                placeholderTextColor={theme.placeholder}
                 style={{
-                    height: 52, borderRadius: 12, backgroundColor: '#f8fafc',
-                    borderWidth: 1.5, borderColor: '#e2e8f0',
+                    height: 52, borderRadius: 12, backgroundColor: theme.inputBg,
+                    borderWidth: 1.5, borderColor: theme.border,
                     paddingHorizontal: 16, fontFamily: 'Poppins-Regular',
-                    fontSize: 15, color: '#0f172a',
+                    fontSize: 15, color: theme.text,
                 }}
             />
         </View>
     );
 
     return (
-        <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
-            <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+        <View style={{ flex: 1, backgroundColor: theme.background }}>
+            <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} backgroundColor={theme.background} />
             <SafeAreaView style={{ flex: 1 }}>
                 <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
                     <ScrollView contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 28 }} showsVerticalScrollIndicator={false}>
@@ -58,8 +60,8 @@ export default function RegisterScreen({ navigation }) {
                                 }}>
                                     <Text style={{ color: '#fff', fontFamily: 'Poppins-Bold', fontSize: 22 }}>S</Text>
                                 </View>
-                                <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 28, color: '#0f172a', marginBottom: 8 }}>Create account</Text>
-                                <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 15, color: '#64748b' }}>Join thousands of smart investors</Text>
+                                <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 28, color: theme.text, marginBottom: 8 }}>Create account</Text>
+                                <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 15, color: theme.subText }}>Join thousands of smart investors</Text>
                             </View>
 
                             <View style={{ gap: 16, marginBottom: 28 }}>
@@ -84,7 +86,7 @@ export default function RegisterScreen({ navigation }) {
                             </TouchableOpacity>
 
                             <TouchableOpacity onPress={() => navigation.navigate('Login')} style={{ alignItems: 'center', paddingVertical: 16 }}>
-                                <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14, color: '#64748b' }}>
+                                <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14, color: theme.subText }}>
                                     Already have an account?{' '}
                                     <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#2563eb' }}>Sign in</Text>
                                 </Text>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, StatusBar, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { MotiView } from 'moti';
 
 export default function LoginScreen({ navigation }) {
@@ -9,6 +10,7 @@ export default function LoginScreen({ navigation }) {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const { login } = useAuth();
+    const { theme, isDarkMode } = useTheme();
 
     const handleLogin = async () => {
         if (!email || !password) {
@@ -26,8 +28,8 @@ export default function LoginScreen({ navigation }) {
     };
 
     return (
-        <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
-            <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+        <View style={{ flex: 1, backgroundColor: theme.background }}>
+            <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} backgroundColor={theme.background} />
             <SafeAreaView style={{ flex: 1 }}>
                 <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
                     <ScrollView contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 28 }} showsVerticalScrollIndicator={false}>
@@ -40,37 +42,37 @@ export default function LoginScreen({ navigation }) {
                                 }}>
                                     <Text style={{ color: '#fff', fontFamily: 'Poppins-Bold', fontSize: 22 }}>S</Text>
                                 </View>
-                                <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 28, color: '#0f172a', marginBottom: 8 }}>Welcome back</Text>
-                                <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 15, color: '#64748b' }}>Sign in to your account</Text>
+                                <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 28, color: theme.text, marginBottom: 8 }}>Welcome back</Text>
+                                <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 15, color: theme.subText }}>Sign in to your account</Text>
                             </View>
 
                             {/* Fields */}
                             <View style={{ gap: 16, marginBottom: 28 }}>
                                 <View>
-                                    <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: '#374151', marginBottom: 8 }}>Email Address</Text>
+                                    <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: theme.text, marginBottom: 8 }}>Email Address</Text>
                                     <TextInput
                                         value={email} onChangeText={setEmail}
                                         placeholder="you@example.com" keyboardType="email-address" autoCapitalize="none"
-                                        placeholderTextColor='#64748b'
+                                        placeholderTextColor={theme.placeholder}
                                         style={{
-                                            height: 52, borderRadius: 12, backgroundColor: '#f8fafc',
-                                            borderWidth: 1.5, borderColor: '#e2e8f0',
+                                            height: 52, borderRadius: 12, backgroundColor: theme.inputBg,
+                                            borderWidth: 1.5, borderColor: theme.border,
                                             paddingHorizontal: 16, fontFamily: 'Poppins-Regular',
-                                            fontSize: 15, color: '#0f172a',
+                                            fontSize: 15, color: theme.text,
                                         }}
                                     />
                                 </View>
                                 <View>
-                                    <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: '#374151', marginBottom: 8 }}>Password</Text>
+                                    <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: theme.text, marginBottom: 8 }}>Password</Text>
                                     <TextInput
                                         value={password} onChangeText={setPassword}
                                         placeholder="Enter your password" secureTextEntry
-                                        placeholderTextColor='#64748b'
+                                        placeholderTextColor={theme.placeholder}
                                         style={{
-                                            height: 52, borderRadius: 12, backgroundColor: '#f8fafc',
-                                            borderWidth: 1.5, borderColor: '#e2e8f0',
+                                            height: 52, borderRadius: 12, backgroundColor: theme.inputBg,
+                                            borderWidth: 1.5, borderColor: theme.border,
                                             paddingHorizontal: 16, fontFamily: 'Poppins-Regular',
-                                            fontSize: 15, color: '#0f172a',
+                                            fontSize: 15, color: theme.text,
                                         }}
                                     />
                                 </View>
@@ -93,7 +95,7 @@ export default function LoginScreen({ navigation }) {
                             </TouchableOpacity>
 
                             <TouchableOpacity onPress={() => navigation.navigate('Register')} style={{ alignItems: 'center', paddingVertical: 16 }}>
-                                <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14, color: '#64748b' }}>
+                                <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14, color: theme.subText }}>
                                     Don't have an account?{' '}
                                     <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#2563eb' }}>Create one</Text>
                                 </Text>

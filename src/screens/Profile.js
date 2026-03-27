@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity, StatusBar, Alert, Modal, TouchableWithoutFeedback, Platform, KeyboardAvoidingView, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MoreVertical, ChevronRight, Activity, CheckCircle, Shield, Sun, Camera, Bell, Lock, HelpCircle, X } from 'lucide-react-native';
+import { MoreVertical, ChevronRight, Activity, CheckCircle, Shield, Sun, Camera, Bell, Lock, HelpCircle, X, TrendingUp, Target } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useAuth } from '../context/AuthContext';
@@ -9,6 +9,7 @@ import { useUserProfileSettings } from '../context/UserProfileContext';
 import { useExpenses } from '../context/ExpenseContext';
 import { useIncome } from '../context/IncomeContext';
 import { useInvestments } from '../context/InvestmentContext';
+import { useTheme } from '../context/ThemeContext';
 import { collection, query, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { MotiView } from 'moti';
@@ -19,6 +20,7 @@ export default function Profile({ navigation }) {
     const { expenses } = useExpenses();
     const { monthlyIncome } = useIncome();
     const { totalPortfolioValue } = useInvestments();
+    const { theme, isDarkMode } = useTheme();
 
     const [expenseHistory, setExpenseHistory] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -125,17 +127,16 @@ export default function Profile({ navigation }) {
     const ratio = overspent / totalMonths;
 
     let healthGrade = 'Deficient';
-    let healthColor = '#ef4444';
-    let healthIconColor = '#fef2f2';
+    let healthColor = theme.danger;
 
     if (monthlyIncome === 0 || ratio > 0.5) {
-        healthGrade = 'Deficient'; healthColor = '#ef4444'; healthIconColor = '#fef2f2';
+        healthGrade = 'Deficient'; healthColor = theme.danger;
     } else if (ratio === 0) {
-        healthGrade = 'Excellent'; healthColor = '#10b981'; healthIconColor = '#ecfdf5';
+        healthGrade = 'Excellent'; healthColor = '#10b981';
     } else if (ratio <= 0.2) {
-        healthGrade = 'Good'; healthColor = '#3b82f6'; healthIconColor = '#eff6ff';
+        healthGrade = 'Good'; healthColor = '#3b82f6';
     } else if (ratio <= 0.5) {
-        healthGrade = 'Average'; healthColor = '#eab308'; healthIconColor = '#fefce8';
+        healthGrade = 'Average'; healthColor = '#eab308';
     }
 
     let velocityDisplay = profileSettings?.capitalVelocity || 'Not Set';
@@ -172,14 +173,14 @@ export default function Profile({ navigation }) {
             const { TextInput } = require('react-native');
             return (
                 <View>
-                    <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 13, color: '#475569', marginBottom: 6 }}>Daily Budget Target (₹)</Text>
+                    <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 13, color: theme.subText, marginBottom: 6 }}>Daily Budget Target (₹)</Text>
                     <TextInput
                         value={modalConfig.inputValue}
                         onChangeText={(t) => setModalConfig({ ...modalConfig, inputValue: t })}
                         keyboardType="numeric"
                         placeholder="1000"
-                        placeholderTextColor="#94a3b8"
-                        style={{ height: 48, borderRadius: 12, backgroundColor: '#f8fafc', borderWidth: 1, borderColor: '#e2e8f0', paddingHorizontal: 16, fontFamily: 'Poppins-Medium', fontSize: 14, color: '#0f172a' }}
+                        placeholderTextColor={theme.placeholder}
+                        style={{ height: 48, borderRadius: 12, backgroundColor: theme.inputBg, borderWidth: 1, borderColor: theme.border, paddingHorizontal: 16, fontFamily: 'Poppins-Medium', fontSize: 14, color: theme.text }}
                     />
                 </View>
             );
@@ -195,47 +196,49 @@ export default function Profile({ navigation }) {
                     <TouchableOpacity
                         key={opt}
                         onPress={() => setModalConfig({ ...modalConfig, inputValue: opt })}
-                        style={{ paddingVertical: 14, paddingHorizontal: 16, borderRadius: 12, backgroundColor: modalConfig.inputValue === opt ? '#eff6ff' : '#f8fafc', borderWidth: 1, borderColor: modalConfig.inputValue === opt ? '#3b82f6' : '#e2e8f0' }}
+                        style={{ paddingVertical: 14, paddingHorizontal: 16, borderRadius: 12, backgroundColor: modalConfig.inputValue === opt ? (isDarkMode ? '#1e3a8a' : '#eff6ff') : theme.inputBg, borderWidth: 1, borderColor: modalConfig.inputValue === opt ? '#3b82f6' : theme.border }}
                     >
-                        <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 14, color: modalConfig.inputValue === opt ? '#1d4ed8' : '#334155' }}>{opt}</Text>
+                        <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 14, color: modalConfig.inputValue === opt ? '#3b82f6' : theme.subText }}>{opt}</Text>
                     </TouchableOpacity>
                 ))}
             </View>
         );
     };
 
-    const NavRow = ({ icon, label, value, onPress, isLast }) => (
-        <TouchableOpacity onPress={onPress} activeOpacity={0.7} style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 16, paddingHorizontal: 20, borderBottomWidth: isLast ? 0 : 1, borderBottomColor: '#f1f5f9' }}>
-            <View style={{ width: 24, alignItems: 'center', marginRight: 12 }}>{icon}</View>
-            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: '#1e293b', flex: 1 }}>{label}</Text>
-            {value ? <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 13, color: '#64748b', marginRight: 8, textTransform: 'capitalize' }}>{value}</Text> : null}
-            <ChevronRight size={18} color="#94a3b8" />
+    const NavRow = ({ IconComponent, iconBg, iconColor, label, value, onPress, isLast }) => (
+        <TouchableOpacity onPress={onPress} activeOpacity={0.7} style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 16, paddingHorizontal: 20, borderBottomWidth: isLast ? 0 : 1, borderBottomColor: theme.divider }}>
+            <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: isDarkMode ? theme.iconBg : iconBg, alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
+                <IconComponent size={20} color={iconColor} />
+            </View>
+            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: theme.text, flex: 1 }}>{label}</Text>
+            {value ? <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 13, color: theme.subText, marginRight: 8, textTransform: 'capitalize' }}>{value}</Text> : null}
+            <ChevronRight size={18} color={theme.subText} />
         </TouchableOpacity>
     );
 
     return (
-        <View style={{ flex: 1, backgroundColor: '#f8fafc' }}>
-            <StatusBar barStyle="dark-content" />
+        <View style={{ flex: 1, backgroundColor: theme.background }}>
+            <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} backgroundColor={theme.background} />
             <SafeAreaView style={{ flex: 1 }}>
                 {/* Header */}
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 16 }}>
                     <TouchableOpacity onPress={() => navigation.navigate('ProfileMenuScreen')} style={{ padding: 4 }}>
-                        <MoreVertical size={24} color="#0f172a" />
+                        <MoreVertical size={24} color={theme.text} />
                     </TouchableOpacity>
-                    <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 18, color: '#0f172a' }}>My Profile</Text>
+                    <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 18, color: theme.text }}>My Profile</Text>
                     <View style={{ width: 32 }} />
                 </View>
 
                 {/* Edit Setting Modal */}
                 <Modal visible={!!modalConfig} transparent animationType="slide">
                     <TouchableWithoutFeedback onPress={() => setModalConfig(null)}>
-                        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' }}>
+                        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }}>
                             <TouchableWithoutFeedback>
-                                <View style={{ backgroundColor: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: Platform.OS === 'ios' ? 40 : 24 }}>
+                                <View style={{ backgroundColor: theme.modalBg, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: Platform.OS === 'ios' ? 40 : 24 }}>
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                                        <Text style={{ fontSize: 17, fontFamily: 'Poppins-Bold', color: '#0f172a' }}>{modalConfig?.title}</Text>
+                                        <Text style={{ fontSize: 17, fontFamily: 'Poppins-Bold', color: theme.text }}>{modalConfig?.title}</Text>
                                         <TouchableOpacity onPress={() => setModalConfig(null)} style={{ padding: 4 }}>
-                                            <X size={20} color="#64748b" />
+                                            <X size={20} color={theme.subText} />
                                         </TouchableOpacity>
                                     </View>
                                     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
@@ -261,7 +264,7 @@ export default function Profile({ navigation }) {
                                     {profileImageURL ? (
                                         <Image source={{ uri: profileImageURL }} style={{ width: 80, height: 80, borderRadius: 40 }} />
                                     ) : (
-                                        <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 28, color: '#ffffff' }}>{(userProfile?.name || 'U').charAt(0)}</Text>
+                                        <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 28, color: '#ffffff' }}>{(userProfile?.name || 'U').charAt(0).toUpperCase()}</Text>
                                     )}
                                 </View>
 
@@ -273,56 +276,56 @@ export default function Profile({ navigation }) {
                                 )}
 
                                 {/* Camera badge */}
-                                <View style={{ position: 'absolute', bottom: 0, right: 0, backgroundColor: '#f97316', width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: '#ffffff', zIndex: 10 }}>
+                                <View style={{ position: 'absolute', bottom: 0, right: 0, backgroundColor: '#8B5CF6', width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: '#ffffff', zIndex: 10 }}>
                                     <Camera size={14} color="#ffffff" />
                                 </View>
                             </TouchableOpacity>
 
-                            <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 20, color: '#0f172a', marginBottom: 2 }}>{userProfile?.name || 'Investor'}</Text>
-                            <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 13, color: '#94a3b8' }}>{userProfile?.email || 'user@example.com'}</Text>
+                            <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 20, color: theme.text, marginBottom: 2 }}>{userProfile?.name || 'Investor'}</Text>
+                            <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 13, color: theme.subText }}>{userProfile?.email || 'user@example.com'}</Text>
 
-                            <TouchableOpacity onPress={() => navigation.navigate('EditProfileScreen')} style={{ marginTop: 12, borderWidth: 1.5, borderColor: '#fed7aa', backgroundColor: '#fff7ed', borderRadius: 20, paddingHorizontal: 20, paddingVertical: 8 }}>
-                                <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 13, color: '#ea580c' }}>Edit Profile</Text>
+                            <TouchableOpacity onPress={() => navigation.navigate('EditProfileScreen')} style={{ marginTop: 12, borderWidth: 1.5, borderColor: isDarkMode ? '#C2410C' : '#FED7AA', backgroundColor: isDarkMode ? theme.iconBg : '#FFF7ED', borderRadius: 20, paddingHorizontal: 20, paddingVertical: 8 }}>
+                                <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 13, color: '#EA580C' }}>Edit Profile</Text>
                             </TouchableOpacity>
                         </View>
                     </MotiView>
 
                     {/* Stats Cards */}
                     <View style={{ flexDirection: 'row', paddingHorizontal: 20, marginBottom: 32, gap: 12 }}>
-                        <View style={{ flex: 1, backgroundColor: '#ffffff', borderRadius: 16, padding: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.06, shadowRadius: 12, elevation: 3 }}>
-                            <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: healthIconColor, alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
-                                <Activity size={20} color={healthColor} />
+                        <View style={{ flex: 1, backgroundColor: theme.card, borderRadius: 16, padding: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.06, shadowRadius: 12, elevation: 3 }}>
+                            <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: isDarkMode ? theme.iconBg : '#FEE2E2', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+                                <Activity size={20} color="#EF4444" />
                             </View>
                             <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 16, color: healthColor, marginBottom: 4 }}>{healthGrade}</Text>
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 10, color: '#94a3b8', letterSpacing: 1, textTransform: 'uppercase' }}>AVG HEALTH</Text>
+                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 10, color: theme.subText, letterSpacing: 1, textTransform: 'uppercase' }}>AVG HEALTH</Text>
                         </View>
-                        <View style={{ flex: 1, backgroundColor: '#ffffff', borderRadius: 16, padding: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.06, shadowRadius: 12, elevation: 3 }}>
-                            <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: '#fff7ed', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
-                                <CheckCircle size={20} color="#fb923c" />
+                        <View style={{ flex: 1, backgroundColor: theme.card, borderRadius: 16, padding: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.06, shadowRadius: 12, elevation: 3 }}>
+                            <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: isDarkMode ? theme.iconBg : '#F0FDF4', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+                                <CheckCircle size={20} color="#22C55E" />
                             </View>
-                            <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 16, color: '#0f172a', marginBottom: 4 }}>{perfectMonths}</Text>
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 10, color: '#94a3b8', letterSpacing: 1, textTransform: 'uppercase' }}>PERFECT MONTHS</Text>
+                            <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 16, color: theme.text, marginBottom: 4 }}>{perfectMonths}</Text>
+                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 10, color: theme.subText, letterSpacing: 1, textTransform: 'uppercase' }}>PERFECT MONTHS</Text>
                         </View>
                     </View>
 
                     {/* SMART PROFILE SECTION */}
                     <View style={{ paddingHorizontal: 20, paddingBottom: 24 }}>
-                        <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 11, color: '#94a3b8', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 8 }}>MY SMART PROFILE</Text>
-                        <View style={{ backgroundColor: '#ffffff', borderRadius: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.06, shadowRadius: 12, elevation: 3 }}>
-                            <NavRow icon={<Shield size={24} color="#f97316" />} label="Risk Profile" value={profileSettings?.riskProfile || 'Moderate'} onPress={() => openEditModal('riskProfile', 'Edit Risk Profile')} />
-                            <NavRow icon={<Sun size={24} color="#f97316" />} label="Alert Preference" value={profileSettings?.alertPreference || 'Auto (AI)'} onPress={() => openEditModal('alertPreference', 'Edit Alert Preference')} />
-                            <NavRow icon={<Activity size={24} color="#f97316" />} label="Capital Velocity" value={velocityDisplay} onPress={() => openEditModal('capitalVelocity', 'Override Capital Velocity')} />
-                            <NavRow icon={<CheckCircle size={24} color="#f97316" />} label="Daily Target" value={`₹${dailyTarget.toLocaleString('en-IN')}`} onPress={() => openEditModal('dailyTarget', 'Edit Daily Target')} isLast={true} />
+                        <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 11, color: theme.sectionLabel, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 8 }}>MY SMART PROFILE</Text>
+                        <View style={{ backgroundColor: theme.card, borderRadius: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.06, shadowRadius: 12, elevation: 3 }}>
+                            <NavRow IconComponent={Shield} iconBg="#EFF6FF" iconColor="#3B82F6" label="Risk Profile" value={profileSettings?.riskProfile || 'Moderate'} onPress={() => openEditModal('riskProfile', 'Edit Risk Profile')} />
+                            <NavRow IconComponent={Bell} iconBg="#FEFCE8" iconColor="#EAB308" label="Alert Preference" value={profileSettings?.alertPreference || 'Auto (AI)'} onPress={() => openEditModal('alertPreference', 'Edit Alert Preference')} />
+                            <NavRow IconComponent={TrendingUp} iconBg="#FDF4FF" iconColor="#A855F7" label="Capital Velocity" value={velocityDisplay} onPress={() => openEditModal('capitalVelocity', 'Override Capital Velocity')} />
+                            <NavRow IconComponent={Target} iconBg="#FCE7F3" iconColor="#EC4899" label="Daily Target" value={`₹${dailyTarget.toLocaleString('en-IN')}`} onPress={() => openEditModal('dailyTarget', 'Edit Daily Target')} isLast={true} />
                         </View>
                     </View>
 
                     {/* GENERAL SECTION */}
                     <View style={{ paddingHorizontal: 20, paddingBottom: 40 }}>
-                        <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 11, color: '#94a3b8', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 8 }}>GENERAL</Text>
-                        <View style={{ backgroundColor: '#ffffff', borderRadius: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.06, shadowRadius: 12, elevation: 3 }}>
-                            <NavRow icon={<Bell size={24} color="#3b82f6" />} label="Notifications" onPress={() => {}} />
-                            <NavRow icon={<Lock size={24} color="#3b82f6" />} label="Security" onPress={() => {}} />
-                            <NavRow icon={<HelpCircle size={24} color="#3b82f6" />} label="Help & Support" onPress={() => navigation.navigate('FAQScreen')} isLast={true} />
+                        <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 11, color: theme.sectionLabel, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 8 }}>GENERAL</Text>
+                        <View style={{ backgroundColor: theme.card, borderRadius: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.06, shadowRadius: 12, elevation: 3 }}>
+                            <NavRow IconComponent={Bell} iconBg="#FFFBEB" iconColor="#F59E0B" label="Notifications" onPress={() => navigation.navigate('NotificationsScreen')} />
+                            <NavRow IconComponent={Lock} iconBg="#F1F5F9" iconColor="#475569" label="Security" onPress={() => navigation.navigate('SecurityScreen')} />
+                            <NavRow IconComponent={HelpCircle} iconBg="#ECFEFF" iconColor="#06B6D4" label="Help & Support" onPress={() => navigation.navigate('HelpSupportScreen')} isLast={true} />
                         </View>
                     </View>
                 </ScrollView>

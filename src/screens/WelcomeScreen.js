@@ -2,16 +2,19 @@ import React, { useEffect } from 'react';
 import { View, Text, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MotiView } from 'moti';
+import { useTheme } from '../context/ThemeContext';
 
 export default function WelcomeScreen({ navigation }) {
+    const { theme, isDarkMode } = useTheme();
+
     useEffect(() => {
         const timer = setTimeout(() => navigation.replace('GetStarted'), 2500);
         return () => clearTimeout(timer);
     }, [navigation]);
 
     return (
-        <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
-            <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+        <View style={{ flex: 1, backgroundColor: theme.background }}>
+            <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} backgroundColor={theme.background} />
             <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <MotiView
                     from={{ opacity: 0, scale: 0.85 }}
@@ -35,10 +38,10 @@ export default function WelcomeScreen({ navigation }) {
                         <Text style={{ fontSize: 36, color: '#fff', fontFamily: 'Poppins-Bold' }}>S</Text>
                     </View>
 
-                    <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 30, color: '#0f172a', letterSpacing: -0.5, marginBottom: 10 }}>
+                    <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 30, color: theme.text, letterSpacing: -0.5, marginBottom: 10 }}>
                         SmartFinance
                     </Text>
-                    <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 15, color: '#64748b', textAlign: 'center', lineHeight: 22 }}>
+                    <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 15, color: theme.subText, textAlign: 'center', lineHeight: 22 }}>
                         Your all-in-one financial command center
                     </Text>
 

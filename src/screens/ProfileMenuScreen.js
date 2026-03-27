@@ -7,7 +7,7 @@ import { useTheme } from '../context/ThemeContext';
 
 export default function ProfileMenuScreen({ navigation }) {
     const { userProfile, logout } = useAuth();
-    const { theme, toggleTheme } = useTheme();
+    const { isDarkMode, toggleDarkMode, theme } = useTheme();
 
     const handleLogout = async () => {
         await logout();
@@ -16,27 +16,27 @@ export default function ProfileMenuScreen({ navigation }) {
     const DrawerItem = ({ icon, label, onPress }) => (
         <TouchableOpacity onPress={onPress} activeOpacity={0.7} style={{ flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 16 }}>
             {icon}
-            <Text style={{ fontSize: 15, fontWeight: '500', color: '#1e293b' }}>{label}</Text>
+            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 15, color: theme.text }}>{label}</Text>
         </TouchableOpacity>
     );
 
     return (
-        <View style={{ flex: 1, backgroundColor: '#f8fafc' }}>
-            <StatusBar barStyle="dark-content" backgroundColor="#f8fafc" />
+        <View style={{ flex: 1, backgroundColor: theme.background }}>
+            <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} backgroundColor={theme.background} />
             <SafeAreaView style={{ flex: 1 }}>
                 
                 {/* Header Section */}
-                <View style={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: 24, borderBottomWidth: 1, borderColor: '#f1f5f9' }}>
+                <View style={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: 24, borderBottomWidth: 1, borderBottomColor: theme.divider }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <View>
                             <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: '#2563eb', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
-                                <Text style={{ fontSize: 24, color: '#fff', fontWeight: '700' }}>{(userProfile?.name || 'U').charAt(0)}</Text>
+                                <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 24, color: '#fff' }}>{(userProfile?.name || 'U').charAt(0).toUpperCase()}</Text>
                             </View>
-                            <Text style={{ fontSize: 17, fontWeight: '700', color: '#0f172a' }}>{userProfile?.name || 'Investor'}</Text>
-                            <Text style={{ fontSize: 13, color: '#94a3b8', marginTop: 2 }}>{userProfile?.email || 'user@example.com'}</Text>
+                            <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 17, color: theme.text }}>{userProfile?.name || 'Investor'}</Text>
+                            <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 13, color: theme.subText, marginTop: 2 }}>{userProfile?.email || 'user@example.com'}</Text>
                         </View>
-                        <TouchableOpacity onPress={() => navigation.goBack()} style={{ padding: 8, backgroundColor: '#f8fafc', borderRadius: 24 }}>
-                            <X size={20} color="#64748b" />
+                        <TouchableOpacity onPress={() => navigation.goBack()} style={{ padding: 8, backgroundColor: theme.inputBg, borderRadius: 24 }}>
+                            <X size={20} color={theme.subText} />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -44,32 +44,37 @@ export default function ProfileMenuScreen({ navigation }) {
                 <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
                     {/* MENU Section */}
                     <View style={{ paddingVertical: 24, paddingHorizontal: 24 }}>
-                        <Text style={{ fontSize: 11, fontWeight: '600', color: '#94a3b8', letterSpacing: 1.5, marginBottom: 8 }}>MENU</Text>
-                        <DrawerItem icon={<History size={20} color="#475569" />} label="History" onPress={() => navigation.navigate('ExpenseHistory')} />
-                        <DrawerItem icon={<HelpCircle size={20} color="#475569" />} label="FAQ" onPress={() => navigation.navigate('FAQScreen')} />
-                        <DrawerItem icon={<SettingsIcon size={20} color="#475569" />} label="Settings" onPress={() => navigation.navigate('Settings')} />
+                        <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 11, color: theme.sectionLabel, letterSpacing: 1.5, marginBottom: 8 }}>MENU</Text>
+                        <DrawerItem icon={<History size={20} color={theme.text} />} label="History" onPress={() => navigation.navigate('ExpenseHistory')} />
+                        <DrawerItem icon={<HelpCircle size={20} color={theme.text} />} label="FAQ" onPress={() => navigation.navigate('FAQScreen')} />
+                        <DrawerItem icon={<SettingsIcon size={20} color={theme.text} />} label="Settings" onPress={() => navigation.navigate('Settings')} />
                     </View>
 
                     {/* LEGAL & INFO Section */}
                     <View style={{ paddingVertical: 8, paddingHorizontal: 24 }}>
-                        <Text style={{ fontSize: 11, fontWeight: '600', color: '#94a3b8', letterSpacing: 1.5, marginBottom: 8 }}>LEGAL & INFO</Text>
-                        <DrawerItem icon={<Lock size={20} color="#475569" />} label="Privacy Policy" onPress={() => Alert.alert('Privacy Policy', 'Your privacy is essential to us. All data is securely encrypted using military-grade protocols and stored safely.')} />
-                        <DrawerItem icon={<Info size={20} color="#475569" />} label="About" onPress={() => Alert.alert('SmartFinance', 'Version 2.1.0\n\nPowered by React Native, Nativewind, and Deepmind.')} />
+                        <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 11, color: theme.sectionLabel, letterSpacing: 1.5, marginBottom: 8 }}>LEGAL & INFO</Text>
+                        <DrawerItem icon={<Lock size={20} color={theme.text} />} label="Privacy Policy" onPress={() => Alert.alert('Privacy Policy', 'Your privacy is essential to us. All data is securely encrypted using military-grade protocols and stored safely.')} />
+                        <DrawerItem icon={<Info size={20} color={theme.text} />} label="About" onPress={() => Alert.alert('SmartFinance', 'Version 2.1.0\n\nPowered by React Native, Nativewind, and Deepmind.')} />
                     </View>
 
                     {/* BOTTOM Section */}
                     <View style={{ paddingHorizontal: 24, marginTop: 40 }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 32 }}>
                             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
-                                <Moon size={20} color="#475569" />
-                                <Text style={{ fontSize: 15, fontWeight: '500', color: '#0f172a' }}>Dark Mode</Text>
+                                <Moon size={20} color={theme.text} />
+                                <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 15, color: theme.text }}>Dark Mode</Text>
                             </View>
-                            <Switch value={theme === 'dark'} onValueChange={toggleTheme} trackColor={{ false: '#e2e8f0', true: '#2563eb' }} />
+                            <Switch 
+                                value={isDarkMode} 
+                                onValueChange={toggleDarkMode} 
+                                trackColor={{ false: '#CBD5E1', true: '#2563EB' }} 
+                                thumbColor={'#FFFFFF'}
+                            />
                         </View>
                         
-                        <TouchableOpacity onPress={handleLogout} style={{ backgroundColor: '#f1f5f9', borderRadius: 14, paddingVertical: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
-                            <LogOut size={20} color="#ef4444" />
-                            <Text style={{ fontWeight: '700', fontSize: 15, color: '#ef4444' }}>Log Out</Text>
+                        <TouchableOpacity onPress={handleLogout} style={{ backgroundColor: isDarkMode ? theme.inputBg : '#fef2f2', borderRadius: 14, paddingVertical: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+                            <LogOut size={20} color={theme.danger} />
+                            <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 15, color: theme.danger }}>Log Out</Text>
                         </TouchableOpacity>
                     </View>
                 </ScrollView>

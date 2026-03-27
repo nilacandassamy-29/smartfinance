@@ -9,7 +9,7 @@ import {
   Poppins_700Bold,
 } from '@expo-google-fonts/poppins';
 import { AuthProvider } from './src/context/AuthContext';
-import { ThemeProvider } from './src/context/ThemeContext';
+import { ThemeProvider, ThemeAwareStatusBar } from './src/context/ThemeContext';
 import { ExpenseProvider } from './src/context/ExpenseContext';
 import { IncomeProvider } from './src/context/IncomeContext';
 import { InvestmentProvider } from './src/context/InvestmentContext';
@@ -19,6 +19,7 @@ import RootNavigator from './src/navigation/RootNavigator';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { Text } from 'react-native';
 
 const NavigationTheme = {
   ...DefaultTheme,
@@ -44,6 +45,10 @@ export default function App() {
     );
   }
 
+  const oldTextRender = Text.render;
+  Text.defaultProps = Text.defaultProps || {};
+  Text.defaultProps.style = { fontFamily: 'Poppins-Regular' };
+
   return (
     <SafeAreaProvider>
       <AuthProvider>
@@ -55,7 +60,7 @@ export default function App() {
                   <OnboardingProvider>
                     <NavigationContainer theme={NavigationTheme}>
                       <RootNavigator />
-                      <StatusBar style="dark" />
+                      <ThemeAwareStatusBar />
                     </NavigationContainer>
                   </OnboardingProvider>
                 </InvestmentProvider>

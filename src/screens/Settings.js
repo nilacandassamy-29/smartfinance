@@ -5,16 +5,16 @@ import { useTheme } from '../context/ThemeContext';
 import { MotiView } from 'moti';
 
 export default function Settings({ navigation }) {
-    const { theme, toggleTheme } = useTheme();
+    const { theme, isDarkMode, toggleTheme } = useTheme();
     const [notifications, setNotifications] = useState(true);
     const [biometrics, setBiometrics] = useState(false);
 
     const Section = ({ title, children }) => (
         <View>
-            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 12, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 8, marginLeft: 4 }}>{title}</Text>
+            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 12, color: theme.sectionLabel || theme.subText, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 8, marginLeft: 4 }}>{title}</Text>
             <View style={{
-                backgroundColor: '#ffffff', borderRadius: 20,
-                shadowColor: '#64748b', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.08, shadowRadius: 10, elevation: 3,
+                backgroundColor: theme.card, borderRadius: 20,
+                shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.05, shadowRadius: 10, elevation: 3,
             }}>{children}</View>
         </View>
     );
@@ -22,33 +22,33 @@ export default function Settings({ navigation }) {
     const ToggleRow = ({ icon, label, value, onChange }) => (
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 18, paddingVertical: 14 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
-                <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: '#f8fafc', alignItems: 'center', justifyContent: 'center' }}>
+                <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: isDarkMode ? theme.iconBg : '#f8fafc', alignItems: 'center', justifyContent: 'center' }}>
                     <Text style={{ fontSize: 18 }}>{icon}</Text>
                 </View>
-                <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 15, color: '#0f172a' }}>{label}</Text>
+                <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 15, color: theme.text }}>{label}</Text>
             </View>
-            <Switch value={value} onValueChange={onChange} trackColor={{ false: '#e2e8f0', true: '#2563eb' }} thumbColor={'#ffffff'} />
+            <Switch value={value} onValueChange={onChange} trackColor={{ false: '#CBD5E1', true: '#2563eb' }} thumbColor={'#ffffff'} ios_backgroundColor="#CBD5E1" />
         </View>
     );
 
-    const Divider = () => <View style={{ height: 1, backgroundColor: '#f1f5f9', marginLeft: 72 }} />;
+    const Divider = () => <View style={{ height: 1, backgroundColor: theme.divider, marginLeft: 72 }} />;
 
     return (
-        <View style={{ flex: 1, backgroundColor: '#f8fafc' }}>
-            <StatusBar barStyle="dark-content" />
+        <View style={{ flex: 1, backgroundColor: theme.background }}>
+            <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} backgroundColor={theme.background} />
             <SafeAreaView style={{ flex: 1 }}>
                 <View style={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 16, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
-                    <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: '#ffffff', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#e2e8f0' }}>
-                        <Text style={{ fontSize: 18, color: '#0f172a' }}>←</Text>
+                    <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: theme.card, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: theme.border }}>
+                        <Text style={{ fontSize: 18, color: theme.text }}>←</Text>
                     </TouchableOpacity>
-                    <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 22, color: '#0f172a' }}>Settings</Text>
+                    <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 22, color: theme.text }}>Settings</Text>
                 </View>
 
                 <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 110, gap: 20 }} showsVerticalScrollIndicator={false}>
                     <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 400 }}>
 
                         <Section title="Appearance">
-                            <ToggleRow icon="🌙" label="Dark Mode" value={theme === 'dark'} onChange={toggleTheme} />
+                            <ToggleRow icon="🌙" label="Dark Mode" value={isDarkMode} onChange={toggleTheme} />
                         </Section>
 
                         <View style={{ marginTop: 20 }}>
@@ -65,7 +65,7 @@ export default function Settings({ navigation }) {
                             </Section>
                         </View>
 
-                        <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 12, color: '#64748b', textAlign: 'center', marginTop: 24 }}>
+                        <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 12, color: theme.subText, textAlign: 'center', marginTop: 24 }}>
                             SmartFinance v2.1.0 · All data encrypted
                         </Text>
                     </MotiView>

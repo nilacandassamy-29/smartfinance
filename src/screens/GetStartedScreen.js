@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MotiView } from 'moti';
+import { useTheme } from '../context/ThemeContext';
 
 const features = [
     { icon: '💰', title: 'Smart Budgeting', desc: 'Track every rupee automatically' },
@@ -10,9 +11,11 @@ const features = [
 ];
 
 export default function GetStartedScreen({ navigation }) {
+    const { theme, isDarkMode } = useTheme();
+
     return (
-        <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
-            <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+        <View style={{ flex: 1, backgroundColor: theme.background }}>
+            <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} backgroundColor={theme.background} />
             <SafeAreaView style={{ flex: 1 }}>
                 <MotiView
                     from={{ opacity: 0, translateY: 20 }}
@@ -22,10 +25,10 @@ export default function GetStartedScreen({ navigation }) {
                 >
                     {/* Header */}
                     <View style={{ marginBottom: 40 }}>
-                        <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 32, color: '#0f172a', lineHeight: 42, marginBottom: 10 }}>
+                        <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 32, color: theme.text, lineHeight: 42, marginBottom: 10 }}>
                             Take control of{'\n'}your finances.
                         </Text>
-                        <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 15, color: '#64748b', lineHeight: 22 }}>
+                        <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 15, color: theme.subText, lineHeight: 22 }}>
                             Built for the modern Indian investor.
                         </Text>
                     </View>
@@ -40,21 +43,21 @@ export default function GetStartedScreen({ navigation }) {
                                 transition={{ delay: 200 + i * 150, type: 'timing', duration: 500 }}
                                 style={{
                                     flexDirection: 'row', alignItems: 'center', gap: 16,
-                                    backgroundColor: '#f8fafc',
+                                    backgroundColor: theme.card,
                                     borderRadius: 16, padding: 18,
-                                    borderWidth: 1, borderColor: '#f1f5f9',
+                                    borderWidth: 1, borderColor: theme.border,
                                 }}
                             >
                                 <View style={{
                                     width: 48, height: 48, borderRadius: 12,
-                                    backgroundColor: '#eff6ff',
+                                    backgroundColor: isDarkMode ? theme.iconBg : '#eff6ff',
                                     alignItems: 'center', justifyContent: 'center',
                                 }}>
                                     <Text style={{ fontSize: 22 }}>{f.icon}</Text>
                                 </View>
                                 <View style={{ flex: 1 }}>
-                                    <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 15, color: '#0f172a', marginBottom: 2 }}>{f.title}</Text>
-                                    <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14, color: '#64748b' }}>{f.desc}</Text>
+                                    <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 15, color: theme.text, marginBottom: 2 }}>{f.title}</Text>
+                                    <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14, color: theme.subText }}>{f.desc}</Text>
                                 </View>
                             </MotiView>
                         ))}
@@ -81,7 +84,8 @@ export default function GetStartedScreen({ navigation }) {
                             style={{
                                 borderRadius: 14, height: 56,
                                 alignItems: 'center', justifyContent: 'center',
-                                borderWidth: 1.5, borderColor: '#e2e8f0',
+                                borderWidth: 1.5, borderColor: isDarkMode ? theme.border : '#e2e8f0',
+                                backgroundColor: isDarkMode ? theme.card : 'transparent',
                             }}
                         >
                             <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 16, color: '#2563eb' }}>Create Account</Text>
