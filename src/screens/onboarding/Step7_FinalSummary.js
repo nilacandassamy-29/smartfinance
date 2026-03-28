@@ -26,10 +26,10 @@ const Step7_FinalSummary = () => {
   };
 
   const summaries = [
-    { label: 'Total Inflow',   value: totalIncome,        icon: TrendingUp,  ic: '#10b981', bg: '#ECFDF5', bd: '#BBF7D0' },
-    { label: 'Flux Leakage',   value: totalExpenses,      icon: TrendingUp,  ic: '#f43f5e', bg: '#FFF1F2', bd: '#FECDD3' },
-    { label: 'Buffer Active',  value: reserveAmount,      icon: ShieldCheck, ic: '#3b82f6', bg: '#EFF6FF', bd: '#BFDBFE' },
-    { label: 'Growth Vector',  value: investableSurplus,  icon: Wallet,      ic: '#6366f1', bg: '#EEF2FF', bd: '#C7D2FE' },
+    { label: 'Monthly Income',    value: totalIncome,       icon: TrendingUp,  ic: '#10b981', bg: '#ECFDF5', bd: '#BBF7D0' },
+    { label: 'Monthly Expenses',  value: totalExpenses,     icon: TrendingUp,  ic: '#f43f5e', bg: '#FFF1F2', bd: '#FECDD3' },
+    { label: 'Emergency Fund',    value: reserveAmount,     icon: ShieldCheck, ic: '#3b82f6', bg: '#EFF6FF', bd: '#BFDBFE' },
+    { label: 'Ready to Invest',   value: investableSurplus, icon: Wallet,      ic: '#6366f1', bg: '#EEF2FF', bd: '#C7D2FE' },
   ];
 
   return (
@@ -40,7 +40,7 @@ const Step7_FinalSummary = () => {
           <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: '#F1F5F9', borderWidth: 1.5, borderColor: C.border, alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={16} color={C.sub} strokeWidth={3} />
           </View>
-          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: C.sub }}>Backtrack</Text>
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: C.sub }}>Go Back</Text>
         </TouchableOpacity>
       </View>
 
@@ -54,10 +54,10 @@ const Step7_FinalSummary = () => {
           <CheckCircle2 size={46} color="#10b981" strokeWidth={2.5} />
         </MotiView>
         <View style={{ alignItems: 'center', paddingHorizontal: 16 }}>
-          <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, letterSpacing: 0, textTransform: 'uppercase', textAlign: 'center', color: C.text }}>Matrix Ready</Text>
+          <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, letterSpacing: 0, textTransform: 'uppercase', textAlign: 'center', color: C.text }}>You Are All Set!</Text>
           <View style={{ paddingHorizontal: 20, paddingVertical: 12, borderRadius: 18, borderWidth: 1.5, borderColor: C.border, backgroundColor: C.card, marginTop: 16 }}>
             <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, textTransform: 'uppercase', letterSpacing: 1.5, textAlign: 'center', lineHeight: 20, color: C.sub }}>
-              Personalized {totalIncome > 50000 ? 'Wealth Acceleration' : 'Financial Resilience'} protocol engaged.
+              Your SmartFinance plan is ready. Start tracking your money and growing your wealth.
             </Text>
           </View>
         </View>
@@ -85,7 +85,7 @@ const Step7_FinalSummary = () => {
             ))}
           </View>
 
-          {/* AI note */}
+          {/* Note */}
           <MotiView from={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 800 }}
             style={{ backgroundColor: '#EEF2FF', padding: 18, borderRadius: 20, borderWidth: 1.5, borderColor: '#C7D2FE', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
             <View style={{ width: 50, height: 50, backgroundColor: C.accent, borderRadius: 16, alignItems: 'center', justifyContent: 'center', shadowColor: C.accent, shadowOpacity: 0.3, shadowRadius: 8, elevation: 4 }}>
@@ -93,7 +93,7 @@ const Step7_FinalSummary = () => {
             </View>
             <View style={{ flex: 1 }}>
               <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, lineHeight: 20, textTransform: 'uppercase', letterSpacing: 1.5, color: C.sub }}>
-                Activation will synchronize node data and initialize global growth trackers.
+                Tap below to save your plan and start using SmartFinance.
               </Text>
             </View>
           </MotiView>
@@ -106,11 +106,11 @@ const Step7_FinalSummary = () => {
         {isFinalizing ? (
           <>
             <ActivityIndicator size="small" color={C.accent} />
-            <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 12, letterSpacing: 2, textTransform: 'uppercase', color: C.accent }}>Syncing Matrix...</Text>
+            <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 12, letterSpacing: 2, textTransform: 'uppercase', color: C.accent }}>Saving Your Plan...</Text>
           </>
         ) : (
           <>
-            <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', color: '#ffffff' }}>Activate Synth Tracker</Text>
+            <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', color: '#ffffff' }}>Start Using SmartFinance</Text>
             <ArrowRight size={22} color="#ffffff" strokeWidth={3} />
           </>
         )}

@@ -7,7 +7,6 @@ import { useOnboarding } from '../../context/OnboardingContext';
 import { MotiView, AnimatePresence } from 'moti';
 import OnboardingLayout from '../../components/onboarding/OnboardingLayout';
 
-// ── Colors ──────────────────────────────────────────────
 const C = {
   text: '#0F172A', sub: '#64748B', muted: '#94A3B8',
   border: '#E2E8F0', card: '#F8FAFC', input: '#F1F5F9',
@@ -27,7 +26,7 @@ const Step1_FamilySize = () => {
     <OnboardingLayout currentStep={1}>
       <View style={{ marginBottom: 40 }}>
 
-        {/* Abort Node button */}
+        {/* Go Back button */}
         <TouchableOpacity
           onPress={async () => await updateUserProfile({ onboardingComplete: true })}
           style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 40 }}
@@ -36,11 +35,11 @@ const Step1_FamilySize = () => {
             <ChevronLeft size={16} color={C.sub} strokeWidth={3} />
           </View>
           <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, color: C.sub, textTransform: 'uppercase' }}>
-            Abort Node
+            Go Back
           </Text>
         </TouchableOpacity>
 
-        {/* Hero icon + title */}
+        {/* Hero */}
         <View style={{ alignItems: 'center', gap: 20, marginBottom: 48 }}>
           <MotiView
             from={{ scale: 0.5, opacity: 0, rotate: '-45deg' }}
@@ -51,12 +50,12 @@ const Step1_FamilySize = () => {
           </MotiView>
 
           <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, letterSpacing: 0, textAlign: 'center', textTransform: 'uppercase', color: C.text }}>
-            Household Core
+            Who Is This For?
           </Text>
 
           <View style={{ paddingHorizontal: 24, paddingVertical: 16, borderRadius: 20, borderWidth: 1.5, borderColor: C.border, backgroundColor: C.card, marginHorizontal: 8 }}>
             <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, letterSpacing: 1.5, textAlign: 'center', textTransform: 'uppercase', color: C.sub, lineHeight: 20 }}>
-              Synchronizing neural mapping based on total capital dependents.
+              Tell us if you are managing finances for yourself or your entire family.
             </Text>
           </View>
         </View>
@@ -80,7 +79,7 @@ const Step1_FamilySize = () => {
                     {familySize}
                   </Text>
                   <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, color: C.sub, textTransform: 'uppercase', textAlign: 'center', marginTop: 2 }}>
-                    Active Nodes
+                    Family Members
                   </Text>
                 </View>
 
@@ -91,11 +90,11 @@ const Step1_FamilySize = () => {
             )}
           </AnimatePresence>
 
-          {/* Single / Cluster cards */}
+          {/* Just Me / Family cards */}
           <View style={{ flexDirection: 'row', gap: 14, width: '100%' }}>
             {[
-              { id: 'single', label: 'Single', icon: User, isActive: familySize === 1, onPress: () => updateFamilySize(1) },
-              { id: 'cluster', label: 'Cluster', icon: Users, isActive: familySize > 1, onPress: () => updateFamilySize(Math.max(2, familySize)) },
+              { id: 'single', label: 'Just Me', icon: User, isActive: familySize === 1, onPress: () => updateFamilySize(1) },
+              { id: 'family', label: 'Family', icon: Users, isActive: familySize > 1, onPress: () => updateFamilySize(Math.max(2, familySize)) },
             ].map((opt) => (
               <TouchableOpacity
                 key={opt.id}
@@ -121,7 +120,7 @@ const Step1_FamilySize = () => {
         </View>
       </View>
 
-      {/* CTA button */}
+      {/* CTA */}
       {familySize > 0 && (
         <MotiView from={{ opacity: 0, translateY: 20 }} animate={{ opacity: 1, translateY: 0 }} style={{ marginTop: 24 }}>
           <TouchableOpacity
@@ -130,7 +129,7 @@ const Step1_FamilySize = () => {
             style={{ width: '100%', backgroundColor: C.accent, height: 58, borderRadius: 22, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, shadowColor: C.accent, shadowOpacity: 0.35, shadowRadius: 16, elevation: 8 }}
           >
             <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', color: '#ffffff' }}>
-              Initialize Cluster Mapping
+              Continue
             </Text>
             <ChevronRight size={20} color="#ffffff" strokeWidth={3} />
           </TouchableOpacity>

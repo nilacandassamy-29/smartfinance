@@ -18,22 +18,22 @@ const Step3_Expenses = () => {
   const navigation = useNavigation();
 
   const cats = [
-    { id: 'groceries',     label: 'Ration',     icon: ShoppingCart, ic: '#f97316', bg: '#FFF7ED', bd: '#FED7AA' },
-    { id: 'electricity',   label: 'Grid',        icon: Zap,          ic: '#eab308', bg: '#FEFCE8', bd: '#FDE68A' },
-    { id: 'water',         label: 'Hydro',       icon: Droplets,     ic: '#3b82f6', bg: '#EFF6FF', bd: '#BFDBFE' },
-    { id: 'gas',           label: 'Thermal',     icon: Flame,        ic: '#f97316', bg: '#FFF7ED', bd: '#FED7AA' },
-    { id: 'internet',      label: 'Fiber',       icon: Wifi,         ic: '#6366f1', bg: '#EEF2FF', bd: '#C7D2FE' },
-    { id: 'mobile',        label: 'Cellular',    icon: Smartphone,   ic: '#64748b', bg: '#F8FAFC', bd: '#E2E8F0' },
-    { id: 'rent',          label: 'Base',        icon: Home,         ic: '#a855f7', bg: '#FAF5FF', bd: '#E9D5FF' },
-    { id: 'transport',     label: 'Kinetic',     icon: Car,          ic: '#0ea5e9', bg: '#F0F9FF', bd: '#BAE6FD' },
-    { id: 'insurance',     label: 'Shield',      icon: Shield,       ic: '#f43f5e', bg: '#FFF1F2', bd: '#FECDD3' },
-    { id: 'medical',       label: 'Bio',         icon: HeartPulse,   ic: '#ef4444', bg: '#FEF2F2', bd: '#FECACA' },
-    { id: 'education',     label: 'Scholarly',   icon: GraduationCap,ic: '#a855f7', bg: '#FAF5FF', bd: '#E9D5FF' },
-    { id: 'loans',         label: 'Credit',      icon: CreditCard,   ic: '#71717a', bg: '#FAFAFA', bd: '#E4E4E7' },
-    { id: 'maintenance',   label: 'Repair',      icon: Wrench,       ic: '#d97706', bg: '#FFFBEB', bd: '#FDE68A' },
-    { id: 'subscriptions', label: 'Media',       icon: Youtube,      ic: '#ef4444', bg: '#FEF2F2', bd: '#FECACA' },
-    { id: 'personal',      label: 'Ego',         icon: User,         ic: '#ec4899', bg: '#FDF2F8', bd: '#FBCFE8' },
-    { id: 'miscellaneous', label: 'Entropy',     icon: MoreHorizontal,ic:'#64748b', bg: '#F8FAFC', bd: '#E2E8F0' },
+    { id: 'groceries',     label: 'Groceries',     icon: ShoppingCart, ic: '#f97316', bg: '#FFF7ED', bd: '#FED7AA' },
+    { id: 'electricity',   label: 'Electricity',   icon: Zap,          ic: '#eab308', bg: '#FEFCE8', bd: '#FDE68A' },
+    { id: 'water',         label: 'Water Bill',    icon: Droplets,     ic: '#3b82f6', bg: '#EFF6FF', bd: '#BFDBFE' },
+    { id: 'gas',           label: 'Gas Bill',      icon: Flame,        ic: '#f97316', bg: '#FFF7ED', bd: '#FED7AA' },
+    { id: 'internet',      label: 'Internet',      icon: Wifi,         ic: '#6366f1', bg: '#EEF2FF', bd: '#C7D2FE' },
+    { id: 'mobile',        label: 'Mobile',        icon: Smartphone,   ic: '#64748b', bg: '#F8FAFC', bd: '#E2E8F0' },
+    { id: 'rent',          label: 'Rent / EMI',    icon: Home,         ic: '#a855f7', bg: '#FAF5FF', bd: '#E9D5FF' },
+    { id: 'transport',     label: 'Transport',     icon: Car,          ic: '#0ea5e9', bg: '#F0F9FF', bd: '#BAE6FD' },
+    { id: 'insurance',     label: 'Insurance',     icon: Shield,       ic: '#f43f5e', bg: '#FFF1F2', bd: '#FECDD3' },
+    { id: 'medical',       label: 'Medical',       icon: HeartPulse,   ic: '#ef4444', bg: '#FEF2F2', bd: '#FECACA' },
+    { id: 'education',     label: 'Education',     icon: GraduationCap,ic: '#a855f7', bg: '#FAF5FF', bd: '#E9D5FF' },
+    { id: 'loans',         label: 'Loan / EMI',    icon: CreditCard,   ic: '#71717a', bg: '#FAFAFA', bd: '#E4E4E7' },
+    { id: 'maintenance',   label: 'Repairs',       icon: Wrench,       ic: '#d97706', bg: '#FFFBEB', bd: '#FDE68A' },
+    { id: 'subscriptions', label: 'Subscriptions', icon: Youtube,      ic: '#ef4444', bg: '#FEF2F2', bd: '#FECACA' },
+    { id: 'personal',      label: 'Personal Care', icon: User,         ic: '#ec4899', bg: '#FDF2F8', bd: '#FBCFE8' },
+    { id: 'miscellaneous', label: 'Other',         icon: MoreHorizontal,ic:'#64748b', bg: '#F8FAFC', bd: '#E2E8F0' },
   ];
 
   const handleNext = () => { setStep(4); navigation.navigate('Step4_Analysis'); };
@@ -48,20 +48,20 @@ const Step3_Expenses = () => {
           <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: C.input, borderWidth: 1.5, borderColor: C.border, alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={16} color={C.sub} strokeWidth={3} />
           </View>
-          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: C.sub }}>Backtrack</Text>
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: C.sub }}>Go Back</Text>
         </TouchableOpacity>
         <View style={{ backgroundColor: '#EEF2FF', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 10 }}>
-          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 1.5, color: C.accent }}>Cashflow Matrix</Text>
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 1.5, color: C.accent }}>Monthly Expenses</Text>
         </View>
       </View>
 
       {/* Title */}
       <View style={{ marginBottom: 28 }}>
         <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, letterSpacing: 0, textTransform: 'uppercase', color: C.text }}>
-          {mode === 'Family' ? 'Cluster Outflow' : 'Flux Analysis'}
+          {mode === 'Family' ? 'Family Expenses' : 'My Expenses'}
         </Text>
         <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, marginTop: 6, textTransform: 'uppercase', letterSpacing: 1.5, lineHeight: 20, color: C.sub }}>
-          Mapping recurring capital erosion vectors.
+          Enter how much you spend each month in each category.
         </Text>
       </View>
 
@@ -84,7 +84,7 @@ const Step3_Expenses = () => {
         ))}
       </View>
 
-      {/* Reconciliation hub */}
+      {/* Summary box */}
       <MotiView from={{ opacity: 0, translateY: 20 }} animate={{ opacity: 1, translateY: 0 }} transition={{ delay: 500 }}
         style={{ borderRadius: 28, borderWidth: 1.5, borderColor: C.border, backgroundColor: '#ffffff', marginBottom: 28, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 12, elevation: 2 }}>
         <View style={{ padding: 24 }}>
@@ -92,13 +92,13 @@ const Step3_Expenses = () => {
             <View>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 }}>
                 <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: '#10b981' }} />
-                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: C.sub }}>Inflow</Text>
+                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: C.sub }}>Income</Text>
               </View>
               <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 26, letterSpacing: -0.5, color: C.text }}>₹{totalIncome.toLocaleString('en-IN')}</Text>
             </View>
             <View style={{ alignItems: 'flex-end' }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: C.sub }}>Outflow</Text>
+                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: C.sub }}>Expenses</Text>
                 <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: isDeficit ? '#f43f5e' : C.accent }} />
               </View>
               <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 26, letterSpacing: -0.5, color: C.text }}>₹{totalExpenses.toLocaleString('en-IN')}</Text>
@@ -111,7 +111,7 @@ const Step3_Expenses = () => {
               </View>
               <View>
                 <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 3, color: C.sub }}>
-                  {isDeficit ? 'Deficit Delta' : 'Net Surplus'}
+                  {isDeficit ? 'You Are Overspending' : 'Money Left Over'}
                 </Text>
                 <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 22, letterSpacing: -0.5, color: isDeficit ? '#f43f5e' : '#10b981' }}>
                   ₹{Math.abs(totalIncome - totalExpenses).toLocaleString('en-IN')}
@@ -120,7 +120,7 @@ const Step3_Expenses = () => {
             </View>
             <View style={{ paddingHorizontal: 12, paddingVertical: 6, borderRadius: 10, borderWidth: 1.5, backgroundColor: isDeficit ? '#FFE4E6' : '#DCFCE7', borderColor: isDeficit ? '#FECDD3' : '#BBF7D0' }}>
               <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 11, letterSpacing: 1.5, color: isDeficit ? '#f43f5e' : '#10b981' }}>
-                {isDeficit ? 'CRITICAL' : 'OPTIMAL'}
+                {isDeficit ? 'OVERSPENT' : 'ON TRACK'}
               </Text>
             </View>
           </View>
@@ -129,7 +129,7 @@ const Step3_Expenses = () => {
 
       {/* CTA */}
       <TouchableOpacity onPress={handleNext} activeOpacity={0.9} style={{ width: '100%', backgroundColor: C.accent, height: 58, borderRadius: 22, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, shadowColor: C.accent, shadowOpacity: 0.35, shadowRadius: 16, elevation: 8 }}>
-        <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', color: '#ffffff' }}>Synthesize Intelligence</Text>
+        <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', color: '#ffffff' }}>Next Step</Text>
         <ChevronRight size={22} color="#ffffff" strokeWidth={3} />
       </TouchableOpacity>
     </OnboardingLayout>

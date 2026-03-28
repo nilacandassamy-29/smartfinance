@@ -6,7 +6,6 @@ import { useAuth } from '../../context/AuthContext';
 import { useNavigation } from '@react-navigation/native';
 import { MotiView } from 'moti';
 
-// ── Font tokens ─────────────────────────────────────────
 const F = {
   label:   { fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2 },
   header:  { fontFamily: 'Poppins_700Bold',      fontSize: 18, letterSpacing: 0 },
@@ -25,7 +24,7 @@ const OnboardingLayout = ({ children, currentStep }) => {
       <View style={{ flex: 1, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator size="large" color="#6366f1" />
         <Text style={{ ...F.label, color: '#94A3B8', marginTop: 24 }}>
-          Securing Neural Link...
+          Setting up your profile...
         </Text>
       </View>
     );
@@ -39,27 +38,23 @@ const OnboardingLayout = ({ children, currentStep }) => {
       <RNStatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
       <View style={{ flex: 1, paddingTop: 48 }}>
-        {/* ── Header ─────────────────────────────────── */}
+        {/* Header */}
         <View style={{ paddingHorizontal: 24, marginBottom: 32 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28 }}>
-
-            {/* Left: App icon + name */}
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
               <View style={{ width: 40, height: 40, backgroundColor: '#6366f1', borderRadius: 12, alignItems: 'center', justifyContent: 'center', shadowColor: '#6366f1', shadowOpacity: 0.3, shadowRadius: 8, elevation: 4 }}>
                 <LayoutDashboard size={20} color="#ffffff" strokeWidth={2.5} />
               </View>
               <View>
-                <Text style={{ ...F.label, color: '#94A3B8' }}>Initialization</Text>
+                <Text style={{ ...F.label, color: '#94A3B8' }}>Getting Started</Text>
                 <Text style={{ ...F.header, color: '#0F172A', marginTop: 1 }}>SmartFinance</Text>
               </View>
             </View>
-
-            {/* Right: Secured + counter */}
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
               {isSyncing ? (
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                   <ActivityIndicator size="small" color="#6366f1" />
-                  <Text style={{ ...F.secured, color: '#6366f1' }}>Syncing...</Text>
+                  <Text style={{ ...F.secured, color: '#6366f1' }}>Saving...</Text>
                 </View>
               ) : (
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
@@ -76,34 +71,18 @@ const OnboardingLayout = ({ children, currentStep }) => {
           {/* Progress bar */}
           <View style={{ flexDirection: 'row', gap: 4, height: 5 }}>
             {steps.map((s) => (
-              <View
-                key={s}
-                style={{
-                  flex: 1, height: '100%', borderRadius: 10,
-                  backgroundColor: s <= currentStep ? '#6366f1' : '#E2E8F0',
-                  shadowColor: '#6366f1', shadowOpacity: s <= currentStep ? 0.35 : 0,
-                  shadowRadius: 4, elevation: s <= currentStep ? 2 : 0,
-                }}
-              />
+              <View key={s} style={{ flex: 1, height: '100%', borderRadius: 10, backgroundColor: s <= currentStep ? '#6366f1' : '#E2E8F0', shadowColor: '#6366f1', shadowOpacity: s <= currentStep ? 0.35 : 0, shadowRadius: 4, elevation: s <= currentStep ? 2 : 0 }} />
             ))}
           </View>
         </View>
 
-        {/* ── Scrollable content ─────────────────────── */}
-        <ScrollView
-          style={{ flex: 1, paddingHorizontal: 24 }}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 60 }}
-        >
-          <MotiView
-            from={{ opacity: 0, scale: 0.97 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ type: 'timing', duration: 380 }}
-          >
+        {/* Content */}
+        <ScrollView style={{ flex: 1, paddingHorizontal: 24 }} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 60 }}>
+          <MotiView from={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'timing', duration: 380 }}>
             {children}
           </MotiView>
 
-          {/* Bottom integrity markers */}
+          {/* Bottom badges */}
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 14, marginTop: 32, marginBottom: 24, opacity: 0.45 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
               <Lock size={11} color="#94A3B8" />

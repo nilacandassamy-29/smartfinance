@@ -16,9 +16,9 @@ const Step4_Analysis = () => {
   const handleNext = () => { setSavingsAmount(initialSurplus); setStep(5); navigation.navigate('Step5_Reserve'); };
 
   const cards = [
-    { label: 'Cumulative Inflow', value: totalIncome, icon: TrendingUp, ic: '#10b981', tint: '#F0FDF4', border: '#BBF7D0' },
-    { label: 'System Outflow',    value: totalExpenses, icon: TrendingDown, ic: '#f43f5e', tint: '#FFF1F2', border: '#FECDD3' },
-    { label: 'Available Liquidity', value: initialSurplus, icon: Wallet,  ic: '#6366f1', tint: '#EEF2FF', border: '#C7D2FE' },
+    { label: 'Total Income',    value: totalIncome,     icon: TrendingUp,   ic: '#10b981', tint: '#F0FDF4', border: '#BBF7D0' },
+    { label: 'Total Expenses',  value: totalExpenses,   icon: TrendingDown, ic: '#f43f5e', tint: '#FFF1F2', border: '#FECDD3' },
+    { label: 'Money Available', value: initialSurplus,  icon: Wallet,       ic: '#6366f1', tint: '#EEF2FF', border: '#C7D2FE' },
   ];
 
   return (
@@ -29,10 +29,10 @@ const Step4_Analysis = () => {
           <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: '#F1F5F9', borderWidth: 1.5, borderColor: C.border, alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={16} color={C.sub} strokeWidth={3} />
           </View>
-          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: C.sub }}>Backtrack</Text>
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: C.sub }}>Go Back</Text>
         </TouchableOpacity>
         <View style={{ backgroundColor: '#ECFDF5', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 10, borderWidth: 1, borderColor: '#BBF7D0' }}>
-          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 1.5, color: '#16a34a' }}>Processing Engine</Text>
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 1.5, color: '#16a34a' }}>Your Summary</Text>
         </View>
       </View>
 
@@ -42,10 +42,10 @@ const Step4_Analysis = () => {
           <Cpu size={32} color="#10b981" strokeWidth={2.5} />
         </View>
         <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, letterSpacing: 0, textTransform: 'uppercase', textAlign: 'center', color: C.text }}>
-          {mode === 'Family' ? 'Cluster Status' : 'Health Metrics'}
+          {mode === 'Family' ? 'Family Summary' : 'Your Summary'}
         </Text>
         <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, marginTop: 8, textAlign: 'center', paddingHorizontal: 24, textTransform: 'uppercase', letterSpacing: 1.5, lineHeight: 20, color: C.sub }}>
-          AI-Driven synth mapping of global cashflow dynamics.
+          Here is a summary of your monthly money flow.
         </Text>
       </View>
 
@@ -70,7 +70,7 @@ const Step4_Analysis = () => {
         ))}
       </View>
 
-      {/* AI insight card */}
+      {/* Smart advice card */}
       <MotiView from={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 600 }}
         style={{ borderRadius: 26, borderWidth: 1.5, borderColor: '#C7D2FE', backgroundColor: '#EEF2FF', marginBottom: 28, shadowColor: C.accent, shadowOpacity: 0.1, shadowRadius: 12, elevation: 3 }}>
         <View style={{ padding: 20, flexDirection: 'row', alignItems: 'flex-start', gap: 16 }}>
@@ -78,11 +78,11 @@ const Step4_Analysis = () => {
             <Bot size={26} color="#ffffff" strokeWidth={2.5} />
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8, color: '#4f46e5' }}>Advisor Synthesis</Text>
+            <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8, color: '#4f46e5' }}>Smart Advice</Text>
             <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 13, lineHeight: 22, color: C.sub }}>
               {initialSurplus > 0
-                ? `Protocol optimized! Monthly surplus of ₹${initialSurplus.toLocaleString('en-IN')} detected. Capital is primed for AI-accelerated growth loops.`
-                : "Flux warning: Outflow equals or exceeds Inflow. Activating security buffer strategy for absolute stability."}
+                ? `Great news! You have ₹${initialSurplus.toLocaleString('en-IN')} left each month after expenses. Let's put that money to work for you.`
+                : "Your expenses are equal to or more than your income. Let's set an emergency fund first to keep you safe."}
             </Text>
           </View>
         </View>
@@ -90,7 +90,7 @@ const Step4_Analysis = () => {
 
       {/* CTA */}
       <TouchableOpacity onPress={handleNext} activeOpacity={0.9} style={{ width: '100%', backgroundColor: C.accent, height: 58, borderRadius: 22, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, shadowColor: C.accent, shadowOpacity: 0.35, shadowRadius: 16, elevation: 8 }}>
-        <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', color: '#ffffff' }}>Generate Deployment Strategy</Text>
+        <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', color: '#ffffff' }}>Next Step</Text>
         <ChevronRight size={22} color="#ffffff" strokeWidth={3} />
       </TouchableOpacity>
     </OnboardingLayout>
