@@ -6,7 +6,7 @@ import { useExpenses } from '../context/ExpenseContext';
 import { useIncome } from '../context/IncomeContext';
 import { useInvestments } from '../context/InvestmentContext';
 import { useTheme } from '../context/ThemeContext';
-import { ArrowUp, ArrowDown, UtensilsCrossed, Wallet, User, Receipt, Car, Zap, ShoppingBag } from 'lucide-react-native';
+import { ArrowUp, ArrowDown, UtensilsCrossed, Wallet, User, Receipt, Car, Zap, ShoppingBag, TrendingDown } from 'lucide-react-native';
 
 export const getCategoryDetails = (category) => {
     const cat = (category || '').toLowerCase();
@@ -30,9 +30,9 @@ const getGreeting = () => {
 export default function Dashboard({ navigation }) {
     const { userProfile, profileImageURL } = useAuth();
     const { theme, isDarkMode } = useTheme();
-    const { expenses, getLastMonthTotal } = useExpenses();
+    const { expenses, getLastMonthTotal, loading: expensesLoading } = useExpenses();
     const { monthlyIncome } = useIncome();
-    const { totalPortfolioValue } = useInvestments();
+    const { totalPortfolioValue, loading: investmentsLoading } = useInvestments();
 
     const [percentageChange, setPercentageChange] = useState(0);
     const [lastMonthData, setLastMonthData] = useState(0);
@@ -60,7 +60,14 @@ export default function Dashboard({ navigation }) {
 
     const recentTransactions = expenses.slice(0, 4);
     const sign = percentageChange >= 0 ? '+' : '';
-    const badgeColor = percentageChange <= 0 ? '#10b981' : '#ef4444'; // Negative spending = good (emerald)
+    const badgeColor = percentageChange <= 0 ? '#10b981' : '#ef4444';
+
+    // Loading skeleton component
+    const Skeleton = ({ w = 100, h = 18, radius = 8 }) => (
+        <View style={{ width: w, height: h, borderRadius: radius, backgroundColor: isDarkMode ? 'rgba(255,255,255,0.15)' : '#E2E8F0' }} />
+    );
+
+    const isLoadingData = expensesLoading || investmentsLoading;
 
     return (
         <View style={{ flex: 1, backgroundColor: theme.background }}>
@@ -89,13 +96,17 @@ export default function Dashboard({ navigation }) {
                     {/* Portfolio Card */}
                     <View style={{ backgroundColor: isDarkMode ? '#1D4ED8' : '#2563eb', borderRadius: 20, padding: 24, marginTop: 20, width: '100%', shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 12, elevation: 3 }}>
                         <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 13, color: 'rgba(255,255,255,0.75)' }}>Total Portfolio Value</Text>
-                        <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 32, color: '#ffffff', marginVertical: 4 }}>
-                            ₹{totalPortfolioValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                        </Text>
+                        {isLoadingData ? (
+                            <View style={{ width: 160, height: 38, borderRadius: 8, backgroundColor: 'rgba(255,255,255,0.28)', marginVertical: 6 }} />
+                        ) : (
+                            <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 32, color: '#ffffff', marginVertical: 4 }}>
+                                ₹{(totalPortfolioValue || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </Text>
+                        )}
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 4 }}>
                             <View style={{ backgroundColor: isDarkMode ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.2)', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 }}>
                                 <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 12, color: '#ffffff' }}>
-                                    {lastMonthData === 0 ? 'No data' : `${sign}${percentageChange.toFixed(1)}%`}
+                                    {lastMonthData === 0 ? 'New' : `${sign}${percentageChange.toFixed(1)}%`}
                                 </Text>
                             </View>
                             <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 12, color: 'rgba(255,255,255,0.65)' }}>vs last month</Text>
@@ -109,7 +120,11 @@ export default function Dashboard({ navigation }) {
                                 <ArrowUp size={18} color="#10b981" />
                             </View>
                             <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 12, color: theme.subText, marginTop: 8 }}>Monthly In</Text>
-                            <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 20, color: theme.text }}>₹{monthlyIncome.toLocaleString('en-IN')}</Text>
+                            {isLoadingData ? (
+                                <View style={{ width: 80, height: 24, borderRadius: 6, backgroundColor: isDarkMode ? '#334155' : '#E2E8F0', marginTop: 4 }} />
+                            ) : (
+                                <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 20, color: theme.text }}>₹{(monthlyIncome || 0).toLocaleString('en-IN')}</Text>
+                            )}
                         </View>
 
                         <View style={{ flex: 1, backgroundColor: theme.card, borderRadius: 16, padding: 16, shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 12, elevation: 3 }}>
@@ -117,7 +132,11 @@ export default function Dashboard({ navigation }) {
                                 <ArrowDown size={18} color="#ef4444" />
                             </View>
                             <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 12, color: theme.subText, marginTop: 8 }}>Monthly Out</Text>
-                            <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 20, color: theme.danger }}>₹{monthlyOut.toLocaleString('en-IN')}</Text>
+                            {isLoadingData ? (
+                                <View style={{ width: 80, height: 24, borderRadius: 6, backgroundColor: isDarkMode ? '#334155' : '#E2E8F0', marginTop: 4 }} />
+                            ) : (
+                                <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 20, color: theme.danger }}>₹{(monthlyOut || 0).toLocaleString('en-IN')}</Text>
+                            )}
                         </View>
                     </View>
 
