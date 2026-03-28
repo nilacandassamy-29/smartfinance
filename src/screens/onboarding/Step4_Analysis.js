@@ -29,10 +29,10 @@ const Step4_Analysis = () => {
           <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: '#F1F5F9', borderWidth: 1.5, borderColor: C.border, alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={16} color={C.sub} strokeWidth={3} />
           </View>
-          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: C.sub }}>Go Back</Text>
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.3, color: C.sub }}>Go Back</Text>
         </TouchableOpacity>
         <View style={{ backgroundColor: '#ECFDF5', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 10, borderWidth: 1, borderColor: '#BBF7D0' }}>
-          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 1.5, color: '#16a34a' }}>Your Summary</Text>
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.3, color: '#16a34a' }}>Your Summary</Text>
         </View>
       </View>
 
@@ -41,10 +41,10 @@ const Step4_Analysis = () => {
         <View style={{ width: 80, height: 80, backgroundColor: '#ECFDF5', borderRadius: 28, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: '#BBF7D0', marginBottom: 20, shadowColor: '#10b981', shadowOpacity: 0.15, shadowRadius: 12, elevation: 3 }}>
           <Cpu size={32} color="#10b981" strokeWidth={2.5} />
         </View>
-        <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, letterSpacing: 0, textTransform: 'uppercase', textAlign: 'center', color: C.text }}>
+        <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, letterSpacing: 0.3, textAlign: 'center', color: C.text }}>
           {mode === 'Family' ? 'Family Summary' : 'Your Summary'}
         </Text>
-        <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, marginTop: 8, textAlign: 'center', paddingHorizontal: 24, textTransform: 'uppercase', letterSpacing: 1.5, lineHeight: 20, color: C.sub }}>
+        <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, marginTop: 8, textAlign: 'center', paddingHorizontal: 24, letterSpacing: 0.2, lineHeight: 20, color: C.sub }}>
           Here is a summary of your monthly money flow.
         </Text>
       </View>
@@ -59,7 +59,7 @@ const Step4_Analysis = () => {
                 <card.icon size={22} color={card.ic} strokeWidth={2.5} />
               </View>
               <View>
-                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4, color: C.sub }}>{card.label}</Text>
+                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 4, color: C.sub }}>{card.label}</Text>
                 <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 24, letterSpacing: -0.5, color: C.text }}>
                   ₹{safeNumber(card.value).toLocaleString('en-IN')}
                 </Text>
@@ -78,8 +78,8 @@ const Step4_Analysis = () => {
             <Bot size={26} color="#ffffff" strokeWidth={2.5} />
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8, color: '#4f46e5' }}>Smart Advice</Text>
-            <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 13, lineHeight: 22, color: C.sub }}>
+            <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 8, color: '#4f46e5' }}>Smart Advice</Text>
+            <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 13, lineHeight: 22, letterSpacing: 0.2, color: C.sub }}>
               {initialSurplus > 0
                 ? `Great news! You have ₹${initialSurplus.toLocaleString('en-IN')} left each month after expenses. Let's put that money to work for you.`
                 : "Your expenses are equal to or more than your income. Let's set an emergency fund first to keep you safe."}
@@ -90,7 +90,7 @@ const Step4_Analysis = () => {
 
       {/* CTA */}
       <TouchableOpacity onPress={handleNext} activeOpacity={0.9} style={{ width: '100%', backgroundColor: C.accent, height: 58, borderRadius: 22, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, shadowColor: C.accent, shadowOpacity: 0.35, shadowRadius: 16, elevation: 8 }}>
-        <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', color: '#ffffff' }}>Next Step</Text>
+        <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 0.5, color: '#ffffff' }}>Next Step</Text>
         <ChevronRight size={22} color="#ffffff" strokeWidth={3} />
       </TouchableOpacity>
     </OnboardingLayout>

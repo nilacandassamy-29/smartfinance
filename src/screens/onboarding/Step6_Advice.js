@@ -55,14 +55,14 @@ const Step6_Advice = () => {
             <AlertCircle size={46} color="#f43f5e" strokeWidth={2.5} />
           </View>
           <View style={{ alignItems: 'center', paddingHorizontal: 24 }}>
-            <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, letterSpacing: 0, textTransform: 'uppercase', textAlign: 'center', color: C.text }}>Can't Invest Yet</Text>
-            <Text style={{ textAlign: 'center', fontFamily: 'Poppins_500Medium', fontSize: 12, textTransform: 'uppercase', letterSpacing: 1.5, marginTop: 14, lineHeight: 20, color: C.sub }}>
+            <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, letterSpacing: 0.3, textAlign: 'center', color: C.text }}>Can't Invest Yet</Text>
+            <Text style={{ textAlign: 'center', fontFamily: 'Poppins_500Medium', fontSize: 12, letterSpacing: 0.2, marginTop: 14, lineHeight: 20, color: C.sub }}>
               Your expenses are equal to or more than your income. Please reduce your expenses first before investing.
             </Text>
           </View>
           <TouchableOpacity onPress={() => { setStep(3); navigation.navigate('Step3_Expenses'); }} activeOpacity={0.8}
             style={{ paddingHorizontal: 36, height: 54, backgroundColor: C.accent, borderRadius: 18, alignItems: 'center', justifyContent: 'center', shadowColor: C.accent, shadowOpacity: 0.3, shadowRadius: 12, elevation: 5 }}>
-            <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', color: '#ffffff' }}>Fix My Expenses</Text>
+            <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 0.5, color: '#ffffff' }}>Fix My Expenses</Text>
           </TouchableOpacity>
         </View>
       </OnboardingLayout>
@@ -77,18 +77,18 @@ const Step6_Advice = () => {
           <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: '#F1F5F9', borderWidth: 1.5, borderColor: C.border, alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={16} color={C.sub} strokeWidth={3} />
           </View>
-          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: C.sub }}>Go Back</Text>
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.3, color: C.sub }}>Go Back</Text>
         </TouchableOpacity>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: '#EEF2FF', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 10 }}>
           <Bot size={11} color={C.accent} strokeWidth={3} />
-          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 1.5, color: C.accent }}>Investment Plan</Text>
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.3, color: C.accent }}>Investment Plan</Text>
         </View>
       </View>
 
       {/* Title */}
       <View style={{ marginBottom: 28 }}>
-        <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, letterSpacing: 0, textTransform: 'uppercase', color: C.text }}>Your Investment Plan</Text>
-        <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, marginTop: 6, textTransform: 'uppercase', letterSpacing: 1.5, lineHeight: 20, color: C.sub }}>
+        <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, letterSpacing: 0.3, color: C.text }}>Your Investment Plan</Text>
+        <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, marginTop: 6, letterSpacing: 0.2, lineHeight: 20, color: C.sub }}>
           We recommend investing <Text style={{ color: C.accent, fontFamily: 'Poppins_600SemiBold' }}>₹{balance.toLocaleString('en-IN')}</Text> after setting aside ₹{safeNumber(reserveAmount).toLocaleString('en-IN')} for emergencies.
         </Text>
       </View>
@@ -106,21 +106,21 @@ const Step6_Advice = () => {
               <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 15, letterSpacing: 0, color: C.text }}>{strategy.title}</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8, alignSelf: 'flex-start', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, backgroundColor: strategy.riskBg, borderWidth: 1.5, borderColor: strategy.riskBorder, gap: 5 }}>
                 <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: strategy.riskColor }} />
-                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 1.5, color: strategy.riskColor }}>{strategy.risk}</Text>
+                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, color: strategy.riskColor }}>{strategy.risk}</Text>
               </View>
             </View>
           </View>
 
           {/* Why this plan */}
           <View style={{ padding: 16, backgroundColor: C.card, borderRadius: 16, borderWidth: 1.5, borderColor: C.border, marginBottom: 18 }}>
-            <Text style={{ fontFamily: 'Poppins_500Medium', lineHeight: 22, fontSize: 13, color: C.sub }}>
-              <Text style={{ color: C.accent, fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 1.5 }}>Why: </Text>
+            <Text style={{ fontFamily: 'Poppins_500Medium', lineHeight: 22, fontSize: 13, letterSpacing: 0.2, color: C.sub }}>
+              <Text style={{ color: C.accent, fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5 }}>Why: </Text>
               {strategy.reasoning}
             </Text>
           </View>
 
           {/* Where to invest */}
-          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12, marginLeft: 2, color: C.sub }}>Where to Invest</Text>
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 12, marginLeft: 2, color: C.sub }}>Where to Invest</Text>
           <View style={{ gap: 10 }}>
             {strategy.recommendations.map((rec, idx) => (
               <MotiView key={idx} from={{ opacity: 0, translateX: -10 }} animate={{ opacity: 1, translateX: 0 }} transition={{ delay: 300 + idx * 100 }}
@@ -130,7 +130,7 @@ const Step6_Advice = () => {
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 14, letterSpacing: 0, color: C.text }}>{rec.name}</Text>
-                  <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 11, letterSpacing: 1.5, textTransform: 'uppercase', marginTop: 3, color: C.muted }}>{rec.target}</Text>
+                  <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 11, letterSpacing: 0.2, marginTop: 3, color: C.muted }}>{rec.target}</Text>
                 </View>
                 <View style={{ paddingHorizontal: 12, paddingVertical: 5, borderRadius: 10, backgroundColor: '#EEF2FF', borderWidth: 1.5, borderColor: '#C7D2FE' }}>
                   <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, color: C.accent }}>{rec.portion}</Text>
@@ -144,7 +144,7 @@ const Step6_Advice = () => {
       {/* CTA */}
       <TouchableOpacity onPress={() => { setStep(7); navigation.navigate('Step7_FinalSummary'); }} activeOpacity={0.9}
         style={{ width: '100%', backgroundColor: C.accent, height: 58, borderRadius: 22, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, shadowColor: C.accent, shadowOpacity: 0.35, shadowRadius: 16, elevation: 8 }}>
-        <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', color: '#ffffff' }}>Looks Good, Continue</Text>
+        <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 0.5, color: '#ffffff' }}>Looks Good, Continue</Text>
         <ChevronRight size={22} color="#ffffff" strokeWidth={3} />
       </TouchableOpacity>
     </OnboardingLayout>

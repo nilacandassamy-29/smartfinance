@@ -18,7 +18,7 @@ const C = {
 
 const InputField = ({ label, icon, value, onChangeText, placeholder, keyboardType = 'default', error }) => (
   <View>
-    <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 10, marginLeft: 2, color: C.sub }}>
+    <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 10, marginLeft: 2, color: C.sub }}>
       {label}
     </Text>
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: C.input, height: 52, borderRadius: 18, paddingHorizontal: 18, borderWidth: 1.5, borderColor: error ? '#f43f5e' : C.border }}>
@@ -32,7 +32,7 @@ const InputField = ({ label, icon, value, onChangeText, placeholder, keyboardTyp
         onChangeText={onChangeText}
       />
     </View>
-    {error && <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 10, color: '#f43f5e', textTransform: 'uppercase', letterSpacing: 1.5, marginTop: 5, marginLeft: 2 }}>Please check this field</Text>}
+    {error && <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 10, color: '#f43f5e', letterSpacing: 0.3, marginTop: 5, marginLeft: 2 }}>Please check this field</Text>}
   </View>
 );
 
@@ -203,9 +203,7 @@ const Step2_MemberDetails = () => {
     const classes = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th', '11th', '12th'];
     return (
       <View>
-        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 10, marginLeft: 2, color: C.sub }}>
-          CLASS
-        </Text>
+        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 10, marginLeft: 2, color: C.sub }}>Class</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingRight: 20 }}>
           {classes.map(cls => (
             <TouchableOpacity key={cls} onPress={() => setSelectedClass(cls)}
@@ -222,9 +220,7 @@ const Step2_MemberDetails = () => {
     const years = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
     return (
       <View>
-        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 10, marginLeft: 2, color: C.sub }}>
-          YEAR
-        </Text>
+        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 10, marginLeft: 2, color: C.sub }}>Year</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingRight: 20 }}>
           {years.map(yr => (
             <TouchableOpacity key={yr} onPress={() => setSelectedYear(yr)}
@@ -241,7 +237,7 @@ const Step2_MemberDetails = () => {
     <MotiView key="school" from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 250 }} style={{ gap: 20 }}>
       {/* Field 1: School Name */}
       <View>
-        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 10, marginLeft: 2, color: C.sub }}>SCHOOL NAME</Text>
+        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 10, marginLeft: 2, color: C.sub }}>School Name</Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#F1F5F9', borderRadius: 14, padding: 14, gap: 12 }}>
           <GraduationCap size={18} color="#94A3B8" />
           <TextInput placeholder="Enter your school name" placeholderTextColor={C.placeholder} style={{ flex: 1, fontFamily: 'Poppins_400Regular', fontSize: 14, color: C.text }} value={schoolName} onChangeText={setSchoolName} />
@@ -253,12 +249,12 @@ const Step2_MemberDetails = () => {
 
       {/* Field 3: Annual Education Fees */}
       <View style={{ backgroundColor: '#EEF2FF', borderRadius: 16, padding: 16 }}>
-        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12, color: C.sub }}>ANNUAL EDUCATION FEES</Text>
+        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 12, color: C.sub }}>Annual Education Fees</Text>
         <View style={{ flexDirection: 'row', gap: 8 }}>
           {[
-            { label: 'TERM 1', val: term1, set: setTerm1 },
-            { label: 'TERM 2', val: term2, set: setTerm2 },
-            { label: 'TERM 3', val: term3, set: setTerm3 }
+            { label: 'Term 1', val: term1, set: setTerm1 },
+            { label: 'Term 2', val: term2, set: setTerm2 },
+            { label: 'Term 3', val: term3, set: setTerm3 }
           ].map((item, idx) => (
             <View key={idx} style={{ flex: 1 }}>
               <Text style={{ fontSize: 10, fontFamily: 'Poppins_600SemiBold', color: '#6366F1', marginBottom: 6 }}>{item.label}</Text>
@@ -269,8 +265,7 @@ const Step2_MemberDetails = () => {
             </View>
           ))}
         </View>
-        <Text style={{ fontSize: 12, fontFamily: 'Poppins_700Bold', color: '#4F46E5', textAlign: 'right', marginTop: 8 }}>
-          TOTAL ANNUAL FEES: ₹{schoolTotal.toLocaleString('en-IN')}
+        <Text style={{ fontSize: 12, fontFamily: 'Poppins_700Bold', color: '#4F46E5', textAlign: 'right', marginTop: 8 }}>Total Annual Fees: ₹{schoolTotal.toLocaleString('en-IN')}
         </Text>
       </View>
     </MotiView>
@@ -280,7 +275,7 @@ const Step2_MemberDetails = () => {
     <MotiView key="college" from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 250 }} style={{ gap: 20 }}>
       {/* Field 1: College Name */}
       <View>
-        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 10, marginLeft: 2, color: C.sub }}>COLLEGE NAME</Text>
+        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 10, marginLeft: 2, color: C.sub }}>College Name</Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#F1F5F9', borderRadius: 14, padding: 14, gap: 12 }}>
           <GraduationCap size={18} color="#94A3B8" />
           <TextInput placeholder="Enter your college name" placeholderTextColor={C.placeholder} style={{ flex: 1, fontFamily: 'Poppins_400Regular', fontSize: 14, color: C.text }} value={collegeName} onChangeText={setCollegeName} />
@@ -292,12 +287,12 @@ const Step2_MemberDetails = () => {
 
       {/* Field 3: Annual Education Fees */}
       <View style={{ backgroundColor: '#EEF2FF', borderRadius: 16, padding: 16 }}>
-        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12, color: C.sub }}>ANNUAL EDUCATION FEES</Text>
+        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 12, color: C.sub }}>Annual Education Fees</Text>
         <View style={{ flexDirection: 'row', gap: 8 }}>
           {[
-            { label: 'SEM 1', val: sem1, set: setSem1 },
-            { label: 'SEM 2', val: sem2, set: setSem2 },
-            { label: 'SEM 3', val: sem3, set: setSem3 }
+            { label: 'Sem 1', val: sem1, set: setSem1 },
+            { label: 'Sem 2', val: sem2, set: setSem2 },
+            { label: 'Sem 3', val: sem3, set: setSem3 }
           ].map((item, idx) => (
             <View key={idx} style={{ flex: 1 }}>
               <Text style={{ fontSize: 10, fontFamily: 'Poppins_600SemiBold', color: '#6366F1', marginBottom: 6 }}>{item.label}</Text>
@@ -308,8 +303,7 @@ const Step2_MemberDetails = () => {
             </View>
           ))}
         </View>
-        <Text style={{ fontSize: 12, fontFamily: 'Poppins_700Bold', color: '#4F46E5', textAlign: 'right', marginTop: 8 }}>
-          TOTAL ANNUAL FEES: ₹{collegeTotal.toLocaleString('en-IN')}
+        <Text style={{ fontSize: 12, fontFamily: 'Poppins_700Bold', color: '#4F46E5', textAlign: 'right', marginTop: 8 }}>Total Annual Fees: ₹{collegeTotal.toLocaleString('en-IN')}
         </Text>
       </View>
     </MotiView>
@@ -322,20 +316,20 @@ const Step2_MemberDetails = () => {
           <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: C.input, borderWidth: 1.5, borderColor: C.border, alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={16} color={C.sub} strokeWidth={3} />
           </View>
-          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: C.sub }}>Go Back</Text>
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, color: C.sub }}>Go Back</Text>
         </TouchableOpacity>
         <View style={{ backgroundColor: '#EEF2FF', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 10 }}>
-          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 1.5, color: C.accent }}>
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, color: C.accent }}>
             {mode === 'Family' ? `Member ${currentIndex + 1} of ${familySize}` : 'Your Profile'}
           </Text>
         </View>
       </View>
 
       <View style={{ marginBottom: 32 }}>
-        <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, letterSpacing: 0, textTransform: 'uppercase', color: C.text }}>
+        <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, letterSpacing: 0.3, color: C.text }}>
           {mode === 'Family' ? (activeMember.name || 'Family Member') : 'About You'}
         </Text>
-        <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, marginTop: 6, textTransform: 'uppercase', letterSpacing: 1.5, lineHeight: 20, color: C.sub }}>
+        <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, marginTop: 6, letterSpacing: 0.2, lineHeight: 20, color: C.sub }}>
           Fill in the details for each family member.
         </Text>
       </View>
@@ -346,7 +340,7 @@ const Step2_MemberDetails = () => {
             <InputField label="Full Name *" icon={<User size={16} color={C.muted} />} placeholder="Enter full name" value={activeMember.name} onChangeText={(v) => handleInputChange('name', v)} />
 
             <View>
-              <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 10, marginLeft: 2, color: C.sub }}>Gender *</Text>
+              <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 10, marginLeft: 2, color: C.sub }}>Gender *</Text>
               <View style={{ height: 52, borderRadius: 18, backgroundColor: C.input, borderWidth: 1.5, borderColor: C.border, justifyContent: 'center', paddingHorizontal: 8 }}>
                 <Picker selectedValue={activeMember.gender} onValueChange={(v) => handleInputChange('gender', v)} dropdownIconColor={C.sub} style={{ fontFamily: 'Poppins_500Medium', color: C.text, fontSize: 14 }}>
                   <Picker.Item label="Select gender" value="" />
@@ -362,7 +356,7 @@ const Step2_MemberDetails = () => {
           </View>
 
           <View style={{ marginBottom: 24 }}>
-            <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 16, marginLeft: 2, color: C.sub }}>What Do They Do?</Text>
+            <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 16, marginLeft: 2, color: C.sub }}>What Do They Do?</Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
               {occupations.map((occ) => {
                 const isActive = activeMember.occupation === occ.id;
@@ -372,7 +366,7 @@ const Step2_MemberDetails = () => {
                     <View style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: isActive ? 'rgba(255,255,255,0.2)' : '#EEF2FF', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
                       <occ.icon size={22} color={isActive ? '#ffffff' : C.accent} strokeWidth={2.5} />
                     </View>
-                    <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 12, letterSpacing: 2, textTransform: 'uppercase', color: isActive ? '#ffffff' : C.muted }}>{occ.label}</Text>
+                    <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 12, letterSpacing: 0.5, color: isActive ? '#ffffff' : C.muted }}>{occ.label}</Text>
                   </TouchableOpacity>
                 );
               })}
@@ -382,15 +376,15 @@ const Step2_MemberDetails = () => {
           {activeMember.occupation === 'Student' && (
             <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} style={{ gap: 18, marginBottom: 24 }}>
               <View>
-                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12, marginLeft: 2, color: C.sub }}>Level of Study</Text>
+                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 12, marginLeft: 2, color: C.sub }}>Level of Study</Text>
                 <View style={{ flexDirection: 'row', gap: 10 }}>
                   <TouchableOpacity onPress={() => handleStudentTypeSwitch('SCHOOL')}
                     style={{ flex: 1, height: 46, borderRadius: 14, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, backgroundColor: studentType === 'SCHOOL' ? C.accent : C.card, borderColor: studentType === 'SCHOOL' ? C.accent : C.border }}>
-                    <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 11, letterSpacing: 1.5, textTransform: 'uppercase', color: studentType === 'SCHOOL' ? '#ffffff' : C.muted }}>SCHOOL STUDENT</Text>
+                    <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 11, letterSpacing: 0.5, color: studentType === 'SCHOOL' ? '#ffffff' : C.muted }}>School Student</Text>
                   </TouchableOpacity>
                   <TouchableOpacity onPress={() => handleStudentTypeSwitch('COLLEGE')}
                     style={{ flex: 1, height: 46, borderRadius: 14, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, backgroundColor: studentType === 'COLLEGE' ? C.accent : C.card, borderColor: studentType === 'COLLEGE' ? C.accent : C.border }}>
-                    <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 11, letterSpacing: 1.5, textTransform: 'uppercase', color: studentType === 'COLLEGE' ? '#ffffff' : C.muted }}>COLLEGE STUDENT</Text>
+                    <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 11, letterSpacing: 0.5, color: studentType === 'COLLEGE' ? '#ffffff' : C.muted }}>College Student</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -404,7 +398,7 @@ const Step2_MemberDetails = () => {
           {(activeMember.occupation === 'Working' || activeMember.occupation === 'Retired') && (
             <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} style={{ gap: 18, marginBottom: 24 }}>
               <View>
-                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 10, marginLeft: 2, color: C.sub }}>Work Sector</Text>
+                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 10, marginLeft: 2, color: C.sub }}>Work Sector</Text>
                 <View style={{ height: 52, borderRadius: 18, backgroundColor: C.input, borderWidth: 1.5, borderColor: C.border, justifyContent: 'center', paddingHorizontal: 8 }}>
                   <Picker selectedValue={activeMember.sector} onValueChange={(v) => handleInputChange('sector', v)} dropdownIconColor={C.sub} style={{ fontFamily: 'Poppins_500Medium', color: C.text, fontSize: 14 }}>
                     <Picker.Item label="Select sector" value="" />
@@ -416,7 +410,7 @@ const Step2_MemberDetails = () => {
                 </View>
               </View>
               <View style={{ padding: 20, backgroundColor: '#F0FDF4', borderRadius: 22, borderWidth: 1.5, borderColor: '#BBF7D0' }}>
-                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: '#16a34a', marginBottom: 14 }}>Monthly Income</Text>
+                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, color: '#16a34a', marginBottom: 14 }}>Monthly Income</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center', height: 50, borderRadius: 14, paddingHorizontal: 14, backgroundColor: '#ffffff', borderWidth: 1.5, borderColor: C.border }}>
                   <IndianRupee size={15} color="#10b981" strokeWidth={3} />
                   <TextInput style={{ flex: 1, fontFamily: 'Poppins_500Medium', fontSize: 16, color: C.text, marginLeft: 10 }} placeholder="0" placeholderTextColor={C.placeholder} keyboardType="numeric" value={String(activeMember.income || '')} onChangeText={(v) => handleInputChange('income', Number(v) || 0)} />
@@ -427,7 +421,7 @@ const Step2_MemberDetails = () => {
 
           <TouchableOpacity onPress={handleNext} activeOpacity={0.9} disabled={!isStepValid()}
             style={{ marginTop: 12, width: '100%', height: 58, borderRadius: 22, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, backgroundColor: isStepValid() ? C.accent : C.input, borderWidth: isStepValid() ? 0 : 1.5, borderColor: C.border, shadowColor: C.accent, shadowOpacity: isStepValid() ? 0.3 : 0, shadowRadius: 14, elevation: isStepValid() ? 6 : 0 }}>
-            <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', color: isStepValid() ? '#ffffff' : C.muted }}>
+            <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 0.5, color: isStepValid() ? '#ffffff' : C.muted }}>
               {currentIndex < familySize - 1 ? 'Next Member' : 'Next Step'}
             </Text>
             <ChevronRight size={20} color={isStepValid() ? '#ffffff' : C.muted} strokeWidth={3} />

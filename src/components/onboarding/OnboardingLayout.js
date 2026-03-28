@@ -7,11 +7,11 @@ import { useNavigation } from '@react-navigation/native';
 import { MotiView } from 'moti';
 
 const F = {
-  label:   { fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2 },
+  label:   { fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.3 },
   header:  { fontFamily: 'Poppins_700Bold',      fontSize: 18, letterSpacing: 0 },
   counter: { fontFamily: 'Poppins_600SemiBold',  fontSize: 13 },
-  secured: { fontFamily: 'Poppins_600SemiBold',  fontSize: 11, letterSpacing: 1.5 },
-  caption: { fontFamily: 'Poppins_500Medium',    fontSize: 10, letterSpacing: 1.5 },
+  secured: { fontFamily: 'Poppins_600SemiBold',  fontSize: 11, letterSpacing: 0.3 },
+  caption: { fontFamily: 'Poppins_500Medium',    fontSize: 10, letterSpacing: 0.3 },
 };
 
 const OnboardingLayout = ({ children, currentStep }) => {

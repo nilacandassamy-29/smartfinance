@@ -23,17 +23,17 @@ const Step5_Reserve = () => {
           <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: C.input, borderWidth: 1.5, borderColor: C.border, alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={16} color={C.sub} strokeWidth={3} />
           </View>
-          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: C.sub }}>Go Back</Text>
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.3, color: C.sub }}>Go Back</Text>
         </TouchableOpacity>
         <View style={{ backgroundColor: '#EEF2FF', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 10 }}>
-          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 1.5, color: C.accent }}>Emergency Fund</Text>
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.3, color: C.accent }}>Emergency Fund</Text>
         </View>
       </View>
 
       {/* Title */}
       <View style={{ marginBottom: 28 }}>
-        <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, letterSpacing: 0, textTransform: 'uppercase', color: C.text }}>Your Safety Net</Text>
-        <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, marginTop: 6, textTransform: 'uppercase', letterSpacing: 1.5, lineHeight: 20, color: C.sub }}>
+        <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, letterSpacing: 0.3, color: C.text }}>Your Safety Net</Text>
+        <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, marginTop: 6, letterSpacing: 0.2, lineHeight: 20, color: C.sub }}>
           Set aside money for emergencies from your ₹{initialSurplus.toLocaleString('en-IN')} monthly savings.
         </Text>
       </View>
@@ -49,10 +49,10 @@ const Step5_Reserve = () => {
               <ShieldCheck size={36} color="#10b981" strokeWidth={2.5} />
             </View>
             <View style={{ alignItems: 'center' }}>
-              <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 14, letterSpacing: 1.5, textTransform: 'uppercase', textAlign: 'center', color: C.text }}>Emergency Fund Amount</Text>
+              <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 14, letterSpacing: 0.5, textAlign: 'center', color: C.text }}>Emergency Fund Amount</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 10, backgroundColor: '#FFFBEB', borderWidth: 1.5, borderColor: '#FDE68A', gap: 6 }}>
                 <Target size={12} color="#d97706" strokeWidth={2.5} />
-                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 1.5, textTransform: 'uppercase', color: '#d97706' }}>Goal: 6 Months of Expenses</Text>
+                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, color: '#d97706' }}>Goal: 6 Months of Expenses</Text>
               </View>
             </View>
           </View>
@@ -73,7 +73,7 @@ const Step5_Reserve = () => {
           {/* Hint */}
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16, backgroundColor: '#EEF2FF', borderRadius: 18, borderWidth: 1.5, borderColor: '#C7D2FE' }}>
             <Zap size={16} color={C.accent} strokeWidth={2.5} />
-            <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, lineHeight: 20, textTransform: 'uppercase', letterSpacing: 1.5, flex: 1, color: C.sub }}>
+            <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, lineHeight: 20, letterSpacing: 0.2, flex: 1, color: C.sub }}>
               An emergency fund keeps you safe when unexpected expenses come up.
             </Text>
           </View>
@@ -82,7 +82,7 @@ const Step5_Reserve = () => {
 
       {/* CTA */}
       <TouchableOpacity onPress={handleNext} activeOpacity={0.9} style={{ width: '100%', backgroundColor: C.accent, height: 58, borderRadius: 22, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, shadowColor: C.accent, shadowOpacity: 0.35, shadowRadius: 16, elevation: 8 }}>
-        <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', color: '#ffffff' }}>Save My Emergency Fund</Text>
+        <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 0.5, color: '#ffffff' }}>Save My Emergency Fund</Text>
         <ChevronRight size={22} color="#ffffff" strokeWidth={3} />
       </TouchableOpacity>
     </OnboardingLayout>

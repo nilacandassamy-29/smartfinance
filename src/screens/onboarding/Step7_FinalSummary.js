@@ -40,7 +40,7 @@ const Step7_FinalSummary = () => {
           <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: '#F1F5F9', borderWidth: 1.5, borderColor: C.border, alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={16} color={C.sub} strokeWidth={3} />
           </View>
-          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: C.sub }}>Go Back</Text>
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.3, color: C.sub }}>Go Back</Text>
         </TouchableOpacity>
       </View>
 
@@ -54,9 +54,9 @@ const Step7_FinalSummary = () => {
           <CheckCircle2 size={46} color="#10b981" strokeWidth={2.5} />
         </MotiView>
         <View style={{ alignItems: 'center', paddingHorizontal: 16 }}>
-          <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, letterSpacing: 0, textTransform: 'uppercase', textAlign: 'center', color: C.text }}>You Are All Set!</Text>
+          <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, letterSpacing: 0.3, textAlign: 'center', color: C.text }}>You Are All Set!</Text>
           <View style={{ paddingHorizontal: 20, paddingVertical: 12, borderRadius: 18, borderWidth: 1.5, borderColor: C.border, backgroundColor: C.card, marginTop: 16 }}>
-            <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, textTransform: 'uppercase', letterSpacing: 1.5, textAlign: 'center', lineHeight: 20, color: C.sub }}>
+            <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, letterSpacing: 0.2, textAlign: 'center', lineHeight: 20, color: C.sub }}>
               Your SmartFinance plan is ready. Start tracking your money and growing your wealth.
             </Text>
           </View>
@@ -76,7 +76,7 @@ const Step7_FinalSummary = () => {
                   <View style={{ width: 30, height: 30, borderRadius: 10, backgroundColor: item.bg, borderWidth: 1.5, borderColor: item.bd, alignItems: 'center', justifyContent: 'center' }}>
                     <item.icon size={15} color={item.ic} strokeWidth={2.5} style={i === 1 ? { transform: [{ rotate: '180deg' }] } : {}} />
                   </View>
-                  <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 10, letterSpacing: 1.5, textTransform: 'uppercase', color: C.muted }}>{item.label}</Text>
+                  <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 10, letterSpacing: 0.5, color: C.muted }}>{item.label}</Text>
                 </View>
                 <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 20, letterSpacing: -0.5, color: C.text }}>
                   ₹{safeNumber(item.value).toLocaleString('en-IN')}
@@ -92,7 +92,7 @@ const Step7_FinalSummary = () => {
               <Bot size={24} color="#ffffff" strokeWidth={2.5} />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, lineHeight: 20, textTransform: 'uppercase', letterSpacing: 1.5, color: C.sub }}>
+              <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, lineHeight: 20, letterSpacing: 0.2, color: C.sub }}>
                 Tap below to save your plan and start using SmartFinance.
               </Text>
             </View>
@@ -106,11 +106,11 @@ const Step7_FinalSummary = () => {
         {isFinalizing ? (
           <>
             <ActivityIndicator size="small" color={C.accent} />
-            <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 12, letterSpacing: 2, textTransform: 'uppercase', color: C.accent }}>Saving Your Plan...</Text>
+            <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 12, letterSpacing: 0.3, color: C.accent }}>Saving Your Plan...</Text>
           </>
         ) : (
           <>
-            <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', color: '#ffffff' }}>Start Using SmartFinance</Text>
+            <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 0.5, color: '#ffffff' }}>Start Using SmartFinance</Text>
             <ArrowRight size={22} color="#ffffff" strokeWidth={3} />
           </>
         )}

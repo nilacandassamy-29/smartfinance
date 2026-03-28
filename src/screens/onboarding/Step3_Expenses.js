@@ -48,19 +48,19 @@ const Step3_Expenses = () => {
           <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: C.input, borderWidth: 1.5, borderColor: C.border, alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={16} color={C.sub} strokeWidth={3} />
           </View>
-          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: C.sub }}>Go Back</Text>
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, color: C.sub }}>Go Back</Text>
         </TouchableOpacity>
         <View style={{ backgroundColor: '#EEF2FF', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 10 }}>
-          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 1.5, color: C.accent }}>Monthly Expenses</Text>
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.3, color: C.accent }}>Monthly Expenses</Text>
         </View>
       </View>
 
       {/* Title */}
       <View style={{ marginBottom: 28 }}>
-        <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, letterSpacing: 0, textTransform: 'uppercase', color: C.text }}>
+        <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, letterSpacing: 0.3, color: C.text }}>
           {mode === 'Family' ? 'Family Expenses' : 'My Expenses'}
         </Text>
-        <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, marginTop: 6, textTransform: 'uppercase', letterSpacing: 1.5, lineHeight: 20, color: C.sub }}>
+        <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, marginTop: 6, letterSpacing: 0.2, lineHeight: 20, color: C.sub }}>
           Enter how much you spend each month in each category.
         </Text>
       </View>
@@ -74,7 +74,7 @@ const Step3_Expenses = () => {
               <View style={{ width: 30, height: 30, borderRadius: 10, backgroundColor: cat.bg, borderWidth: 1, borderColor: cat.bd, alignItems: 'center', justifyContent: 'center' }}>
                 <cat.icon size={14} color={cat.ic} />
               </View>
-              <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 1.5, textTransform: 'uppercase', color: C.sub }}>{cat.label}</Text>
+              <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, color: C.sub }}>{cat.label}</Text>
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1.5, borderBottomColor: C.border, paddingBottom: 4 }}>
               <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, marginRight: 4, color: C.muted }}>₹</Text>
@@ -92,13 +92,13 @@ const Step3_Expenses = () => {
             <View>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 }}>
                 <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: '#10b981' }} />
-                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: C.sub }}>Income</Text>
+                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, color: C.sub }}>Income</Text>
               </View>
               <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 26, letterSpacing: -0.5, color: C.text }}>₹{totalIncome.toLocaleString('en-IN')}</Text>
             </View>
             <View style={{ alignItems: 'flex-end' }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: C.sub }}>Expenses</Text>
+                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, color: C.sub }}>Expenses</Text>
                 <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: isDeficit ? '#f43f5e' : C.accent }} />
               </View>
               <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 26, letterSpacing: -0.5, color: C.text }}>₹{totalExpenses.toLocaleString('en-IN')}</Text>
@@ -110,8 +110,8 @@ const Step3_Expenses = () => {
                 {isDeficit ? <Activity size={22} color="#f43f5e" /> : <TrendingUp size={22} color="#10b981" />}
               </View>
               <View>
-                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 3, color: C.sub }}>
-                  {isDeficit ? 'You Are Overspending' : 'Money Left Over'}
+                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.3, marginBottom: 3, color: C.sub }}>
+                  {isDeficit ? 'You are overspending' : 'Money left over'}
                 </Text>
                 <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 22, letterSpacing: -0.5, color: isDeficit ? '#f43f5e' : '#10b981' }}>
                   ₹{Math.abs(totalIncome - totalExpenses).toLocaleString('en-IN')}
@@ -119,8 +119,8 @@ const Step3_Expenses = () => {
               </View>
             </View>
             <View style={{ paddingHorizontal: 12, paddingVertical: 6, borderRadius: 10, borderWidth: 1.5, backgroundColor: isDeficit ? '#FFE4E6' : '#DCFCE7', borderColor: isDeficit ? '#FECDD3' : '#BBF7D0' }}>
-              <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 11, letterSpacing: 1.5, color: isDeficit ? '#f43f5e' : '#10b981' }}>
-                {isDeficit ? 'OVERSPENT' : 'ON TRACK'}
+              <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 11, letterSpacing: 0.3, color: isDeficit ? '#f43f5e' : '#10b981' }}>
+                {isDeficit ? 'Overspent' : 'On Track'}
               </Text>
             </View>
           </View>
@@ -129,7 +129,7 @@ const Step3_Expenses = () => {
 
       {/* CTA */}
       <TouchableOpacity onPress={handleNext} activeOpacity={0.9} style={{ width: '100%', backgroundColor: C.accent, height: 58, borderRadius: 22, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, shadowColor: C.accent, shadowOpacity: 0.35, shadowRadius: 16, elevation: 8 }}>
-        <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', color: '#ffffff' }}>Next Step</Text>
+        <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 0.5, color: '#ffffff' }}>Next Step</Text>
         <ChevronRight size={22} color="#ffffff" strokeWidth={3} />
       </TouchableOpacity>
     </OnboardingLayout>
