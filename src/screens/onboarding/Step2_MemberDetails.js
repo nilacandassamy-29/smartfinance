@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput, Dimensions } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, TextInput, Dimensions, ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ChevronRight, ChevronLeft, User, GraduationCap, Briefcase, Home, Heart, Phone, Calendar, IndianRupee } from 'lucide-react-native';
 import { useOnboarding } from '../../context/OnboardingContext';
+import { useAuth } from '../../context/AuthContext';
 import { MotiView, AnimatePresence } from 'moti';
 import OnboardingLayout from '../../components/onboarding/OnboardingLayout';
 import { Picker } from '@react-native-picker/picker';
+import { doc, setDoc } from 'firebase/firestore';
+import { db } from '../../config/firebase';
 
 const C = {
   text: '#0F172A', sub: '#64748B', muted: '#94A3B8',
@@ -36,9 +39,53 @@ const InputField = ({ label, icon, value, onChangeText, placeholder, keyboardTyp
 const Step2_MemberDetails = () => {
   const { width } = Dimensions.get('window');
   const { members, updateMember, familySize, setStep, mode } = useOnboarding();
+  const { user } = useAuth();
   const navigation = useNavigation();
   const [currentIndex, setCurrentIndex] = useState(0);
   const activeMember = members[currentIndex] || {};
+
+  // Part 3: State Management
+  const [studentType, setStudentType] = useState('SCHOOL');
+  const [schoolName, setSchoolName] = useState('');
+  const [collegeName, setCollegeName] = useState('');
+  const [selectedClass, setSelectedClass] = useState(null);
+  const [selectedYear, setSelectedYear] = useState(null);
+  const [term1, setTerm1] = useState('');
+  const [term2, setTerm2] = useState('');
+  const [term3, setTerm3] = useState('');
+  const [sem1, setSem1] = useState('');
+  const [sem2, setSem2] = useState('');
+  const [sem3, setSem3] = useState('');
+
+  // Auto-calculated totals
+  const schoolTotal = (parseFloat(term1) || 0) + (parseFloat(term2) || 0) + (parseFloat(term3) || 0);
+  const collegeTotal = (parseFloat(sem1) || 0) + (parseFloat(sem2) || 0) + (parseFloat(sem3) || 0);
+
+  // Sync state when active member changes (so we don't bleed values between members)
+  useEffect(() => {
+    setStudentType(activeMember.studentType || 'SCHOOL');
+    setSchoolName(activeMember.schoolName || '');
+    setCollegeName(activeMember.collegeName || '');
+    setSelectedClass(activeMember.selectedClass || null);
+    setSelectedYear(activeMember.selectedYear || null);
+    setTerm1(activeMember.term1 || '');
+    setTerm2(activeMember.term2 || '');
+    setTerm3(activeMember.term3 || '');
+    setSem1(activeMember.sem1 || '');
+    setSem2(activeMember.sem2 || '');
+    setSem3(activeMember.sem3 || '');
+  }, [currentIndex]);
+
+  const handleStudentTypeSwitch = (type) => {
+    if (studentType === type) return;
+    setStudentType(type);
+    setSchoolName('');
+    setCollegeName('');
+    setSelectedClass(null);
+    setSelectedYear(null);
+    setTerm1(''); setTerm2(''); setTerm3('');
+    setSem1(''); setSem2(''); setSem3('');
+  };
 
   const handleInputChange = (name, value) => {
     if (name === 'contact') { updateMember(currentIndex, { [name]: value.replace(/\D/g, '').slice(0, 10) }); return; }
@@ -71,19 +118,74 @@ const Step2_MemberDetails = () => {
     const date = new Date(year, month, day);
     return date <= new Date() && date.getDate() === day;
   };
+  
   const isContactValid = () => {
-    if (activeMember.occupation === 'Student' && activeMember.educationType === 'School Student') return true;
+    if (activeMember.occupation === 'Student') return true;
     return (activeMember.contact || '').length === 10;
   };
+
   const handleBack = () => { if (currentIndex > 0) { setCurrentIndex(currentIndex - 1); } else { setStep(1); navigation.navigate('Step1_FamilySize'); } };
+
+  // Button disabled logic (base fields must be filled)
   const isStepValid = () => {
     const base = activeMember.name?.trim() && activeMember.gender && activeMember.occupation && isDobValid() && isContactValid();
     if (activeMember.occupation === 'Working' || activeMember.occupation === 'Retired') return base && activeMember.income > 0 && activeMember.sector;
     return !!base;
   };
-  const handleNext = () => {
+
+  // Next button click handler
+  const handleNext = async () => {
     if (!isStepValid()) return;
-    if (currentIndex < familySize - 1) { setCurrentIndex(currentIndex + 1); } else { setStep(3); navigation.navigate('Step3_Expenses'); }
+
+    // Part 4: Save to Firestore on Next
+    if (activeMember.occupation === 'Student') {
+      if (studentType === 'SCHOOL') {
+        if (!schoolName || !selectedClass || !term1) {
+          Alert.alert('Incomplete', 'Please fill in all required fields (School Name, Class, and at least Term 1).');
+          return;
+        }
+      } else {
+        if (!collegeName || !selectedYear || !sem1) {
+          Alert.alert('Incomplete', 'Please fill in all required fields (College Name, Year, and at least Sem 1).');
+          return;
+        }
+      }
+
+      const totalFees = studentType === 'SCHOOL' ? schoolTotal : collegeTotal;
+      
+      // Update global context so other steps can access it
+      updateMember(currentIndex, {
+        studentType, schoolName, collegeName, selectedClass, selectedYear,
+        term1, term2, term3, sem1, sem2, sem3, totalFees
+      });
+
+      try {
+        if (user && user.uid) {
+          const firestoreData = {
+            studentType,
+            institutionName: studentType === 'SCHOOL' ? schoolName : collegeName,
+            classOrYear: studentType === 'SCHOOL' ? selectedClass : selectedYear,
+            term1Fees: parseFloat(term1) || 0,
+            term2Fees: parseFloat(term2) || 0,
+            term3Fees: parseFloat(term3) || 0,
+            sem1Fees: parseFloat(sem1) || 0,
+            sem2Fees: parseFloat(sem2) || 0,
+            sem3Fees: parseFloat(sem3) || 0,
+            totalAnnualFees: totalFees
+          };
+          // Requirements specifically ask for `users/{uid}/onboarding/step2`
+          await setDoc(doc(db, `users/${user.uid}/onboarding`, 'step2'), firestoreData, { merge: true });
+        }
+      } catch (e) {
+        console.error("Firestore save failed:", e);
+      }
+    }
+
+    if (currentIndex < familySize - 1) { 
+      setCurrentIndex(currentIndex + 1); 
+    } else { 
+      setStep(3); navigation.navigate('Step3_Expenses'); 
+    }
   };
 
   let occupations = [
@@ -96,9 +198,125 @@ const Step2_MemberDetails = () => {
     occupations = occupations.filter(o => o.id !== 'Student');
   }
 
+  // Helper renderers
+  const renderClassPills = () => {
+    const classes = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th', '11th', '12th'];
+    return (
+      <View>
+        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 10, marginLeft: 2, color: C.sub }}>
+          CLASS
+        </Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingRight: 20 }}>
+          {classes.map(cls => (
+            <TouchableOpacity key={cls} onPress={() => setSelectedClass(cls)}
+              style={{ borderRadius: 20, paddingHorizontal: 16, paddingVertical: 8, backgroundColor: selectedClass === cls ? '#4F46E5' : '#F1F5F9' }}>
+              <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 12, color: selectedClass === cls ? '#FFFFFF' : '#64748B' }}>{cls}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+    );
+  };
+
+  const renderYearPills = () => {
+    const years = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
+    return (
+      <View>
+        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 10, marginLeft: 2, color: C.sub }}>
+          YEAR
+        </Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingRight: 20 }}>
+          {years.map(yr => (
+            <TouchableOpacity key={yr} onPress={() => setSelectedYear(yr)}
+              style={{ borderRadius: 20, paddingHorizontal: 16, paddingVertical: 8, backgroundColor: selectedYear === yr ? '#4F46E5' : '#F1F5F9' }}>
+              <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 12, color: selectedYear === yr ? '#FFFFFF' : '#64748B' }}>{yr}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+    );
+  };
+
+  const renderSchoolFields = () => (
+    <MotiView key="school" from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 250 }} style={{ gap: 20 }}>
+      {/* Field 1: School Name */}
+      <View>
+        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 10, marginLeft: 2, color: C.sub }}>SCHOOL NAME</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#F1F5F9', borderRadius: 14, padding: 14, gap: 12 }}>
+          <GraduationCap size={18} color="#94A3B8" />
+          <TextInput placeholder="Enter your school name" placeholderTextColor={C.placeholder} style={{ flex: 1, fontFamily: 'Poppins_400Regular', fontSize: 14, color: C.text }} value={schoolName} onChangeText={setSchoolName} />
+        </View>
+      </View>
+
+      {/* Field 2: Class */}
+      {renderClassPills()}
+
+      {/* Field 3: Annual Education Fees */}
+      <View style={{ backgroundColor: '#EEF2FF', borderRadius: 16, padding: 16 }}>
+        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12, color: C.sub }}>ANNUAL EDUCATION FEES</Text>
+        <View style={{ flexDirection: 'row', gap: 8 }}>
+          {[
+            { label: 'TERM 1', val: term1, set: setTerm1 },
+            { label: 'TERM 2', val: term2, set: setTerm2 },
+            { label: 'TERM 3', val: term3, set: setTerm3 }
+          ].map((item, idx) => (
+            <View key={idx} style={{ flex: 1 }}>
+              <Text style={{ fontSize: 10, fontFamily: 'Poppins_600SemiBold', color: '#6366F1', marginBottom: 6 }}>{item.label}</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', borderRadius: 10, padding: 10 }}>
+                <IndianRupee size={12} color={C.text} style={{ marginRight: 4 }} />
+                <TextInput placeholder="0" keyboardType="numeric" style={{ flex: 1, fontSize: 14, fontFamily: 'Poppins_500Medium', color: C.text, padding: 0 }} value={item.val} onChangeText={item.set} />
+              </View>
+            </View>
+          ))}
+        </View>
+        <Text style={{ fontSize: 12, fontFamily: 'Poppins_700Bold', color: '#4F46E5', textAlign: 'right', marginTop: 8 }}>
+          TOTAL ANNUAL FEES: ₹{schoolTotal.toLocaleString('en-IN')}
+        </Text>
+      </View>
+    </MotiView>
+  );
+
+  const renderCollegeFields = () => (
+    <MotiView key="college" from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 250 }} style={{ gap: 20 }}>
+      {/* Field 1: College Name */}
+      <View>
+        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 10, marginLeft: 2, color: C.sub }}>COLLEGE NAME</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#F1F5F9', borderRadius: 14, padding: 14, gap: 12 }}>
+          <GraduationCap size={18} color="#94A3B8" />
+          <TextInput placeholder="Enter your college name" placeholderTextColor={C.placeholder} style={{ flex: 1, fontFamily: 'Poppins_400Regular', fontSize: 14, color: C.text }} value={collegeName} onChangeText={setCollegeName} />
+        </View>
+      </View>
+
+      {/* Field 2: Year */}
+      {renderYearPills()}
+
+      {/* Field 3: Annual Education Fees */}
+      <View style={{ backgroundColor: '#EEF2FF', borderRadius: 16, padding: 16 }}>
+        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12, color: C.sub }}>ANNUAL EDUCATION FEES</Text>
+        <View style={{ flexDirection: 'row', gap: 8 }}>
+          {[
+            { label: 'SEM 1', val: sem1, set: setSem1 },
+            { label: 'SEM 2', val: sem2, set: setSem2 },
+            { label: 'SEM 3', val: sem3, set: setSem3 }
+          ].map((item, idx) => (
+            <View key={idx} style={{ flex: 1 }}>
+              <Text style={{ fontSize: 10, fontFamily: 'Poppins_600SemiBold', color: '#6366F1', marginBottom: 6 }}>{item.label}</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', borderRadius: 10, padding: 10 }}>
+                <IndianRupee size={12} color={C.text} style={{ marginRight: 4 }} />
+                <TextInput placeholder="0" keyboardType="numeric" style={{ flex: 1, fontSize: 14, fontFamily: 'Poppins_500Medium', color: C.text, padding: 0 }} value={item.val} onChangeText={item.set} />
+              </View>
+            </View>
+          ))}
+        </View>
+        <Text style={{ fontSize: 12, fontFamily: 'Poppins_700Bold', color: '#4F46E5', textAlign: 'right', marginTop: 8 }}>
+          TOTAL ANNUAL FEES: ₹{collegeTotal.toLocaleString('en-IN')}
+        </Text>
+      </View>
+    </MotiView>
+  );
+
   return (
     <OnboardingLayout currentStep={2}>
-      {/* Header row */}
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 36 }}>
         <TouchableOpacity onPress={handleBack} style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
           <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: C.input, borderWidth: 1.5, borderColor: C.border, alignItems: 'center', justifyContent: 'center' }}>
@@ -113,7 +331,6 @@ const Step2_MemberDetails = () => {
         </View>
       </View>
 
-      {/* Title */}
       <View style={{ marginBottom: 32 }}>
         <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, letterSpacing: 0, textTransform: 'uppercase', color: C.text }}>
           {mode === 'Family' ? (activeMember.name || 'Family Member') : 'About You'}
@@ -144,7 +361,6 @@ const Step2_MemberDetails = () => {
             <InputField label="Mobile Number *" icon={<Phone size={16} color={C.muted} />} placeholder="10-digit mobile number" keyboardType="numeric" value={activeMember.contact} onChangeText={(v) => handleInputChange('contact', v)} error={activeMember.contact && !isContactValid()} />
           </View>
 
-          {/* Occupation */}
           <View style={{ marginBottom: 24 }}>
             <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 16, marginLeft: 2, color: C.sub }}>What Do They Do?</Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
@@ -163,32 +379,28 @@ const Step2_MemberDetails = () => {
             </View>
           </View>
 
-          {/* Student extras */}
           {activeMember.occupation === 'Student' && (
             <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} style={{ gap: 18, marginBottom: 24 }}>
               <View>
                 <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12, marginLeft: 2, color: C.sub }}>Level of Study</Text>
                 <View style={{ flexDirection: 'row', gap: 10 }}>
-                  {['School Student', 'College Student'].map(type => (
-                    <TouchableOpacity key={type} onPress={() => updateMember(currentIndex, { educationType: type, school: '', college: '', std: '', course: '', year: '', totalFees: 0 })}
-                      style={{ flex: 1, height: 46, borderRadius: 14, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, backgroundColor: activeMember.educationType === type ? C.accent : C.card, borderColor: activeMember.educationType === type ? C.accent : C.border }}>
-                      <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 11, letterSpacing: 1.5, textTransform: 'uppercase', color: activeMember.educationType === type ? '#ffffff' : C.muted }}>{type}</Text>
-                    </TouchableOpacity>
-                  ))}
+                  <TouchableOpacity onPress={() => handleStudentTypeSwitch('SCHOOL')}
+                    style={{ flex: 1, height: 46, borderRadius: 14, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, backgroundColor: studentType === 'SCHOOL' ? C.accent : C.card, borderColor: studentType === 'SCHOOL' ? C.accent : C.border }}>
+                    <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 11, letterSpacing: 1.5, textTransform: 'uppercase', color: studentType === 'SCHOOL' ? '#ffffff' : C.muted }}>SCHOOL STUDENT</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => handleStudentTypeSwitch('COLLEGE')}
+                    style={{ flex: 1, height: 46, borderRadius: 14, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, backgroundColor: studentType === 'COLLEGE' ? C.accent : C.card, borderColor: studentType === 'COLLEGE' ? C.accent : C.border }}>
+                    <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 11, letterSpacing: 1.5, textTransform: 'uppercase', color: studentType === 'COLLEGE' ? '#ffffff' : C.muted }}>COLLEGE STUDENT</Text>
+                  </TouchableOpacity>
                 </View>
               </View>
-              <InputField label={activeMember.educationType === 'School Student' ? "School Name" : "College Name"} icon={<GraduationCap size={16} color={C.muted} />} value={activeMember.educationType === 'School Student' ? activeMember.school : activeMember.college} onChangeText={(v) => handleInputChange(activeMember.educationType === 'School Student' ? 'school' : 'college', v)} placeholder="Enter institution name" />
-              <View style={{ padding: 20, backgroundColor: '#EEF2FF', borderRadius: 22, borderWidth: 1.5, borderColor: '#C7D2FE' }}>
-                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: C.accent, marginBottom: 14 }}>Annual Education Fees</Text>
-                <View style={{ flexDirection: 'row', alignItems: 'center', height: 50, borderRadius: 14, paddingHorizontal: 14, backgroundColor: '#ffffff', borderWidth: 1.5, borderColor: C.border }}>
-                  <IndianRupee size={15} color={C.accent} strokeWidth={2.5} />
-                  <TextInput style={{ flex: 1, fontFamily: 'Poppins_500Medium', fontSize: 16, color: C.text, marginLeft: 10 }} placeholder="0" placeholderTextColor={C.placeholder} keyboardType="numeric" value={String(activeMember.totalFees || '')} onChangeText={(v) => handleInputChange('totalFees', Number(v) || 0)} />
-                </View>
-              </View>
+
+              <AnimatePresence exitBeforeEnter>
+                {studentType === 'SCHOOL' ? renderSchoolFields() : renderCollegeFields()}
+              </AnimatePresence>
             </MotiView>
           )}
 
-          {/* Working / Retired extras */}
           {(activeMember.occupation === 'Working' || activeMember.occupation === 'Retired') && (
             <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} style={{ gap: 18, marginBottom: 24 }}>
               <View>
@@ -213,7 +425,6 @@ const Step2_MemberDetails = () => {
             </MotiView>
           )}
 
-          {/* CTA */}
           <TouchableOpacity onPress={handleNext} activeOpacity={0.9} disabled={!isStepValid()}
             style={{ marginTop: 12, width: '100%', height: 58, borderRadius: 22, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, backgroundColor: isStepValid() ? C.accent : C.input, borderWidth: isStepValid() ? 0 : 1.5, borderColor: C.border, shadowColor: C.accent, shadowOpacity: isStepValid() ? 0.3 : 0, shadowRadius: 14, elevation: isStepValid() ? 6 : 0 }}>
             <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', color: isStepValid() ? '#ffffff' : C.muted }}>
