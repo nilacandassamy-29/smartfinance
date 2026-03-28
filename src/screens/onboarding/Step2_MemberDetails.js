@@ -45,7 +45,32 @@ const Step2_MemberDetails = () => {
     updateMember(currentIndex, { [name]: value });
   };
 
-  const isDobValid = () => { if (!activeMember.dob) return false; return new Date(activeMember.dob) <= new Date(); };
+  const handleDobChange = (v) => {
+    let text = v.replace(/\D/g, '');
+    if (text.length > 8) text = text.slice(0, 8);
+    let formatted = '';
+    if (text.length > 0) {
+      formatted = text.slice(0, 2);
+      if (text.length > 2) {
+        formatted += '-' + text.slice(2, 4);
+        if (text.length > 4) {
+          formatted += '-' + text.slice(4, 8);
+        }
+      }
+    }
+    handleInputChange('dob', formatted);
+  };
+
+  const isDobValid = () => {
+    if (!activeMember.dob) return false;
+    const parts = activeMember.dob.split('-');
+    if (parts.length !== 3 || parts[0].length !== 2 || parts[1].length !== 2 || parts[2].length !== 4) return false;
+    const day = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1;
+    const year = parseInt(parts[2], 10);
+    const date = new Date(year, month, day);
+    return date <= new Date() && date.getDate() === day;
+  };
   const isContactValid = () => {
     if (activeMember.occupation === 'Student' && activeMember.educationType === 'School Student') return true;
     return (activeMember.contact || '').length === 10;
@@ -61,12 +86,15 @@ const Step2_MemberDetails = () => {
     if (currentIndex < familySize - 1) { setCurrentIndex(currentIndex + 1); } else { setStep(3); navigation.navigate('Step3_Expenses'); }
   };
 
-  const occupations = [
+  let occupations = [
     { id: 'Student',   label: 'Student',   icon: GraduationCap },
     { id: 'Working',   label: 'Working',   icon: Briefcase },
     { id: 'Homemaker', label: 'Homemaker', icon: Home },
     { id: 'Retired',   label: 'Retired',   icon: Heart },
   ];
+  if (familySize === 1) {
+    occupations = occupations.filter(o => o.id !== 'Student');
+  }
 
   return (
     <OnboardingLayout currentStep={2}>
@@ -112,7 +140,7 @@ const Step2_MemberDetails = () => {
               </View>
             </View>
 
-            <InputField label="Date of Birth (YYYY-MM-DD) *" icon={<Calendar size={16} color={C.muted} />} placeholder="YYYY-MM-DD" value={activeMember.dob} onChangeText={(v) => handleInputChange('dob', v)} error={activeMember.dob && !isDobValid()} />
+            <InputField label="Date of Birth (DD-MM-YYYY) *" icon={<Calendar size={16} color={C.muted} />} placeholder="DD-MM-YYYY" keyboardType="numeric" value={activeMember.dob} onChangeText={handleDobChange} error={activeMember.dob && !isDobValid()} />
             <InputField label="Mobile Number *" icon={<Phone size={16} color={C.muted} />} placeholder="10-digit mobile number" keyboardType="numeric" value={activeMember.contact} onChangeText={(v) => handleInputChange('contact', v)} error={activeMember.contact && !isContactValid()} />
           </View>
 
