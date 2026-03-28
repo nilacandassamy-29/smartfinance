@@ -2,8 +2,9 @@ import React from 'react';
 import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Users, User, ChevronRight, Minus, Plus, ChevronLeft } from 'lucide-react-native';
-import { useAuth } from '../../context/AuthContext';
 import { useOnboarding } from '../../context/OnboardingContext';
+import { useAuth } from '../../context/AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MotiView, AnimatePresence } from 'moti';
 import OnboardingLayout from '../../components/onboarding/OnboardingLayout';
 
@@ -14,9 +15,9 @@ const C = {
 };
 
 const Step1_FamilySize = () => {
-  const { updateUserProfile } = useAuth();
   const { width } = Dimensions.get('window');
   const { familySize, updateFamilySize, setStep } = useOnboarding();
+  const { logout } = useAuth();
   const navigation = useNavigation();
 
   const handleNext = () => { setStep(2); navigation.navigate('Step2_MemberDetails'); };
@@ -28,7 +29,10 @@ const Step1_FamilySize = () => {
 
         {/* Go Back button */}
         <TouchableOpacity
-          onPress={async () => await updateUserProfile({ onboardingComplete: true })}
+          onPress={async () => {
+            await AsyncStorage.setItem('authRedirect', 'Register');
+            await logout();
+          }}
           style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 40 }}
         >
           <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: C.input, borderWidth: 1.5, borderColor: C.border, alignItems: 'center', justifyContent: 'center' }}>
