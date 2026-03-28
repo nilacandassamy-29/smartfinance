@@ -6,7 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useOnboarding } from '../../context/OnboardingContext';
 import { MotiView } from 'moti';
 import OnboardingLayout from '../../components/onboarding/OnboardingLayout';
-import { doc, setDoc, addDoc, collection, updateDoc, serverTimestamp, deleteDoc } from 'firebase/firestore';
+import { doc, setDoc, addDoc, collection, serverTimestamp, deleteDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -145,13 +145,14 @@ const Step7_FinalSummary = () => {
         await AsyncStorage.removeItem('onboarding_data');
       } catch (_) { /* non-critical — ignore */ }
 
-      // ── 7. Update userProfile state in AuthContext ───────────────
+      // ── 7. Update Firestore + AuthContext state ─────────────────
+      // RootNavigator watches userProfile.onboardingComplete.
+      // When it becomes true, RootNavigator automatically switches
+      // from OnboardingNavigator → AppStackNavigator (Dashboard).
       await updateUserProfile({ onboardingComplete: true });
 
       setIsFinalizing(false);
-
-      // ── 8. Navigate to MainApp (Dashboard) ──────────────────────
-      navigation.reset({ index: 0, routes: [{ name: 'MainApp' }] });
+      // No manual navigation needed — RootNavigator handles the redirect
 
     } catch (error) {
       console.error('Finalization failed:', error);
