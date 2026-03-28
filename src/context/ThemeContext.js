@@ -24,13 +24,18 @@ export const ThemeProvider = ({ children }) => {
     await AsyncStorage.setItem('darkMode', String(newValue));
   };
 
+  const setThemeMode = async (isDark) => {
+    setIsDarkMode(isDark);
+    await AsyncStorage.setItem('darkMode', String(isDark));
+  };
+
   // LIGHT THEME COLORS
   const lightTheme = {
-    background: '#F8FAFC',
+    background: '#FFFFFF',
     card: '#FFFFFF',
     text: '#0F172A',
     subText: '#64748B',
-    border: '#E2E8F0',
+    border: '#F1F5F9',
     tabBar: '#FFFFFF',
     tabBarBorder: '#F1F5F9',
     inputBg: '#F8FAFC',
@@ -39,6 +44,7 @@ export const ThemeProvider = ({ children }) => {
     iconBg: '#F8FAFC',
     portfolioCard: '#2563EB',
     modalBg: '#FFFFFF',
+    pageBg: '#F8FAFC',
     danger: '#EF4444',
     placeholder: '#CBD5E1'
   };
@@ -58,6 +64,7 @@ export const ThemeProvider = ({ children }) => {
     iconBg: '#334155',
     portfolioCard: '#1D4ED8',
     modalBg: '#1E293B',
+    pageBg: '#020617',
     danger: '#EF4444',
     placeholder: '#475569'
   };
@@ -65,7 +72,7 @@ export const ThemeProvider = ({ children }) => {
   const theme = isDarkMode ? darkTheme : lightTheme;
 
   return (
-    <ThemeContext.Provider value={{ isDarkMode, toggleDarkMode, toggleTheme: toggleDarkMode, theme }}>
+    <ThemeContext.Provider value={{ isDarkMode, toggleDarkMode, setThemeMode, toggleTheme: toggleDarkMode, theme }}>
       {children}
     </ThemeContext.Provider>
   );

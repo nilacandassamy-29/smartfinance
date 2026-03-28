@@ -1,134 +1,143 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Users, User, ChevronRight, Minus, Plus, ChevronLeft, Target, Shield, Cpu } from 'lucide-react-native';
+import { Users, User, ChevronRight, Minus, Plus, ChevronLeft } from 'lucide-react-native';
+import { useAuth } from '../../context/AuthContext';
 import { useOnboarding } from '../../context/OnboardingContext';
 import { MotiView, AnimatePresence } from 'moti';
-import { BlurView } from 'expo-blur';
 import OnboardingLayout from '../../components/onboarding/OnboardingLayout';
 
+// ── Colors ──────────────────────────────────────────────
+const C = {
+  text: '#0F172A', sub: '#64748B', muted: '#94A3B8',
+  border: '#E2E8F0', card: '#F8FAFC', input: '#F1F5F9',
+  accent: '#6366f1',
+};
+
 const Step1_FamilySize = () => {
- const { familySize, updateFamilySize, setStep } = useOnboarding();
- const navigation = useNavigation();
+  const { updateUserProfile } = useAuth();
+  const { width } = Dimensions.get('window');
+  const { familySize, updateFamilySize, setStep } = useOnboarding();
+  const navigation = useNavigation();
 
- const handleNext = () => {
- setStep(2);
- navigation.navigate('Step2_MemberDetails');
- };
+  const handleNext = () => { setStep(2); navigation.navigate('Step2_MemberDetails'); };
+  const adjustSize = (delta) => updateFamilySize(Math.max(1, Math.min(10, familySize + delta)));
 
- const adjustSize = (delta) => {
- const newSize = Math.max(1, Math.min(10, familySize + delta));
- updateFamilySize(newSize);
- };
+  return (
+    <OnboardingLayout currentStep={1}>
+      <View style={{ marginBottom: 40 }}>
 
- return (
- <OnboardingLayout currentStep={1}>
- <View className="mb-10">
- <TouchableOpacity 
- onPress={() => navigation.navigate('Home')} 
- className="flex-row items-center space-x-3 mb-10"
- >
- <View className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 items-center justify-center">
- <ChevronLeft size={16} color="#64748b" strokeWidth={3} />
- </View>
- <Text className="text-slate-500 font-black text-xs uppercase tracking-[0.3em] ">Abort Node</Text>
- </TouchableOpacity>
+        {/* Abort Node button */}
+        <TouchableOpacity
+          onPress={async () => await updateUserProfile({ onboardingComplete: true })}
+          style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 40 }}
+        >
+          <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: C.input, borderWidth: 1.5, borderColor: C.border, alignItems: 'center', justifyContent: 'center' }}>
+            <ChevronLeft size={16} color={C.sub} strokeWidth={3} />
+          </View>
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, color: C.sub, textTransform: 'uppercase' }}>
+            Abort Node
+          </Text>
+        </TouchableOpacity>
 
- <View className="items-center space-y-6 mb-12">
- <MotiView
- from={{ scale: 0.5, opacity: 0, rotate: '-45deg' }}
- animate={{ scale: 1, opacity: 1, rotate: '0deg' }}
- className="w-24 h-24 bg-indigo-600/20 rounded-[2rem] items-center justify-center mb-6 border border-indigo-500/30 shadow-2xl shadow-indigo-600/40"
- >
- <Users size={40} color="#818cf8" strokeWidth={2.5} />
- </MotiView>
- <Text className="text-4xl font-black text-white tracking-tighter text-center uppercase ">Household Core</Text>
- <BlurView intensity={10} tint="dark" className="px-6 py-4 rounded-2xl border border-white/5 bg-white/5 mx-4">
- <Text className="text-slate-500 font-bold text-xs uppercase tracking-[0.3em] text-center leading-relaxed">
- Synchronizing neural mapping based on total capital dependents.
- </Text>
- </BlurView>
- </View>
+        {/* Hero icon + title */}
+        <View style={{ alignItems: 'center', gap: 20, marginBottom: 48 }}>
+          <MotiView
+            from={{ scale: 0.5, opacity: 0, rotate: '-45deg' }}
+            animate={{ scale: 1, opacity: 1, rotate: '0deg' }}
+            style={{ width: 96, height: 96, backgroundColor: '#EEF2FF', borderRadius: 32, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: '#C7D2FE' }}
+          >
+            <Users size={40} color={C.accent} strokeWidth={2.5} />
+          </MotiView>
 
- <View className="items-center space-y-10">
- <AnimatePresence exitBeforeEnter>
- {familySize > 1 && (
- <MotiView
- from={{ opacity: 0, scale: 0.9, y: 10 }}
- animate={{ opacity: 1, scale: 1, y: 0 }}
- exit={{ opacity: 0, scale: 0.9, y: 10 }}
- className="flex-row items-center justify-center space-x-10 w-full mb-6"
- >
- <TouchableOpacity
- onPress={() => adjustSize(-1)}
- activeOpacity={0.7}
- className="w-16 h-16 rounded-[1.5rem] bg-rose-500/10 items-center justify-center border border-rose-500/20 shadow-xl"
- >
- <Minus size={28} color="#f43f5e" strokeWidth={3} />
- </TouchableOpacity>
- 
- <View className="items-center w-24">
- <Text className="text-6xl font-black text-white tracking-tighter">
- {familySize}
- </Text>
- <Text className="text-xs font-black text-slate-600 uppercase tracking-[0.4em] mt-2">Active Nodes</Text>
- </View>
- 
- <TouchableOpacity
- onPress={() => adjustSize(1)}
- activeOpacity={0.7}
- className="w-16 h-16 rounded-[1.5rem] bg-emerald-500/10 items-center justify-center border border-emerald-500/20 shadow-xl"
- >
- <Plus size={28} color="#10b981" strokeWidth={3} />
- </TouchableOpacity>
- </MotiView>
- )}
- </AnimatePresence>
+          <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, letterSpacing: 0, textAlign: 'center', textTransform: 'uppercase', color: C.text }}>
+            Household Core
+          </Text>
 
- <View className="flex-row space-x-5 w-full">
- <TouchableOpacity
- onPress={() => updateFamilySize(1)}
- activeOpacity={0.8}
- className={`flex-1 p-8 rounded-[2.5rem] border-2 items-center flex-col shadow-2xl ${familySize === 1 ? 'bg-indigo-600/20 border-indigo-500 shadow-indigo-600/40' : 'bg-white/5 border-white/5 shadow-inner'}`}
- >
- <View className={`w-14 h-14 rounded-2xl items-center justify-center mb-4 ${familySize === 1 ? 'bg-indigo-500/20' : 'bg-white/5'}`}>
- <User size={28} color={familySize === 1 ? '#818cf8' : '#475569'} strokeWidth={2.5} />
- </View>
- <Text className={`font-black text-xs uppercase tracking-[0.3em] ${familySize === 1 ? 'text-white' : 'text-slate-500'}`}>Single</Text>
- </TouchableOpacity>
+          <View style={{ paddingHorizontal: 24, paddingVertical: 16, borderRadius: 20, borderWidth: 1.5, borderColor: C.border, backgroundColor: C.card, marginHorizontal: 8 }}>
+            <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, letterSpacing: 1.5, textAlign: 'center', textTransform: 'uppercase', color: C.sub, lineHeight: 20 }}>
+              Synchronizing neural mapping based on total capital dependents.
+            </Text>
+          </View>
+        </View>
 
- <TouchableOpacity
- onPress={() => updateFamilySize(Math.max(2, familySize))}
- activeOpacity={0.8}
- className={`flex-1 p-8 rounded-[2.5rem] border-2 items-center flex-col shadow-2xl ${familySize > 1 ? 'bg-indigo-600/20 border-indigo-500 shadow-indigo-600/40' : 'bg-white/5 border-white/5 shadow-inner'}`}
- >
- <View className={`w-14 h-14 rounded-2xl items-center justify-center mb-4 ${familySize > 1 ? 'bg-indigo-500/20' : 'bg-white/5'}`}>
- <Users size={28} color={familySize > 1 ? '#818cf8' : '#475569'} strokeWidth={2.5} />
- </View>
- <Text className={`font-black text-xs uppercase tracking-[0.3em] ${familySize > 1 ? 'text-white' : 'text-slate-500'}`}>Cluster</Text>
- </TouchableOpacity>
- </View>
- </View>
- </View>
+        {/* Counter + selector */}
+        <View style={{ alignItems: 'center', gap: 28 }}>
+          <AnimatePresence exitBeforeEnter>
+            {familySize > 1 && (
+              <MotiView
+                from={{ opacity: 0, scale: 0.9, translateY: 10 }}
+                animate={{ opacity: 1, scale: 1, translateY: 0 }}
+                exit={{ opacity: 0, scale: 0.9, translateY: 10 }}
+                style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 40, width: '100%', marginBottom: 8 }}
+              >
+                <TouchableOpacity onPress={() => adjustSize(-1)} activeOpacity={0.7} style={{ width: 64, height: 64, borderRadius: 24, backgroundColor: '#FFF1F2', alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: '#FECDD3' }}>
+                  <Minus size={28} color="#f43f5e" strokeWidth={3} />
+                </TouchableOpacity>
 
- {familySize > 0 && (
- <MotiView
- from={{ opacity: 0, y: 20 }}
- animate={{ opacity: 1, y: 0 }}
- className="mt-12"
- >
- <TouchableOpacity
- onPress={handleNext}
- activeOpacity={0.9}
- className="w-full bg-indigo-600 h-16 rounded-[1.5rem] flex-row items-center justify-center shadow-2xl shadow-indigo-600/50"
- >
- <Text className="text-white font-black text-xs uppercase tracking-[0.3em] ">Initialize Cluster Mapping</Text>
- <ChevronRight size={20} color="#ffffff" strokeWidth={3} className="ml-4" />
- </TouchableOpacity>
- </MotiView>
- )}
- </OnboardingLayout>
- );
+                <View style={{ alignItems: 'center', width: 80 }}>
+                  <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 48, color: C.text, textAlign: 'center', letterSpacing: 0 }}>
+                    {familySize}
+                  </Text>
+                  <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, color: C.sub, textTransform: 'uppercase', textAlign: 'center', marginTop: 2 }}>
+                    Active Nodes
+                  </Text>
+                </View>
+
+                <TouchableOpacity onPress={() => adjustSize(1)} activeOpacity={0.7} style={{ width: 64, height: 64, borderRadius: 24, backgroundColor: '#F0FDF4', alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: '#BBF7D0' }}>
+                  <Plus size={28} color="#10b981" strokeWidth={3} />
+                </TouchableOpacity>
+              </MotiView>
+            )}
+          </AnimatePresence>
+
+          {/* Single / Cluster cards */}
+          <View style={{ flexDirection: 'row', gap: 14, width: '100%' }}>
+            {[
+              { id: 'single', label: 'Single', icon: User, isActive: familySize === 1, onPress: () => updateFamilySize(1) },
+              { id: 'cluster', label: 'Cluster', icon: Users, isActive: familySize > 1, onPress: () => updateFamilySize(Math.max(2, familySize)) },
+            ].map((opt) => (
+              <TouchableOpacity
+                key={opt.id}
+                onPress={opt.onPress}
+                activeOpacity={0.8}
+                style={{
+                  flex: 1, paddingVertical: 28, paddingHorizontal: 16, borderRadius: 28, alignItems: 'center',
+                  backgroundColor: opt.isActive ? C.accent : C.card,
+                  borderWidth: 1.5, borderColor: opt.isActive ? C.accent : C.border,
+                  shadowColor: opt.isActive ? C.accent : '#000',
+                  shadowOpacity: opt.isActive ? 0.25 : 0.04, shadowRadius: 12, elevation: opt.isActive ? 6 : 2,
+                }}
+              >
+                <View style={{ width: 52, height: 52, borderRadius: 16, backgroundColor: opt.isActive ? 'rgba(255,255,255,0.2)' : '#EEF2FF', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+                  <opt.icon size={28} color={opt.isActive ? '#ffffff' : C.accent} strokeWidth={2.5} />
+                </View>
+                <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 12, letterSpacing: 2, textTransform: 'uppercase', textAlign: 'center', color: opt.isActive ? '#ffffff' : C.muted }}>
+                  {opt.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </View>
+
+      {/* CTA button */}
+      {familySize > 0 && (
+        <MotiView from={{ opacity: 0, translateY: 20 }} animate={{ opacity: 1, translateY: 0 }} style={{ marginTop: 24 }}>
+          <TouchableOpacity
+            onPress={handleNext}
+            activeOpacity={0.9}
+            style={{ width: '100%', backgroundColor: C.accent, height: 58, borderRadius: 22, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, shadowColor: C.accent, shadowOpacity: 0.35, shadowRadius: 16, elevation: 8 }}
+          >
+            <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', color: '#ffffff' }}>
+              Initialize Cluster Mapping
+            </Text>
+            <ChevronRight size={20} color="#ffffff" strokeWidth={3} />
+          </TouchableOpacity>
+        </MotiView>
+      )}
+    </OnboardingLayout>
+  );
 };
 
 export default Step1_FamilySize;

@@ -7,6 +7,7 @@ import {
   Poppins_500Medium,
   Poppins_600SemiBold,
   Poppins_700Bold,
+  Poppins_800ExtraBold,
 } from '@expo-google-fonts/poppins';
 import { AuthProvider } from './src/context/AuthContext';
 import { ThemeProvider, ThemeAwareStatusBar } from './src/context/ThemeContext';
@@ -19,7 +20,7 @@ import RootNavigator from './src/navigation/RootNavigator';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Text } from 'react-native';
+import { Text, TextInput } from 'react-native';
 
 const NavigationTheme = {
   ...DefaultTheme,
@@ -35,6 +36,12 @@ export default function App() {
     'Poppins-Medium': Poppins_500Medium,
     'Poppins-SemiBold': Poppins_600SemiBold,
     'Poppins-Bold': Poppins_700Bold,
+    'Poppins-ExtraBold': Poppins_800ExtraBold,
+    Poppins_400Regular,
+    Poppins_500Medium,
+    Poppins_600SemiBold,
+    Poppins_700Bold,
+    Poppins_800ExtraBold,
   });
 
   if (!fontsLoaded && !fontError) {
@@ -47,7 +54,10 @@ export default function App() {
 
   const oldTextRender = Text.render;
   Text.defaultProps = Text.defaultProps || {};
-  Text.defaultProps.style = { fontFamily: 'Poppins-Regular' };
+  Text.defaultProps.style = { fontFamily: 'Poppins_400Regular' };
+
+  TextInput.defaultProps = TextInput.defaultProps || {};
+  TextInput.defaultProps.style = { fontFamily: 'Poppins_400Regular' };
 
   return (
     <SafeAreaProvider>

@@ -35,13 +35,13 @@ export default function WelcomeScreen({ navigation }) {
                         shadowRadius: 20,
                         elevation: 12,
                     }}>
-                        <Text style={{ fontSize: 36, color: '#fff', fontFamily: 'Poppins-Bold' }}>S</Text>
+                        <Text style={{ fontSize: 36, color: '#fff', fontFamily: 'Poppins_700Bold' }}>S</Text>
                     </View>
 
-                    <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 30, color: theme.text, letterSpacing: -0.5, marginBottom: 10 }}>
+                    <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 30, color: theme.text, letterSpacing: -0.5, marginBottom: 10 }}>
                         SmartFinance
                     </Text>
-                    <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 15, color: theme.subText, textAlign: 'center', lineHeight: 22 }}>
+                    <Text style={{ fontFamily: 'Poppins_400Regular', fontSize: 15, color: theme.subText, textAlign: 'center', lineHeight: 22 }}>
                         Your all-in-one financial command center
                     </Text>
 

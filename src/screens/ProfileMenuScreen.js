@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StatusBar, Switch, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { X, History, HelpCircle, Settings as SettingsIcon, Lock, Info, Moon, LogOut } from 'lucide-react-native';
+import { X, History, HelpCircle, Settings as SettingsIcon, Lock, Info, LogOut, Palette, ChevronRight } from 'lucide-react-native';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 
 export default function ProfileMenuScreen({ navigation }) {
     const { userProfile, logout } = useAuth();
-    const { isDarkMode, toggleDarkMode, theme } = useTheme();
+    const { isDarkMode, theme } = useTheme();
 
     const handleLogout = async () => {
         await logout();
@@ -47,6 +47,13 @@ export default function ProfileMenuScreen({ navigation }) {
                         <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 11, color: theme.sectionLabel, letterSpacing: 1.5, marginBottom: 8 }}>MENU</Text>
                         <DrawerItem icon={<History size={20} color={theme.text} />} label="History" onPress={() => navigation.navigate('ExpenseHistory')} />
                         <DrawerItem icon={<HelpCircle size={20} color={theme.text} />} label="FAQ" onPress={() => navigation.navigate('FAQScreen')} />
+                        <TouchableOpacity onPress={() => navigation.navigate('ThemeScreen')} activeOpacity={0.7} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 16 }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                                <Palette size={20} color="#64748B" />
+                                <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 15, color: isDarkMode ? '#F8FAFC' : '#1E293B' }}>Theme</Text>
+                            </View>
+                            <ChevronRight size={20} color="#CBD5E1" />
+                        </TouchableOpacity>
                         <DrawerItem icon={<SettingsIcon size={20} color={theme.text} />} label="Settings" onPress={() => navigation.navigate('Settings')} />
                     </View>
 
@@ -59,19 +66,6 @@ export default function ProfileMenuScreen({ navigation }) {
 
                     {/* BOTTOM Section */}
                     <View style={{ paddingHorizontal: 24, marginTop: 40 }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 32 }}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
-                                <Moon size={20} color={theme.text} />
-                                <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 15, color: theme.text }}>Dark Mode</Text>
-                            </View>
-                            <Switch 
-                                value={isDarkMode} 
-                                onValueChange={toggleDarkMode} 
-                                trackColor={{ false: '#CBD5E1', true: '#2563EB' }} 
-                                thumbColor={'#FFFFFF'}
-                            />
-                        </View>
-                        
                         <TouchableOpacity onPress={handleLogout} style={{ backgroundColor: isDarkMode ? theme.inputBg : '#fef2f2', borderRadius: 14, paddingVertical: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
                             <LogOut size={20} color={theme.danger} />
                             <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 15, color: theme.danger }}>Log Out</Text>

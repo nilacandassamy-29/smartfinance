@@ -40,16 +40,16 @@ export default function LoginScreen({ navigation }) {
                                     width: 52, height: 52, backgroundColor: '#2563eb',
                                     borderRadius: 16, alignItems: 'center', justifyContent: 'center', marginBottom: 24,
                                 }}>
-                                    <Text style={{ color: '#fff', fontFamily: 'Poppins-Bold', fontSize: 22 }}>S</Text>
+                                    <Text style={{ color: '#fff', fontFamily: 'Poppins_700Bold', fontSize: 22 }}>S</Text>
                                 </View>
-                                <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 28, color: theme.text, marginBottom: 8 }}>Welcome back</Text>
-                                <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 15, color: theme.subText }}>Sign in to your account</Text>
+                                <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 28, color: theme.text, marginBottom: 8 }}>Welcome back</Text>
+                                <Text style={{ fontFamily: 'Poppins_400Regular', fontSize: 15, color: theme.subText }}>Sign in to your account</Text>
                             </View>
 
                             {/* Fields */}
                             <View style={{ gap: 16, marginBottom: 28 }}>
                                 <View>
-                                    <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: theme.text, marginBottom: 8 }}>Email Address</Text>
+                                    <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 14, color: theme.text, marginBottom: 8 }}>Email Address</Text>
                                     <TextInput
                                         value={email} onChangeText={setEmail}
                                         placeholder="you@example.com" keyboardType="email-address" autoCapitalize="none"
@@ -57,13 +57,13 @@ export default function LoginScreen({ navigation }) {
                                         style={{
                                             height: 52, borderRadius: 12, backgroundColor: theme.inputBg,
                                             borderWidth: 1.5, borderColor: theme.border,
-                                            paddingHorizontal: 16, fontFamily: 'Poppins-Regular',
+                                            paddingHorizontal: 16, fontFamily: 'Poppins_400Regular',
                                             fontSize: 15, color: theme.text,
                                         }}
                                     />
                                 </View>
                                 <View>
-                                    <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: theme.text, marginBottom: 8 }}>Password</Text>
+                                    <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 14, color: theme.text, marginBottom: 8 }}>Password</Text>
                                     <TextInput
                                         value={password} onChangeText={setPassword}
                                         placeholder="Enter your password" secureTextEntry
@@ -71,7 +71,7 @@ export default function LoginScreen({ navigation }) {
                                         style={{
                                             height: 52, borderRadius: 12, backgroundColor: theme.inputBg,
                                             borderWidth: 1.5, borderColor: theme.border,
-                                            paddingHorizontal: 16, fontFamily: 'Poppins-Regular',
+                                            paddingHorizontal: 16, fontFamily: 'Poppins_400Regular',
                                             fontSize: 15, color: theme.text,
                                         }}
                                     />
@@ -89,15 +89,15 @@ export default function LoginScreen({ navigation }) {
                                     shadowOpacity: 0.25, shadowRadius: 10, elevation: 6,
                                 }}
                             >
-                                <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 16, color: '#fff' }}>
+                                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 16, color: '#fff' }}>
                                     {loading ? 'Signing in...' : 'Sign In'}
                                 </Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity onPress={() => navigation.navigate('Register')} style={{ alignItems: 'center', paddingVertical: 16 }}>
-                                <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14, color: theme.subText }}>
+                                <Text style={{ fontFamily: 'Poppins_400Regular', fontSize: 14, color: theme.subText }}>
                                     Don't have an account?{' '}
-                                    <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#2563eb' }}>Create one</Text>
+                                    <Text style={{ fontFamily: 'Poppins_600SemiBold', color: '#2563eb' }}>Create one</Text>
                                 </Text>
                             </TouchableOpacity>
                         </MotiView>

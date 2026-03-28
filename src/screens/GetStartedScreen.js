@@ -25,10 +25,10 @@ export default function GetStartedScreen({ navigation }) {
                 >
                     {/* Header */}
                     <View style={{ marginBottom: 40 }}>
-                        <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 32, color: theme.text, lineHeight: 42, marginBottom: 10 }}>
+                        <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 32, color: theme.text, lineHeight: 42, marginBottom: 10 }}>
                             Take control of{'\n'}your finances.
                         </Text>
-                        <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 15, color: theme.subText, lineHeight: 22 }}>
+                        <Text style={{ fontFamily: 'Poppins_400Regular', fontSize: 15, color: theme.subText, lineHeight: 22 }}>
                             Built for the modern Indian investor.
                         </Text>
                     </View>
@@ -56,17 +56,16 @@ export default function GetStartedScreen({ navigation }) {
                                     <Text style={{ fontSize: 22 }}>{f.icon}</Text>
                                 </View>
                                 <View style={{ flex: 1 }}>
-                                    <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 15, color: theme.text, marginBottom: 2 }}>{f.title}</Text>
-                                    <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14, color: theme.subText }}>{f.desc}</Text>
+                                    <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 15, color: theme.text, marginBottom: 2 }}>{f.title}</Text>
+                                    <Text style={{ fontFamily: 'Poppins_400Regular', fontSize: 14, color: theme.subText }}>{f.desc}</Text>
                                 </View>
                             </MotiView>
                         ))}
                     </View>
 
-                    {/* CTA Buttons */}
                     <View style={{ gap: 12, paddingBottom: 24 }}>
                         <TouchableOpacity
-                            onPress={() => navigation.navigate('Login')}
+                            onPress={() => navigation.navigate('AuthChoiceScreen')}
                             activeOpacity={0.85}
                             style={{
                                 backgroundColor: '#2563eb', borderRadius: 14,
@@ -75,20 +74,7 @@ export default function GetStartedScreen({ navigation }) {
                                 shadowOpacity: 0.3, shadowRadius: 12, elevation: 8,
                             }}
                         >
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 16, color: '#fff' }}>Get Started</Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                            onPress={() => navigation.navigate('Register')}
-                            activeOpacity={0.85}
-                            style={{
-                                borderRadius: 14, height: 56,
-                                alignItems: 'center', justifyContent: 'center',
-                                borderWidth: 1.5, borderColor: isDarkMode ? theme.border : '#e2e8f0',
-                                backgroundColor: isDarkMode ? theme.card : 'transparent',
-                            }}
-                        >
-                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 16, color: '#2563eb' }}>Create Account</Text>
+                            <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 16, color: '#fff' }}>Get Started</Text>
                         </TouchableOpacity>
                     </View>
                 </MotiView>

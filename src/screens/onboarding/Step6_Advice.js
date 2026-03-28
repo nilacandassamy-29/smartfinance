@@ -1,190 +1,154 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import {
- ChevronRight, ChevronLeft, Bot, Sparkles, Shield, TrendingUp,
- Wallet, Banknote, Landmark, Target, AlertCircle,
- Users, HeartPulse, CircleDollarSign, Coins, Cpu, ShieldCheck, Zap
-} from 'lucide-react-native';
+import { ChevronRight, ChevronLeft, Bot, Shield, TrendingUp, Wallet, Banknote, Landmark, HeartPulse, CircleDollarSign, Coins, AlertCircle } from 'lucide-react-native';
 import { useOnboarding } from '../../context/OnboardingContext';
 import { MotiView } from 'moti';
-import { BlurView } from 'expo-blur';
 import OnboardingLayout from '../../components/onboarding/OnboardingLayout';
 
+const C = { text: '#0F172A', sub: '#64748B', muted: '#94A3B8', border: '#E2E8F0', card: '#F8FAFC', accent: '#6366f1' };
+
 const Step6_Advice = () => {
- const { investableSurplus, savingsAmount, reserveAmount, setStep, safeNumber, mode, members } = useOnboarding();
- const navigation = useNavigation();
+  const { width } = Dimensions.get('window');
+  const { investableSurplus, reserveAmount, setStep, safeNumber, members } = useOnboarding();
+  const navigation = useNavigation();
 
- const getStrategy = () => {
- const balance = safeNumber(investableSurplus);
- const hasGirlChild = members.some(m => m.gender === 'Female' || m.gender === 'Female // XX');
- const workers = members.filter(m => m.occupation === 'Working');
- const isSingleEarner = workers.length === 1;
+  const getStrategy = () => {
+    const b = safeNumber(investableSurplus);
+    const hasGirl = members.some(m => m.gender === 'Female' || m.gender === 'Female // XX');
 
- if (balance <= 2000) {
- return {
- title: "Ultra-Safe Stability Plan",
- reasoning: "Maintaining high liquidity and absolute capital safety is critical at this surplus level.",
- risk: "No Risk",
- recommendations: [
- { id: 'sb', name: "Savings Account", target: "Instant Cash", portion: "70%", icon: <Wallet size={16} color="#3b82f6" /> },
- { id: 'rd', name: "Recurring Deposit", target: "Planned Saving", portion: "30%", icon: <Landmark size={16} color="#6366f1" /> }
- ]
- };
- } else if (balance <= 10000) {
- return {
- title: "Stable + Growth Core",
- reasoning: "A balanced mix to ensure your money beats inflation while keeping the principal protected.",
- risk: "Low-Moderate Risk",
- recommendations: [
- { id: 'fd', name: "Fixed Deposit", target: "Shield Principal", portion: "60%", icon: <Shield size={16} color="#10b981" /> },
- { id: 'mutual', name: "Bluechip SIP", target: "Steady Growth", portion: "40%", icon: <TrendingUp size={16} color="#6366f1" /> }
- ]
- };
- } else if (balance <= 25000) {
- const schemes = [
- { id: 'fd', name: "Emergency Buffer", target: "Security", portion: "40%", icon: <Banknote size={16} color="#10b981" /> },
- { id: 'mutual', name: "Flexi-Cap SIP", target: "Wealth Building", portion: "40%", icon: <TrendingUp size={16} color="#6366f1" /> }
- ];
- if (hasGirlChild) {
- schemes.push({ id: 'ssy', name: "Sukanya Samriddhi", target: "Girl Growth", portion: "20%", icon: <HeartPulse size={16} color="#f43f5e" /> });
- } else {
- schemes.push({ id: 'ppf', name: "PPF", target: "Tax-Free", portion: "20%", icon: <Landmark size={16} color="#6366f1" /> });
- }
- return {
- title: "Balanced Wealth Strategy",
- reasoning: "Optimized for tax-efficiency and long-term goal planning for the entire family.",
- risk: "Moderate Risk",
- recommendations: schemes
- };
- } else {
- return {
- title: "Diversified Growth Portfolio",
- reasoning: "Aggressive wealth compounding strategy utilizing multiple asset classes to maximize returns.",
- risk: "Growth Oriented",
- recommendations: [
- { id: 'mutual', name: "Mid-Cap SIP", target: "High Returns", portion: "40%", icon: <TrendingUp size={16} color="#6366f1" /> },
- { id: 'sgb', name: "Gold Bonds", target: "Asset Hedge", portion: "30%", icon: <Coins size={16} color="#f59e0b" /> },
- { id: 'mutual', name: "Index Fund Mix", target: "Security + Alpha", portion: "30%", icon: <CircleDollarSign size={16} color="#10b981" /> }
- ]
- };
- }
- };
+    const base = (title, reasoning, risk, riskColor, riskBg, riskBorder, recs) => ({ title, reasoning, risk, riskColor, riskBg, riskBorder, recommendations: recs });
 
- const balance = safeNumber(investableSurplus);
- const strategy = getStrategy();
+    if (b <= 2000) return base('Ultra-Safe Stability Plan', 'Maintaining high liquidity and absolute capital safety is critical at this surplus level.', 'No Risk', '#10b981', '#ECFDF5', '#BBF7D0', [
+      { name: 'Savings Account', target: 'Instant Cash', portion: '70%', icon: Wallet, ic: '#3b82f6', bg: '#EFF6FF', bd: '#BFDBFE' },
+      { name: 'Recurring Deposit', target: 'Planned Saving', portion: '30%', icon: Landmark, ic: '#6366f1', bg: '#EEF2FF', bd: '#C7D2FE' },
+    ]);
+    if (b <= 10000) return base('Stable + Growth Core', 'A balanced mix to ensure your money beats inflation while keeping the principal protected.', 'Low-Moderate', '#d97706', '#FFFBEB', '#FDE68A', [
+      { name: 'Fixed Deposit', target: 'Shield Principal', portion: '60%', icon: Shield, ic: '#10b981', bg: '#ECFDF5', bd: '#BBF7D0' },
+      { name: 'Bluechip SIP', target: 'Steady Growth', portion: '40%', icon: TrendingUp, ic: '#6366f1', bg: '#EEF2FF', bd: '#C7D2FE' },
+    ]);
+    if (b <= 25000) {
+      const recs = [
+        { name: 'Emergency Buffer', target: 'Security', portion: '40%', icon: Banknote, ic: '#10b981', bg: '#ECFDF5', bd: '#BBF7D0' },
+        { name: 'Flexi-Cap SIP', target: 'Wealth Building', portion: '40%', icon: TrendingUp, ic: '#6366f1', bg: '#EEF2FF', bd: '#C7D2FE' },
+        hasGirl
+          ? { name: 'Sukanya Samriddhi', target: 'Girl Growth', portion: '20%', icon: HeartPulse, ic: '#f43f5e', bg: '#FFF1F2', bd: '#FECDD3' }
+          : { name: 'PPF', target: 'Tax-Free', portion: '20%', icon: Landmark, ic: '#6366f1', bg: '#EEF2FF', bd: '#C7D2FE' },
+      ];
+      return base('Balanced Wealth Strategy', 'Optimized for tax-efficiency and long-term goal planning for the entire family.', 'Moderate', '#d97706', '#FFFBEB', '#FDE68A', recs);
+    }
+    return base('Diversified Growth Portfolio', 'Aggressive wealth compounding strategy utilizing multiple asset classes to maximize returns.', 'Growth Oriented', '#6366f1', '#EEF2FF', '#C7D2FE', [
+      { name: 'Mid-Cap SIP', target: 'High Returns', portion: '40%', icon: TrendingUp, ic: '#6366f1', bg: '#EEF2FF', bd: '#C7D2FE' },
+      { name: 'Gold Bonds', target: 'Asset Hedge', portion: '30%', icon: Coins, ic: '#d97706', bg: '#FFFBEB', bd: '#FDE68A' },
+      { name: 'Index Fund Mix', target: 'Security + Alpha', portion: '30%', icon: CircleDollarSign, ic: '#10b981', bg: '#ECFDF5', bd: '#BBF7D0' },
+    ]);
+  };
 
- if (balance <= 0) {
- return (
- <OnboardingLayout currentStep={6}>
- <View className="items-center py-20 space-y-8">
- <View className="w-24 h-24 rounded-[2rem] bg-rose-500/10 border border-rose-500/20 items-center justify-center shadow-2xl shadow-rose-500/20">
- <AlertCircle size={48} color="#f43f5e" strokeWidth={2.5} />
- </View>
- <View className="items-center px-6">
- <Text className="text-3xl font-black text-white tracking-tighter uppercase text-center leading-none">Strategy Offline</Text>
- <Text className="text-slate-500 text-center font-bold text-xs uppercase tracking-widest mt-4 leading-relaxed">
- System detect: Total outflows match or exceed inflows. Capital allocation protocol cannot initialize.
- </Text>
- </View>
- <TouchableOpacity 
- onPress={() => { setStep(3); navigation.navigate('Step3_Expenses'); }} 
- activeOpacity={0.8}
- className="px-10 h-14 bg-indigo-600 rounded-2xl items-center justify-center shadow-2xl shadow-indigo-600/40"
- >
- <Text className="text-white font-black text-xs uppercase tracking-[0.3em] ">Re-calibrate Flux</Text>
- </TouchableOpacity>
- </View>
- </OnboardingLayout>
- );
- }
+  const balance = safeNumber(investableSurplus);
+  const strategy = getStrategy();
 
- return (
- <OnboardingLayout currentStep={6}>
- <View className="mb-10 flex-row items-center justify-between">
- <TouchableOpacity onPress={() => { setStep(5); navigation.navigate('Step5_Reserve'); }} className="flex-row items-center space-x-3">
- <View className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 items-center justify-center">
- <ChevronLeft size={16} color="#475569" strokeWidth={3} />
- </View>
- <Text className="text-slate-500 font-black text-xs uppercase tracking-[0.3em] ">Backtrack</Text>
- </TouchableOpacity>
- <BlurView intensity={20} tint="dark" className="px-4 py-2 rounded-xl border border-white/5 overflow-hidden flex-row items-center">
- <Bot size={12} color="#818cf8" strokeWidth={3} />
- <Text className="text-xs font-black text-indigo-400 uppercase tracking-[0.3em] ml-2 ">
- Strategic Logic
- </Text>
- </BlurView>
- </View>
+  if (balance <= 0) {
+    return (
+      <OnboardingLayout currentStep={6}>
+        <View style={{ alignItems: 'center', paddingTop: 60, gap: 28 }}>
+          <View style={{ width: 96, height: 96, borderRadius: 32, backgroundColor: '#FFF1F2', borderWidth: 1.5, borderColor: '#FECDD3', alignItems: 'center', justifyContent: 'center' }}>
+            <AlertCircle size={46} color="#f43f5e" strokeWidth={2.5} />
+          </View>
+          <View style={{ alignItems: 'center', paddingHorizontal: 24 }}>
+            <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, letterSpacing: 0, textTransform: 'uppercase', textAlign: 'center', color: C.text }}>Strategy Offline</Text>
+            <Text style={{ textAlign: 'center', fontFamily: 'Poppins_500Medium', fontSize: 12, textTransform: 'uppercase', letterSpacing: 1.5, marginTop: 14, lineHeight: 20, color: C.sub }}>
+              System detect: Total outflows match or exceed inflows. Capital allocation protocol cannot initialize.
+            </Text>
+          </View>
+          <TouchableOpacity onPress={() => { setStep(3); navigation.navigate('Step3_Expenses'); }} activeOpacity={0.8}
+            style={{ paddingHorizontal: 36, height: 54, backgroundColor: C.accent, borderRadius: 18, alignItems: 'center', justifyContent: 'center', shadowColor: C.accent, shadowOpacity: 0.3, shadowRadius: 12, elevation: 5 }}>
+            <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', color: '#ffffff' }}>Re-calibrate Flux</Text>
+          </TouchableOpacity>
+        </View>
+      </OnboardingLayout>
+    );
+  }
 
- <View className="mb-12">
- <Text className="text-4xl font-black text-white tracking-tighter uppercase leading-none">Growth Blueprint</Text>
- <Text className="text-slate-500 font-bold text-xs mt-3 uppercase tracking-widest leading-relaxed">
- Optimizing <Text className="text-indigo-400">₹{balance.toLocaleString('en-IN')}</Text> deployment after ₹{safeNumber(reserveAmount).toLocaleString('en-IN')} resilience buffer.
- </Text>
- </View>
+  return (
+    <OnboardingLayout currentStep={6}>
+      {/* Header */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 36 }}>
+        <TouchableOpacity onPress={() => { setStep(5); navigation.navigate('Step5_Reserve'); }} style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+          <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: '#F1F5F9', borderWidth: 1.5, borderColor: C.border, alignItems: 'center', justifyContent: 'center' }}>
+            <ChevronLeft size={16} color={C.sub} strokeWidth={3} />
+          </View>
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: C.sub }}>Backtrack</Text>
+        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: '#EEF2FF', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 10 }}>
+          <Bot size={11} color={C.accent} strokeWidth={3} />
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 1.5, color: C.accent }}>Strategic Logic</Text>
+        </View>
+      </View>
 
- <MotiView
- from={{ opacity: 0, scale: 0.95 }}
- animate={{ opacity: 1, scale: 1 }}
- className="overflow-hidden rounded-[3rem] border border-white/10 mb-12 shadow-2xl"
- >
- <BlurView intensity={30} tint="dark" className="p-8 bg-slate-900/40">
- <View className="flex-row items-center space-x-6 mb-8 border-b border-white/5 pb-8">
- <View className="w-16 h-16 rounded-[1.5rem] bg-indigo-600 items-center justify-center border border-white/20 shadow-2xl shadow-indigo-600/60">
- <TrendingUp size={32} color="#ffffff" strokeWidth={2.5} />
- </View>
- <View className="flex-1">
- <Text className="text-2xl font-black text-white tracking-tighter uppercase leading-none">{strategy.title}</Text>
- <View className="flex-row items-center mt-2 bg-emerald-500/10 self-start px-3 py-1 rounded-lg border border-emerald-500/20">
- <View className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-2 shadow-sm shadow-emerald-500" />
- <Text className="text-xs font-black text-emerald-400 uppercase tracking-widest ">{strategy.risk} Profile</Text>
- </View>
- </View>
- </View>
+      {/* Title */}
+      <View style={{ marginBottom: 28 }}>
+        <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, letterSpacing: 0, textTransform: 'uppercase', color: C.text }}>Growth Blueprint</Text>
+        <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, marginTop: 6, textTransform: 'uppercase', letterSpacing: 1.5, lineHeight: 20, color: C.sub }}>
+          Optimizing <Text style={{ color: C.accent, fontFamily: 'Poppins_600SemiBold' }}>₹{balance.toLocaleString('en-IN')}</Text> deployment after ₹{safeNumber(reserveAmount).toLocaleString('en-IN')} resilience buffer.
+        </Text>
+      </View>
 
- <View className="mb-10 p-5 bg-white/5 rounded-2xl border border-white/5 ">
- <Text className="text-slate-500 font-bold leading-relaxed text-sm leading-[22px]">
- <Text className="text-indigo-400 font-black uppercase tracking-widest">Logic: </Text>
- {strategy.reasoning}
- </Text>
- </View>
+      {/* Strategy card */}
+      <MotiView from={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+        style={{ borderRadius: 26, borderWidth: 1.5, borderColor: C.border, backgroundColor: '#ffffff', marginBottom: 28, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 14, elevation: 3 }}>
+        <View style={{ padding: 22 }}>
+          {/* Strategy header */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 18, paddingBottom: 18, borderBottomWidth: 1.5, borderBottomColor: C.border }}>
+            <View style={{ width: 58, height: 58, borderRadius: 20, backgroundColor: C.accent, alignItems: 'center', justifyContent: 'center', shadowColor: C.accent, shadowOpacity: 0.3, shadowRadius: 8, elevation: 4 }}>
+              <TrendingUp size={26} color="#ffffff" strokeWidth={2.5} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 15, letterSpacing: 0, color: C.text }}>{strategy.title}</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8, alignSelf: 'flex-start', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, backgroundColor: strategy.riskBg, borderWidth: 1.5, borderColor: strategy.riskBorder, gap: 5 }}>
+                <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: strategy.riskColor }} />
+                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 1.5, color: strategy.riskColor }}>{strategy.risk} Profile</Text>
+              </View>
+            </View>
+          </View>
 
- <View className="space-y-4">
- <Text className="text-xs font-black text-slate-500 uppercase tracking-[0.4em] mb-2 ml-1">Proposed Allocations</Text>
- {strategy.recommendations.map((rec, idx) => (
- <MotiView 
- key={idx} 
- from={{ opacity: 0, x: -10 }}
- animate={{ opacity: 1, x: 0 }}
- transition={{ delay: 300 + (idx * 100) }}
- className="p-5 rounded-[2rem] bg-white/5 border border-white/5 flex-row items-center space-x-5 shadow-inner"
- >
- <View className="w-12 h-12 rounded-xl bg-slate-900 items-center justify-center border border-white/5 shadow-2xl">
- {React.cloneElement(rec.icon, { strokeWidth: 2.5 })}
- </View>
- <View className="flex-1">
- <Text className="font-black text-white text-sm leading-[22px] tracking-tight">{rec.name}</Text>
- <Text className="text-xs font-black text-slate-500 uppercase tracking-[0.2em] mt-1 ">{rec.target}</Text>
- </View>
- <BlurView intensity={20} tint="dark" className="px-4 py-2 rounded-xl border border-white/10 overflow-hidden bg-indigo-500/10">
- <Text className="text-indigo-400 text-xs font-black uppercase tracking-[0.2em] ">{rec.portion}</Text>
- </BlurView>
- </MotiView>
- ))}
- </View>
- </BlurView>
- </MotiView>
+          {/* Reasoning */}
+          <View style={{ padding: 16, backgroundColor: C.card, borderRadius: 16, borderWidth: 1.5, borderColor: C.border, marginBottom: 18 }}>
+            <Text style={{ fontFamily: 'Poppins_500Medium', lineHeight: 22, fontSize: 13, color: C.sub }}>
+              <Text style={{ color: C.accent, fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 1.5 }}>Logic: </Text>
+              {strategy.reasoning}
+            </Text>
+          </View>
 
- <TouchableOpacity
- onPress={() => { setStep(7); navigation.navigate('Step7_FinalSummary'); }}
- activeOpacity={0.9}
- className="w-full bg-indigo-600 h-18 rounded-[1.5rem] flex-row items-center justify-center shadow-2xl shadow-indigo-600/50 mb-10"
- >
- <Text className="text-white font-black text-xs uppercase tracking-[0.3em] ">Commit Deployment Plan</Text>
- <ChevronRight size={22} color="#ffffff" strokeWidth={3} className="ml-4" />
- </TouchableOpacity>
- </OnboardingLayout>
- );
+          {/* Allocations */}
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12, marginLeft: 2, color: C.sub }}>Proposed Allocations</Text>
+          <View style={{ gap: 10 }}>
+            {strategy.recommendations.map((rec, idx) => (
+              <MotiView key={idx} from={{ opacity: 0, translateX: -10 }} animate={{ opacity: 1, translateX: 0 }} transition={{ delay: 300 + idx * 100 }}
+                style={{ padding: 16, borderRadius: 18, borderWidth: 1.5, borderColor: C.border, flexDirection: 'row', alignItems: 'center', gap: 14, backgroundColor: C.card }}>
+                <View style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: rec.bg, borderWidth: 1.5, borderColor: rec.bd, alignItems: 'center', justifyContent: 'center' }}>
+                  <rec.icon size={18} color={rec.ic} strokeWidth={2.5} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 14, letterSpacing: 0, color: C.text }}>{rec.name}</Text>
+                  <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 11, letterSpacing: 1.5, textTransform: 'uppercase', marginTop: 3, color: C.muted }}>{rec.target}</Text>
+                </View>
+                <View style={{ paddingHorizontal: 12, paddingVertical: 5, borderRadius: 10, backgroundColor: '#EEF2FF', borderWidth: 1.5, borderColor: '#C7D2FE' }}>
+                  <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, color: C.accent }}>{rec.portion}</Text>
+                </View>
+              </MotiView>
+            ))}
+          </View>
+        </View>
+      </MotiView>
+
+      {/* CTA */}
+      <TouchableOpacity onPress={() => { setStep(7); navigation.navigate('Step7_FinalSummary'); }} activeOpacity={0.9}
+        style={{ width: '100%', backgroundColor: C.accent, height: 58, borderRadius: 22, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, shadowColor: C.accent, shadowOpacity: 0.35, shadowRadius: 16, elevation: 8 }}>
+        <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', color: '#ffffff' }}>Commit Deployment Plan</Text>
+        <ChevronRight size={22} color="#ffffff" strokeWidth={3} />
+      </TouchableOpacity>
+    </OnboardingLayout>
+  );
 };
 
 export default Step6_Advice;

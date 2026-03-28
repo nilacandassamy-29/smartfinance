@@ -28,23 +28,6 @@ export default function RegisterScreen({ navigation }) {
         }
     };
 
-    const Field = ({ label, value, onChange, placeholder, type, secure }) => (
-        <View>
-            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: theme.text, marginBottom: 8 }}>{label}</Text>
-            <TextInput
-                value={value} onChangeText={onChange}
-                placeholder={placeholder} keyboardType={type || 'default'}
-                autoCapitalize="none" secureTextEntry={secure}
-                placeholderTextColor={theme.placeholder}
-                style={{
-                    height: 52, borderRadius: 12, backgroundColor: theme.inputBg,
-                    borderWidth: 1.5, borderColor: theme.border,
-                    paddingHorizontal: 16, fontFamily: 'Poppins-Regular',
-                    fontSize: 15, color: theme.text,
-                }}
-            />
-        </View>
-    );
 
     return (
         <View style={{ flex: 1, backgroundColor: theme.background }}>
@@ -58,16 +41,58 @@ export default function RegisterScreen({ navigation }) {
                                     width: 52, height: 52, backgroundColor: '#2563eb',
                                     borderRadius: 16, alignItems: 'center', justifyContent: 'center', marginBottom: 24,
                                 }}>
-                                    <Text style={{ color: '#fff', fontFamily: 'Poppins-Bold', fontSize: 22 }}>S</Text>
+                                    <Text style={{ color: '#fff', fontFamily: 'Poppins_700Bold', fontSize: 22 }}>S</Text>
                                 </View>
-                                <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 28, color: theme.text, marginBottom: 8 }}>Create account</Text>
-                                <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 15, color: theme.subText }}>Join thousands of smart investors</Text>
+                                <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 28, color: theme.text, marginBottom: 8 }}>Create account</Text>
+                                <Text style={{ fontFamily: 'Poppins_400Regular', fontSize: 15, color: theme.subText }}>Join thousands of smart investors</Text>
                             </View>
 
                             <View style={{ gap: 16, marginBottom: 28 }}>
-                                <Field label="Full Name" value={name} onChange={setName} placeholder="Your name" />
-                                <Field label="Email Address" value={email} onChange={setEmail} placeholder="you@example.com" type="email-address" />
-                                <Field label="Password" value={password} onChange={setPassword} placeholder="Create a strong password" secure />
+                                <View>
+                                    <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 14, color: theme.text, marginBottom: 8 }}>Full Name</Text>
+                                    <TextInput
+                                        value={name} onChangeText={setName}
+                                        placeholder="Your name" keyboardType="default"
+                                        autoCapitalize="words"
+                                        placeholderTextColor={theme.placeholder}
+                                        style={{
+                                            height: 52, borderRadius: 12, backgroundColor: theme.inputBg,
+                                            borderWidth: 1.5, borderColor: theme.border,
+                                            paddingHorizontal: 16, fontFamily: 'Poppins_400Regular',
+                                            fontSize: 15, color: theme.text,
+                                        }}
+                                    />
+                                </View>
+                                <View>
+                                    <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 14, color: theme.text, marginBottom: 8 }}>Email Address</Text>
+                                    <TextInput
+                                        value={email} onChangeText={setEmail}
+                                        placeholder="you@example.com" keyboardType="email-address"
+                                        autoCapitalize="none"
+                                        placeholderTextColor={theme.placeholder}
+                                        style={{
+                                            height: 52, borderRadius: 12, backgroundColor: theme.inputBg,
+                                            borderWidth: 1.5, borderColor: theme.border,
+                                            paddingHorizontal: 16, fontFamily: 'Poppins_400Regular',
+                                            fontSize: 15, color: theme.text,
+                                        }}
+                                    />
+                                </View>
+                                <View>
+                                    <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 14, color: theme.text, marginBottom: 8 }}>Password</Text>
+                                    <TextInput
+                                        value={password} onChangeText={setPassword}
+                                        placeholder="Create a strong password"
+                                        autoCapitalize="none" secureTextEntry={true}
+                                        placeholderTextColor={theme.placeholder}
+                                        style={{
+                                            height: 52, borderRadius: 12, backgroundColor: theme.inputBg,
+                                            borderWidth: 1.5, borderColor: theme.border,
+                                            paddingHorizontal: 16, fontFamily: 'Poppins_400Regular',
+                                            fontSize: 15, color: theme.text,
+                                        }}
+                                    />
+                                </View>
                             </View>
 
                             <TouchableOpacity
@@ -80,15 +105,15 @@ export default function RegisterScreen({ navigation }) {
                                     shadowOpacity: 0.25, shadowRadius: 10, elevation: 6,
                                 }}
                             >
-                                <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 16, color: '#fff' }}>
+                                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 16, color: '#fff' }}>
                                     {loading ? 'Creating account...' : 'Create Account'}
                                 </Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity onPress={() => navigation.navigate('Login')} style={{ alignItems: 'center', paddingVertical: 16 }}>
-                                <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14, color: theme.subText }}>
+                                <Text style={{ fontFamily: 'Poppins_400Regular', fontSize: 14, color: theme.subText }}>
                                     Already have an account?{' '}
-                                    <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#2563eb' }}>Sign in</Text>
+                                    <Text style={{ fontFamily: 'Poppins_600SemiBold', color: '#2563eb' }}>Sign in</Text>
                                 </Text>
                             </TouchableOpacity>
                         </MotiView>

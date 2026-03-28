@@ -1,305 +1,202 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput, ScrollView, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { 
- ChevronRight, ChevronLeft, User, GraduationCap, Briefcase, 
- Home, Heart, Phone, Calendar, IndianRupee, Landmark, ShieldCheck, 
- AtSign, Cpu, Target, UserCircle
-} from 'lucide-react-native';
+import { ChevronRight, ChevronLeft, User, GraduationCap, Briefcase, Home, Heart, Phone, Calendar, IndianRupee, Landmark } from 'lucide-react-native';
 import { useOnboarding } from '../../context/OnboardingContext';
 import { MotiView, AnimatePresence } from 'moti';
-import { BlurView } from 'expo-blur';
 import OnboardingLayout from '../../components/onboarding/OnboardingLayout';
 import { Picker } from '@react-native-picker/picker';
 
-const Step2_MemberDetails = () => {
- const {
- members, updateMember, familySize, setStep, mode
- } = useOnboarding();
- const navigation = useNavigation();
- const [currentIndex, setCurrentIndex] = useState(0);
-
- const activeMember = members[currentIndex] || {};
-
- const handleInputChange = (name, value) => {
- if (name === 'contact') {
- const cleaned = value.replace(/\D/g, '').slice(0, 10);
- updateMember(currentIndex, { [name]: cleaned });
- return;
- }
- updateMember(currentIndex, { [name]: value });
- };
-
- const isDobValid = () => {
- if (!activeMember.dob) return false;
- const selectedDate = new Date(activeMember.dob);
- const todayDate = new Date();
- todayDate.setHours(0, 0, 0, 0);
- return selectedDate <= todayDate;
- };
-
- const isContactValid = () => {
- const isSchoolStudent = activeMember.occupation === 'Student' && activeMember.educationType === 'School Student';
- const contact = activeMember.contact || '';
- if (isSchoolStudent) return true;
- return contact.length === 10;
- };
-
- const handleBack = () => {
- if (currentIndex > 0) {
- setCurrentIndex(currentIndex - 1);
- } else {
- setStep(1);
- navigation.navigate('Step1_FamilySize');
- }
- };
-
- const isStepValid = () => {
- const hasName = activeMember.name && activeMember.name.trim().length > 0;
- const hasGender = activeMember.gender && activeMember.gender !== '';
- const hasOccupation = activeMember.occupation && activeMember.occupation !== '';
- const dobValid = isDobValid();
- const contactValid = isContactValid();
-
- if (activeMember.occupation === 'Working' || activeMember.occupation === 'Retired') {
- const hasIncome = activeMember.income && Number(activeMember.income) > 0;
- const hasSector = activeMember.sector && activeMember.sector !== '';
- return hasName && hasGender && hasOccupation && dobValid && contactValid && hasIncome && hasSector;
- }
- return hasName && hasGender && hasOccupation && dobValid && contactValid;
- };
-
- const handleNext = () => {
- if (!isStepValid()) return;
- if (currentIndex < familySize - 1) {
- setCurrentIndex(currentIndex + 1);
- } else {
- setStep(3);
- navigation.navigate('Step3_Expenses');
- }
- };
-
- const occupations = [
- { id: 'Student', label: 'Scholastic', icon: <GraduationCap size={24} /> },
- { id: 'Working', label: 'Industrial', icon: <Briefcase size={24} /> },
- { id: 'Homemaker', label: 'Domestic', icon: <Home size={24} /> },
- { id: 'Retired', label: 'Emeritus', icon: <Heart size={24} /> },
- ];
-
- return (
- <OnboardingLayout currentStep={2}>
- <View className="mb-10 flex-row items-center justify-between">
- <TouchableOpacity onPress={handleBack} className="flex-row items-center space-x-3">
- <View className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 items-center justify-center">
- <ChevronLeft size={16} color="#475569" strokeWidth={3} />
- </View>
- <Text className="text-slate-500 font-black text-xs uppercase tracking-[0.3em] ">Backtrack</Text>
- </TouchableOpacity>
- <BlurView intensity={20} tint="dark" className="px-4 py-2 rounded-xl border border-white/5 overflow-hidden">
- <Text className="text-xs font-black text-indigo-400 uppercase tracking-[0.3em]">
- {mode === 'Family' ? `Node ${currentIndex + 1} // ${familySize}` : 'Persona Calibration'}
- </Text>
- </BlurView>
- </View>
-
- <View className="mb-12">
- <Text className="text-4xl font-black text-white tracking-tighter uppercase ">
- {mode === 'Family' ? `${activeMember.name || 'Entity Profile'}` : 'Neural Profile'}
- </Text>
- <Text className="text-slate-500 font-bold text-xs mt-2 uppercase tracking-widest leading-relaxed">
- Executing demographic mapping for biometric alignment.
- </Text>
- </View>
-
- <AnimatePresence exitBeforeEnter>
- <MotiView
- key={currentIndex}
- from={{ opacity: 0, x: 20 }}
- animate={{ opacity: 1, x: 0 }}
- exit={{ opacity: 0, x: -20 }}
- className="space-y-10"
- >
- {/* Primary Data Input Group */}
- <View className="space-y-8">
- <InputField 
- label="Biological Identity (Name) *" 
- icon={<User size={18} color="#475569" />}
- placeholder="Full Alias"
- value={activeMember.name}
- onChangeText={(val) => handleInputChange('name', val)}
- />
-
- <View>
- <Text className="text-xs font-black text-slate-500 uppercase tracking-[0.4em] mb-3 ml-1">Cellular Classification (Gender) *</Text>
- <View className="w-full h-14 bg-white/5 rounded-[1.25rem] border border-white/5 justify-center px-2">
- <Picker
- selectedValue={activeMember.gender}
- onValueChange={(val) => handleInputChange('gender', val)}
- dropdownIconColor="#475569"
- style={{ color: '#ffffff', fontSize: 14, fontWeight: 'bold' }}
- >
- <Picker.Item label="SELECT GENDER" value="" />
- <Picker.Item label="MALE // XY" value="Male" />
- <Picker.Item label="FEMALE // XX" value="Female" />
- <Picker.Item label="NON-BINARY // OTHER" value="Other" />
- </Picker>
- </View>
- </View>
-
- <InputField 
- label="Origin Pulse (DOB: YYYY-MM-DD) *" 
- icon={<Calendar size={18} color="#475569" />}
- placeholder="YYYY-MM-DD"
- value={activeMember.dob}
- onChangeText={(val) => handleInputChange('dob', val)}
- error={activeMember.dob && !isDobValid()}
- />
-
- <InputField 
- label="Signal Uplink (Contact) *" 
- icon={<Phone size={18} color="#475569" />}
- placeholder="10-Digit Mobile"
- keyboardType="numeric"
- value={activeMember.contact}
- onChangeText={(val) => handleInputChange('contact', val)}
- error={activeMember.contact && !isContactValid()}
- />
- </View>
-
- {/* Operational Directive Group */}
- <View className="mt-4">
- <Text className="text-xs font-black text-slate-500 uppercase tracking-[0.4em] mb-4 ml-1">Functional Directive (Occupation)</Text>
- <View className="flex-row flex-wrap gap-4">
- {occupations.map((occ) => (
- <TouchableOpacity
- key={occ.id}
- onPress={() => updateMember(currentIndex, { occupation: occ.id })}
- style={{ width: '47%' }}
- activeOpacity={0.8}
- className={`p-6 rounded-[1.5rem] border-2 flex-col items-center shadow-xl ${activeMember.occupation === occ.id ? 'bg-indigo-600/20 border-indigo-500' : 'bg-white/5 border-white/5 shadow-inner'}`}
- >
- <View className={`w-12 h-12 rounded-xl items-center justify-center mb-3 ${activeMember.occupation === occ.id ? 'bg-indigo-500/20' : 'bg-white/5'}`}>
- {React.cloneElement(occ.icon, { color: activeMember.occupation === occ.id ? '#818cf8' : '#475569', strokeWidth: 2.5 })}
- </View>
- <Text className={`font-black text-xs uppercase tracking-[0.2em] ${activeMember.occupation === occ.id ? 'text-white' : 'text-slate-500'}`}>{occ.label}</Text>
- </TouchableOpacity>
- ))}
- </View>
- </View>
-
- {/* Conditional Logic Modules */}
- {activeMember.occupation === 'Student' && (
- <MotiView from={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
- <View>
- <Text className="text-xs font-black text-slate-500 uppercase tracking-[0.4em] mb-3 ml-1">Academic Tier</Text>
- <View className="flex-row space-x-3">
- {['School Student', 'College Student'].map(type => (
- <TouchableOpacity
- key={type}
- onPress={() => updateMember(currentIndex, { educationType: type, school: '', college: '', std: '', course: '', year: '', totalFees: 0 })}
- className={`flex-1 h-12 rounded-xl items-center justify-center border ${activeMember.educationType === type ? 'bg-indigo-600 border-indigo-500' : 'bg-white/5 border-white/5'}`}
- >
- <Text className={`text-xs font-black uppercase tracking-widest ${activeMember.educationType === type ? 'text-white' : 'text-slate-500'}`}>{type}</Text>
- </TouchableOpacity>
- ))}
- </View>
- </View>
-
- <InputField 
- label={activeMember.educationType === 'School Student' ? "Institution Alias (School)" : "Institution Alias (College)"}
- icon={<GraduationCap size={18} color="#475569" />}
- value={activeMember.educationType === 'School Student' ? activeMember.school : activeMember.college}
- onChangeText={(val) => handleInputChange(activeMember.educationType === 'School Student' ? 'school' : 'college', val)}
- placeholder="Alias Name"
- />
-
- <View className="p-6 bg-indigo-500/10 rounded-[2rem] border border-indigo-500/20">
- <Text className="text-xs font-black uppercase tracking-[0.3em] text-indigo-400 mb-4">Cumulative Fees (Annual)</Text>
- <View className="flex-row items-center bg-white/5 h-14 rounded-xl px-4 border border-white/5">
- <IndianRupee size={16} color="#818cf8" strokeWidth={2.5} />
- <TextInput
- className="flex-1 font-black text-lg text-white ml-3"
- placeholder="0"
- placeholderTextColor="rgba(255,255,255,0.2)"
- keyboardType="numeric"
- value={String(activeMember.totalFees || '')}
- onChangeText={(val) => handleInputChange('totalFees', Number(val) || 0)}
- />
- </View>
- </View>
- </MotiView>
- )}
-
- {(activeMember.occupation === 'Working' || activeMember.occupation === 'Retired') && (
- <MotiView from={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
- <View>
- <Text className="text-xs font-black text-slate-500 uppercase tracking-[0.4em] mb-1 ml-1">Economic Sector</Text>
- <View className="w-full h-14 bg-white/5 rounded-[1.25rem] border border-white/5 justify-center px-2">
- <Picker
- selectedValue={activeMember.sector}
- onValueChange={(val) => handleInputChange('sector', val)}
- dropdownIconColor="#475569"
- style={{ color: '#ffffff', fontSize: 14, fontWeight: 'bold' }}
- >
- <Picker.Item label="SELECT SECTOR" value="" />
- <Picker.Item label="PRIVATE // CORP" value="Private" />
- <Picker.Item label="PUBLIC // GOVT" value="Public" />
- <Picker.Item label="BUSINESS // OPS" value="Business" />
- <Picker.Item label="FREELANCE // INDIE" value="Freelance" />
- </Picker>
- </View>
- </View>
-
- <View className="p-6 bg-emerald-500/5 rounded-[2rem] border border-emerald-500/10">
- <Text className="text-xs font-black uppercase tracking-[0.3em] text-emerald-400 mb-4">Monthly Inflow (Income)</Text>
- <View className="flex-row items-center bg-white/5 h-14 rounded-xl px-4 border border-white/5 shadow-inner">
- <IndianRupee size={16} color="#10b981" strokeWidth={3} />
- <TextInput
- className="flex-1 font-black text-lg text-white ml-3"
- placeholder="0"
- placeholderTextColor="rgba(255,255,255,0.2)"
- keyboardType="numeric"
- value={String(activeMember.income || '')}
- onChangeText={(val) => handleInputChange('income', Number(val) || 0)}
- />
- </View>
- </View>
- </MotiView>
- )}
-
- <TouchableOpacity
- onPress={handleNext}
- activeOpacity={0.9}
- disabled={!isStepValid()}
- className={`mt-10 w-full h-16 rounded-[1.5rem] flex-row items-center justify-center shadow-2xl ${isStepValid() ? 'bg-indigo-600 shadow-indigo-600/40' : 'bg-white/5 border border-white/5'}`}
- >
- <Text className={`font-black text-xs uppercase tracking-[0.3em] ${isStepValid() ? 'text-white' : 'text-slate-600'}`}>
- {currentIndex < familySize - 1 ? 'Next Node Sync' : 'Commit Ledger Phase'}
- </Text>
- <ChevronRight size={20} color={isStepValid() ? '#ffffff' : '#334155'} strokeWidth={3} className="ml-4" />
- </TouchableOpacity>
- </MotiView>
- </AnimatePresence>
- </OnboardingLayout>
- );
+const C = {
+  text: '#0F172A', sub: '#64748B', muted: '#94A3B8',
+  border: '#E2E8F0', card: '#F8FAFC', input: '#F1F5F9',
+  placeholder: '#CBD5E1', accent: '#6366f1',
 };
 
 const InputField = ({ label, icon, value, onChangeText, placeholder, keyboardType = 'default', error }) => (
- <View>
- <Text className="text-xs font-black text-slate-500 uppercase tracking-[0.4em] mb-3 ml-1">{label}</Text>
- <View className={`flex-row items-center space-x-4 bg-white/5 h-14 rounded-[1.25rem] px-5 border ${error ? 'border-rose-500' : 'border-white/5'}`}>
- {icon}
- <TextInput
- className="flex-1 font-black text-sm leading-[22px] text-white"
- placeholder={placeholder}
- placeholderTextColor="rgba(255,255,255,0.2)"
- keyboardType={keyboardType}
- value={value}
- onChangeText={onChangeText}
- />
- </View>
- {error && <Text className="text-xs font-black text-rose-500 uppercase tracking-widest mt-1.5 ml-1">Protocol field invalid</Text>}
- </View>
+  <View>
+    <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 10, marginLeft: 2, color: C.sub }}>
+      {label}
+    </Text>
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: C.input, height: 52, borderRadius: 18, paddingHorizontal: 18, borderWidth: 1.5, borderColor: error ? '#f43f5e' : C.border }}>
+      {icon}
+      <TextInput
+        style={{ flex: 1, fontFamily: 'Poppins_500Medium', fontSize: 14, color: C.text }}
+        placeholder={placeholder}
+        placeholderTextColor={C.placeholder}
+        keyboardType={keyboardType}
+        value={value}
+        onChangeText={onChangeText}
+      />
+    </View>
+    {error && <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 10, color: '#f43f5e', textTransform: 'uppercase', letterSpacing: 1.5, marginTop: 5, marginLeft: 2 }}>Protocol field invalid</Text>}
+  </View>
 );
+
+const Step2_MemberDetails = () => {
+  const { width } = Dimensions.get('window');
+  const { members, updateMember, familySize, setStep, mode } = useOnboarding();
+  const navigation = useNavigation();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const activeMember = members[currentIndex] || {};
+
+  const handleInputChange = (name, value) => {
+    if (name === 'contact') { updateMember(currentIndex, { [name]: value.replace(/\D/g, '').slice(0, 10) }); return; }
+    updateMember(currentIndex, { [name]: value });
+  };
+
+  const isDobValid = () => { if (!activeMember.dob) return false; return new Date(activeMember.dob) <= new Date(); };
+  const isContactValid = () => {
+    if (activeMember.occupation === 'Student' && activeMember.educationType === 'School Student') return true;
+    return (activeMember.contact || '').length === 10;
+  };
+  const handleBack = () => { if (currentIndex > 0) { setCurrentIndex(currentIndex - 1); } else { setStep(1); navigation.navigate('Step1_FamilySize'); } };
+  const isStepValid = () => {
+    const base = activeMember.name?.trim() && activeMember.gender && activeMember.occupation && isDobValid() && isContactValid();
+    if (activeMember.occupation === 'Working' || activeMember.occupation === 'Retired') return base && activeMember.income > 0 && activeMember.sector;
+    return !!base;
+  };
+  const handleNext = () => {
+    if (!isStepValid()) return;
+    if (currentIndex < familySize - 1) { setCurrentIndex(currentIndex + 1); } else { setStep(3); navigation.navigate('Step3_Expenses'); }
+  };
+
+  const occupations = [
+    { id: 'Student', label: 'Scholastic', icon: GraduationCap },
+    { id: 'Working', label: 'Industrial', icon: Briefcase },
+    { id: 'Homemaker', label: 'Domestic', icon: Home },
+    { id: 'Retired', label: 'Emeritus', icon: Heart },
+  ];
+
+  return (
+    <OnboardingLayout currentStep={2}>
+      {/* Header row */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 36 }}>
+        <TouchableOpacity onPress={handleBack} style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+          <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: C.input, borderWidth: 1.5, borderColor: C.border, alignItems: 'center', justifyContent: 'center' }}>
+            <ChevronLeft size={16} color={C.sub} strokeWidth={3} />
+          </View>
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: C.sub }}>Backtrack</Text>
+        </TouchableOpacity>
+        <View style={{ backgroundColor: '#EEF2FF', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 10 }}>
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 1.5, color: C.accent }}>
+            {mode === 'Family' ? `Node ${currentIndex + 1} // ${familySize}` : 'Persona Calibration'}
+          </Text>
+        </View>
+      </View>
+
+      {/* Title */}
+      <View style={{ marginBottom: 32 }}>
+        <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, letterSpacing: 0, textTransform: 'uppercase', color: C.text }}>
+          {mode === 'Family' ? (activeMember.name || 'Entity Profile') : 'Neural Profile'}
+        </Text>
+        <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, marginTop: 6, textTransform: 'uppercase', letterSpacing: 1.5, lineHeight: 20, color: C.sub }}>
+          Executing demographic mapping for biometric alignment.
+        </Text>
+      </View>
+
+      <AnimatePresence exitBeforeEnter>
+        <MotiView key={currentIndex} from={{ opacity: 0, translateX: 20 }} animate={{ opacity: 1, translateX: 0 }} exit={{ opacity: 0, translateX: -20 }}>
+          <View style={{ gap: 20, marginBottom: 24 }}>
+            <InputField label="Biological Identity (Name) *" icon={<User size={16} color={C.muted} />} placeholder="Full Alias" value={activeMember.name} onChangeText={(v) => handleInputChange('name', v)} />
+
+            <View>
+              <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 10, marginLeft: 2, color: C.sub }}>Cellular Classification (Gender) *</Text>
+              <View style={{ height: 52, borderRadius: 18, backgroundColor: C.input, borderWidth: 1.5, borderColor: C.border, justifyContent: 'center', paddingHorizontal: 8 }}>
+                <Picker selectedValue={activeMember.gender} onValueChange={(v) => handleInputChange('gender', v)} dropdownIconColor={C.sub} style={{ fontFamily: 'Poppins_500Medium', color: C.text, fontSize: 14 }}>
+                  <Picker.Item label="SELECT GENDER" value="" />
+                  <Picker.Item label="MALE // XY" value="Male" />
+                  <Picker.Item label="FEMALE // XX" value="Female" />
+                  <Picker.Item label="NON-BINARY // OTHER" value="Other" />
+                </Picker>
+              </View>
+            </View>
+
+            <InputField label="Origin Pulse (DOB: YYYY-MM-DD) *" icon={<Calendar size={16} color={C.muted} />} placeholder="YYYY-MM-DD" value={activeMember.dob} onChangeText={(v) => handleInputChange('dob', v)} error={activeMember.dob && !isDobValid()} />
+            <InputField label="Signal Uplink (Contact) *" icon={<Phone size={16} color={C.muted} />} placeholder="10-Digit Mobile" keyboardType="numeric" value={activeMember.contact} onChangeText={(v) => handleInputChange('contact', v)} error={activeMember.contact && !isContactValid()} />
+          </View>
+
+          {/* Occupation */}
+          <View style={{ marginBottom: 24 }}>
+            <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 16, marginLeft: 2, color: C.sub }}>Functional Directive (Occupation)</Text>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+              {occupations.map((occ) => {
+                const isActive = activeMember.occupation === occ.id;
+                return (
+                  <TouchableOpacity key={occ.id} onPress={() => updateMember(currentIndex, { occupation: occ.id })} activeOpacity={0.8}
+                    style={{ width: '47%', padding: 20, borderRadius: 22, alignItems: 'center', backgroundColor: isActive ? C.accent : C.card, borderWidth: 1.5, borderColor: isActive ? C.accent : C.border, shadowColor: isActive ? C.accent : '#000', shadowOpacity: isActive ? 0.2 : 0.03, shadowRadius: 8, elevation: isActive ? 4 : 1 }}>
+                    <View style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: isActive ? 'rgba(255,255,255,0.2)' : '#EEF2FF', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
+                      <occ.icon size={22} color={isActive ? '#ffffff' : C.accent} strokeWidth={2.5} />
+                    </View>
+                    <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 12, letterSpacing: 2, textTransform: 'uppercase', color: isActive ? '#ffffff' : C.muted }}>{occ.label}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
+
+          {/* Student extras */}
+          {activeMember.occupation === 'Student' && (
+            <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} style={{ gap: 18, marginBottom: 24 }}>
+              <View>
+                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12, marginLeft: 2, color: C.sub }}>Academic Tier</Text>
+                <View style={{ flexDirection: 'row', gap: 10 }}>
+                  {['School Student', 'College Student'].map(type => (
+                    <TouchableOpacity key={type} onPress={() => updateMember(currentIndex, { educationType: type, school: '', college: '', std: '', course: '', year: '', totalFees: 0 })}
+                      style={{ flex: 1, height: 46, borderRadius: 14, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, backgroundColor: activeMember.educationType === type ? C.accent : C.card, borderColor: activeMember.educationType === type ? C.accent : C.border }}>
+                      <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 11, letterSpacing: 1.5, textTransform: 'uppercase', color: activeMember.educationType === type ? '#ffffff' : C.muted }}>{type}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+              <InputField label={activeMember.educationType === 'School Student' ? "Institution Alias (School)" : "Institution Alias (College)"} icon={<GraduationCap size={16} color={C.muted} />} value={activeMember.educationType === 'School Student' ? activeMember.school : activeMember.college} onChangeText={(v) => handleInputChange(activeMember.educationType === 'School Student' ? 'school' : 'college', v)} placeholder="Alias Name" />
+              <View style={{ padding: 20, backgroundColor: '#EEF2FF', borderRadius: 22, borderWidth: 1.5, borderColor: '#C7D2FE' }}>
+                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: C.accent, marginBottom: 14 }}>Cumulative Fees (Annual)</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', height: 50, borderRadius: 14, paddingHorizontal: 14, backgroundColor: '#ffffff', borderWidth: 1.5, borderColor: C.border }}>
+                  <IndianRupee size={15} color={C.accent} strokeWidth={2.5} />
+                  <TextInput style={{ flex: 1, fontFamily: 'Poppins_500Medium', fontSize: 16, color: C.text, marginLeft: 10 }} placeholder="0" placeholderTextColor={C.placeholder} keyboardType="numeric" value={String(activeMember.totalFees || '')} onChangeText={(v) => handleInputChange('totalFees', Number(v) || 0)} />
+                </View>
+              </View>
+            </MotiView>
+          )}
+
+          {/* Working / Retired extras */}
+          {(activeMember.occupation === 'Working' || activeMember.occupation === 'Retired') && (
+            <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} style={{ gap: 18, marginBottom: 24 }}>
+              <View>
+                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 10, marginLeft: 2, color: C.sub }}>Economic Sector</Text>
+                <View style={{ height: 52, borderRadius: 18, backgroundColor: C.input, borderWidth: 1.5, borderColor: C.border, justifyContent: 'center', paddingHorizontal: 8 }}>
+                  <Picker selectedValue={activeMember.sector} onValueChange={(v) => handleInputChange('sector', v)} dropdownIconColor={C.sub} style={{ fontFamily: 'Poppins_500Medium', color: C.text, fontSize: 14 }}>
+                    <Picker.Item label="SELECT SECTOR" value="" />
+                    <Picker.Item label="PRIVATE // CORP" value="Private" />
+                    <Picker.Item label="PUBLIC // GOVT" value="Public" />
+                    <Picker.Item label="BUSINESS // OPS" value="Business" />
+                    <Picker.Item label="FREELANCE // INDIE" value="Freelance" />
+                  </Picker>
+                </View>
+              </View>
+              <View style={{ padding: 20, backgroundColor: '#F0FDF4', borderRadius: 22, borderWidth: 1.5, borderColor: '#BBF7D0' }}>
+                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: '#16a34a', marginBottom: 14 }}>Monthly Inflow (Income)</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', height: 50, borderRadius: 14, paddingHorizontal: 14, backgroundColor: '#ffffff', borderWidth: 1.5, borderColor: C.border }}>
+                  <IndianRupee size={15} color="#10b981" strokeWidth={3} />
+                  <TextInput style={{ flex: 1, fontFamily: 'Poppins_500Medium', fontSize: 16, color: C.text, marginLeft: 10 }} placeholder="0" placeholderTextColor={C.placeholder} keyboardType="numeric" value={String(activeMember.income || '')} onChangeText={(v) => handleInputChange('income', Number(v) || 0)} />
+                </View>
+              </View>
+            </MotiView>
+          )}
+
+          {/* CTA */}
+          <TouchableOpacity onPress={handleNext} activeOpacity={0.9} disabled={!isStepValid()}
+            style={{ marginTop: 12, width: '100%', height: 58, borderRadius: 22, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, backgroundColor: isStepValid() ? C.accent : C.input, borderWidth: isStepValid() ? 0 : 1.5, borderColor: C.border, shadowColor: C.accent, shadowOpacity: isStepValid() ? 0.3 : 0, shadowRadius: 14, elevation: isStepValid() ? 6 : 0 }}>
+            <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, letterSpacing: 2, textTransform: 'uppercase', color: isStepValid() ? '#ffffff' : C.muted }}>
+              {currentIndex < familySize - 1 ? 'Next Node Sync' : 'Commit Ledger Phase'}
+            </Text>
+            <ChevronRight size={20} color={isStepValid() ? '#ffffff' : C.muted} strokeWidth={3} />
+          </TouchableOpacity>
+        </MotiView>
+      </AnimatePresence>
+    </OnboardingLayout>
+  );
+};
 
 export default Step2_MemberDetails;

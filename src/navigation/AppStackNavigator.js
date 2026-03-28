@@ -13,6 +13,7 @@ import ProfileMenuScreen from '../screens/ProfileMenuScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
 import SecurityScreen from '../screens/SecurityScreen';
 import HelpSupportScreen from '../screens/HelpSupportScreen';
+import ThemeScreen from '../screens/ThemeScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -27,6 +28,7 @@ export default function AppStackNavigator() {
       <Stack.Screen name="ExpenseHistoryDetail" component={ExpenseHistoryDetailScreen} />
       <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
       <Stack.Screen name="FAQScreen" component={FAQScreen} />
+      <Stack.Screen name="ThemeScreen" component={ThemeScreen} options={{ headerShown: false }} />
       <Stack.Screen name="ProfileMenuScreen" component={ProfileMenuScreen} />
       <Stack.Screen name="NotificationsScreen" component={NotificationsScreen} options={{ headerShown: false }} />
       <Stack.Screen name="SecurityScreen" component={SecurityScreen} options={{ headerShown: false }} />
