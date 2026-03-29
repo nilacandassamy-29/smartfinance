@@ -40,7 +40,7 @@ export default function AuthChoiceScreen({ navigation }) {
                     }}>
                         <Wallet size={56} color="#2563EB" />
                     </View>
-                    <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, fontWeight: '800', color: theme.text, letterSpacing: 0 }}>
+                    <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, color: theme.text, letterSpacing: 0 }}>
                         SmartFinance
                     </Text>
                     <Text style={{ fontFamily: 'Poppins_400Regular', fontSize: 14, color: theme.subText, marginTop: 6 }}>
