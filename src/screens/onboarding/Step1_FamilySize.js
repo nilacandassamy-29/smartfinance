@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Users, User, ChevronRight, Minus, Plus, ChevronLeft } from 'lucide-react-native';
@@ -11,7 +11,7 @@ import OnboardingLayout from '../../components/onboarding/OnboardingLayout';
 const C = {
   text: '#0F172A', sub: '#64748B', muted: '#94A3B8',
   border: '#E2E8F0', card: '#F8FAFC', input: '#F1F5F9',
-  accent: '#6366f1',
+  accent: '#2563EB',
 };
 
 const Step1_FamilySize = () => {
@@ -48,7 +48,7 @@ const Step1_FamilySize = () => {
           <MotiView
             from={{ scale: 0.5, opacity: 0, rotate: '-45deg' }}
             animate={{ scale: 1, opacity: 1, rotate: '0deg' }}
-            style={{ width: 96, height: 96, backgroundColor: '#EEF2FF', borderRadius: 32, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: '#C7D2FE' }}
+            style={{ width: 96, height: 96, backgroundColor: '#EFF6FF', borderRadius: 32, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: '#BFDBFE' }}
           >
             <Users size={40} color={C.accent} strokeWidth={2.5} />
           </MotiView>
@@ -112,7 +112,7 @@ const Step1_FamilySize = () => {
                   shadowOpacity: opt.isActive ? 0.25 : 0.04, shadowRadius: 12, elevation: opt.isActive ? 6 : 2,
                 }}
               >
-                <View style={{ width: 52, height: 52, borderRadius: 16, backgroundColor: opt.isActive ? 'rgba(255,255,255,0.2)' : '#EEF2FF', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+                <View style={{ width: 52, height: 52, borderRadius: 16, backgroundColor: opt.isActive ? 'rgba(255,255,255,0.2)' : '#EFF6FF', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
                   <opt.icon size={28} color={opt.isActive ? '#ffffff' : C.accent} strokeWidth={2.5} />
                 </View>
                 <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 12, letterSpacing: 0.5, textAlign: 'center', color: opt.isActive ? '#ffffff' : C.muted }}>

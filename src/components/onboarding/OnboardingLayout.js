@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { View, Text, ScrollView, ActivityIndicator, StatusBar as RNStatusBar } from 'react-native';
 import { LayoutDashboard, ShieldCheck, Lock } from 'lucide-react-native';
 import { useOnboarding } from '../../context/OnboardingContext';
@@ -22,7 +22,7 @@ const OnboardingLayout = ({ children, currentStep }) => {
   if (authLoading || !isInitialized) {
     return (
       <View style={{ flex: 1, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center' }}>
-        <ActivityIndicator size="large" color="#6366f1" />
+        <ActivityIndicator size="large" color="#2563EB" />
         <Text style={{ ...F.label, color: '#94A3B8', marginTop: 24 }}>
           Setting up your profile...
         </Text>
@@ -42,7 +42,7 @@ const OnboardingLayout = ({ children, currentStep }) => {
         <View style={{ paddingHorizontal: 24, marginBottom: 32 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <View style={{ width: 40, height: 40, backgroundColor: '#6366f1', borderRadius: 12, alignItems: 'center', justifyContent: 'center', shadowColor: '#6366f1', shadowOpacity: 0.3, shadowRadius: 8, elevation: 4 }}>
+              <View style={{ width: 40, height: 40, backgroundColor: '#2563EB', borderRadius: 12, alignItems: 'center', justifyContent: 'center', shadowColor: '#2563EB', shadowOpacity: 0.3, shadowRadius: 8, elevation: 4 }}>
                 <LayoutDashboard size={20} color="#ffffff" strokeWidth={2.5} />
               </View>
               <View>
@@ -53,8 +53,8 @@ const OnboardingLayout = ({ children, currentStep }) => {
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
               {isSyncing ? (
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <ActivityIndicator size="small" color="#6366f1" />
-                  <Text style={{ ...F.secured, color: '#6366f1' }}>Saving...</Text>
+                  <ActivityIndicator size="small" color="#2563EB" />
+                  <Text style={{ ...F.secured, color: '#2563EB' }}>Saving...</Text>
                 </View>
               ) : (
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
@@ -71,7 +71,7 @@ const OnboardingLayout = ({ children, currentStep }) => {
           {/* Progress bar */}
           <View style={{ flexDirection: 'row', gap: 4, height: 5 }}>
             {steps.map((s) => (
-              <View key={s} style={{ flex: 1, height: '100%', borderRadius: 10, backgroundColor: s <= currentStep ? '#6366f1' : '#E2E8F0', shadowColor: '#6366f1', shadowOpacity: s <= currentStep ? 0.35 : 0, shadowRadius: 4, elevation: s <= currentStep ? 2 : 0 }} />
+              <View key={s} style={{ flex: 1, height: '100%', borderRadius: 10, backgroundColor: s <= currentStep ? '#2563EB' : '#E2E8F0', shadowColor: '#2563EB', shadowOpacity: s <= currentStep ? 0.35 : 0, shadowRadius: 4, elevation: s <= currentStep ? 2 : 0 }} />
             ))}
           </View>
         </View>

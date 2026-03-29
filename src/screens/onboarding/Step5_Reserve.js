@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { View, Text, TouchableOpacity, TextInput, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ChevronRight, ChevronLeft, ShieldCheck, Target, Zap, Banknote } from 'lucide-react-native';
@@ -6,7 +6,7 @@ import { useOnboarding } from '../../context/OnboardingContext';
 import { MotiView } from 'moti';
 import OnboardingLayout from '../../components/onboarding/OnboardingLayout';
 
-const C = { text: '#0F172A', sub: '#64748B', muted: '#94A3B8', border: '#E2E8F0', card: '#F8FAFC', input: '#F1F5F9', placeholder: '#CBD5E1', accent: '#6366f1' };
+const C = { text: '#0F172A', sub: '#64748B', muted: '#94A3B8', border: '#E2E8F0', card: '#F8FAFC', input: '#F1F5F9', placeholder: '#CBD5E1', accent: '#2563EB' };
 
 const Step5_Reserve = () => {
   const { width } = Dimensions.get('window');
@@ -25,7 +25,7 @@ const Step5_Reserve = () => {
           </View>
           <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.3, color: C.sub }}>Go Back</Text>
         </TouchableOpacity>
-        <View style={{ backgroundColor: '#EEF2FF', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 10 }}>
+        <View style={{ backgroundColor: '#EFF6FF', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 10 }}>
           <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.3, color: C.accent }}>Emergency Fund</Text>
         </View>
       </View>
@@ -71,7 +71,7 @@ const Step5_Reserve = () => {
           </View>
 
           {/* Hint */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16, backgroundColor: '#EEF2FF', borderRadius: 18, borderWidth: 1.5, borderColor: '#C7D2FE' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16, backgroundColor: '#EFF6FF', borderRadius: 18, borderWidth: 1.5, borderColor: '#BFDBFE' }}>
             <Zap size={16} color={C.accent} strokeWidth={2.5} />
             <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, lineHeight: 20, letterSpacing: 0.2, flex: 1, color: C.sub }}>
               An emergency fund keeps you safe when unexpected expenses come up.

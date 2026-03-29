@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { View, Text, TouchableOpacity, TextInput, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ChevronRight, ChevronLeft, ShoppingCart, Zap, Droplets, Flame, Wifi, Smartphone, Home, Car, Shield, HeartPulse, GraduationCap, CreditCard, Wrench, Youtube, User, MoreHorizontal, Activity, TrendingUp } from 'lucide-react-native';
@@ -9,7 +9,7 @@ import OnboardingLayout from '../../components/onboarding/OnboardingLayout';
 const C = {
   text: '#0F172A', sub: '#64748B', muted: '#94A3B8',
   border: '#E2E8F0', card: '#F8FAFC', input: '#F1F5F9',
-  placeholder: '#CBD5E1', accent: '#6366f1',
+  placeholder: '#CBD5E1', accent: '#2563EB',
 };
 
 const Step3_Expenses = () => {
@@ -22,7 +22,7 @@ const Step3_Expenses = () => {
     { id: 'electricity',   label: 'Electricity',   icon: Zap,          ic: '#eab308', bg: '#FEFCE8', bd: '#FDE68A' },
     { id: 'water',         label: 'Water Bill',    icon: Droplets,     ic: '#3b82f6', bg: '#EFF6FF', bd: '#BFDBFE' },
     { id: 'gas',           label: 'Gas Bill',      icon: Flame,        ic: '#f97316', bg: '#FFF7ED', bd: '#FED7AA' },
-    { id: 'internet',      label: 'Internet',      icon: Wifi,         ic: '#6366f1', bg: '#EEF2FF', bd: '#C7D2FE' },
+    { id: 'internet',      label: 'Internet',      icon: Wifi,         ic: '#2563EB', bg: '#EFF6FF', bd: '#BFDBFE' },
     { id: 'mobile',        label: 'Mobile',        icon: Smartphone,   ic: '#64748b', bg: '#F8FAFC', bd: '#E2E8F0' },
     { id: 'rent',          label: 'Rent / EMI',    icon: Home,         ic: '#a855f7', bg: '#FAF5FF', bd: '#E9D5FF' },
     { id: 'transport',     label: 'Transport',     icon: Car,          ic: '#0ea5e9', bg: '#F0F9FF', bd: '#BAE6FD' },
@@ -50,7 +50,7 @@ const Step3_Expenses = () => {
           </View>
           <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, color: C.sub }}>Go Back</Text>
         </TouchableOpacity>
-        <View style={{ backgroundColor: '#EEF2FF', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 10 }}>
+        <View style={{ backgroundColor: '#EFF6FF', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 10 }}>
           <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.3, color: C.accent }}>Monthly Expenses</Text>
         </View>
       </View>

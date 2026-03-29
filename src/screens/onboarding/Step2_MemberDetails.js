@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, TextInput, Dimensions, ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ChevronRight, ChevronLeft, User, GraduationCap, Briefcase, Home, Heart, Phone, Calendar, IndianRupee } from 'lucide-react-native';
@@ -13,7 +13,7 @@ import { db } from '../../config/firebase';
 const C = {
   text: '#0F172A', sub: '#64748B', muted: '#94A3B8',
   border: '#E2E8F0', card: '#F8FAFC', input: '#F1F5F9',
-  placeholder: '#CBD5E1', accent: '#6366f1',
+  placeholder: '#CBD5E1', accent: '#2563EB',
 };
 
 const InputField = ({ label, icon, value, onChangeText, placeholder, keyboardType = 'default', error }) => (
@@ -207,7 +207,7 @@ const Step2_MemberDetails = () => {
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingRight: 20 }}>
           {classes.map(cls => (
             <TouchableOpacity key={cls} onPress={() => setSelectedClass(cls)}
-              style={{ borderRadius: 20, paddingHorizontal: 16, paddingVertical: 8, backgroundColor: selectedClass === cls ? '#4F46E5' : '#F1F5F9' }}>
+              style={{ borderRadius: 20, paddingHorizontal: 16, paddingVertical: 8, backgroundColor: selectedClass === cls ? '#2563EB' : '#F1F5F9' }}>
               <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 12, color: selectedClass === cls ? '#FFFFFF' : '#64748B' }}>{cls}</Text>
             </TouchableOpacity>
           ))}
@@ -224,7 +224,7 @@ const Step2_MemberDetails = () => {
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingRight: 20 }}>
           {years.map(yr => (
             <TouchableOpacity key={yr} onPress={() => setSelectedYear(yr)}
-              style={{ borderRadius: 20, paddingHorizontal: 16, paddingVertical: 8, backgroundColor: selectedYear === yr ? '#4F46E5' : '#F1F5F9' }}>
+              style={{ borderRadius: 20, paddingHorizontal: 16, paddingVertical: 8, backgroundColor: selectedYear === yr ? '#2563EB' : '#F1F5F9' }}>
               <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 12, color: selectedYear === yr ? '#FFFFFF' : '#64748B' }}>{yr}</Text>
             </TouchableOpacity>
           ))}
@@ -248,7 +248,7 @@ const Step2_MemberDetails = () => {
       {renderClassPills()}
 
       {/* Field 3: Annual Education Fees */}
-      <View style={{ backgroundColor: '#EEF2FF', borderRadius: 16, padding: 16 }}>
+      <View style={{ backgroundColor: '#EFF6FF', borderRadius: 16, padding: 16 }}>
         <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 12, color: C.sub }}>Annual Education Fees</Text>
         <View style={{ flexDirection: 'row', gap: 8 }}>
           {[
@@ -257,7 +257,7 @@ const Step2_MemberDetails = () => {
             { label: 'Term 3', val: term3, set: setTerm3 }
           ].map((item, idx) => (
             <View key={idx} style={{ flex: 1 }}>
-              <Text style={{ fontSize: 10, fontFamily: 'Poppins_600SemiBold', color: '#6366F1', marginBottom: 6 }}>{item.label}</Text>
+              <Text style={{ fontSize: 10, fontFamily: 'Poppins_600SemiBold', color: '#2563EB', marginBottom: 6 }}>{item.label}</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', borderRadius: 10, padding: 10 }}>
                 <IndianRupee size={12} color={C.text} style={{ marginRight: 4 }} />
                 <TextInput placeholder="0" keyboardType="numeric" style={{ flex: 1, fontSize: 14, fontFamily: 'Poppins_500Medium', color: C.text, padding: 0 }} value={item.val} onChangeText={item.set} />
@@ -265,7 +265,7 @@ const Step2_MemberDetails = () => {
             </View>
           ))}
         </View>
-        <Text style={{ fontSize: 12, fontFamily: 'Poppins_700Bold', color: '#4F46E5', textAlign: 'right', marginTop: 8 }}>Total Annual Fees: ₹{schoolTotal.toLocaleString('en-IN')}
+        <Text style={{ fontSize: 12, fontFamily: 'Poppins_700Bold', color: '#2563EB', textAlign: 'right', marginTop: 8 }}>Total Annual Fees: ₹{schoolTotal.toLocaleString('en-IN')}
         </Text>
       </View>
     </MotiView>
@@ -286,7 +286,7 @@ const Step2_MemberDetails = () => {
       {renderYearPills()}
 
       {/* Field 3: Annual Education Fees */}
-      <View style={{ backgroundColor: '#EEF2FF', borderRadius: 16, padding: 16 }}>
+      <View style={{ backgroundColor: '#EFF6FF', borderRadius: 16, padding: 16 }}>
         <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 12, color: C.sub }}>Annual Education Fees</Text>
         <View style={{ flexDirection: 'row', gap: 8 }}>
           {[
@@ -295,7 +295,7 @@ const Step2_MemberDetails = () => {
             { label: 'Sem 3', val: sem3, set: setSem3 }
           ].map((item, idx) => (
             <View key={idx} style={{ flex: 1 }}>
-              <Text style={{ fontSize: 10, fontFamily: 'Poppins_600SemiBold', color: '#6366F1', marginBottom: 6 }}>{item.label}</Text>
+              <Text style={{ fontSize: 10, fontFamily: 'Poppins_600SemiBold', color: '#2563EB', marginBottom: 6 }}>{item.label}</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', borderRadius: 10, padding: 10 }}>
                 <IndianRupee size={12} color={C.text} style={{ marginRight: 4 }} />
                 <TextInput placeholder="0" keyboardType="numeric" style={{ flex: 1, fontSize: 14, fontFamily: 'Poppins_500Medium', color: C.text, padding: 0 }} value={item.val} onChangeText={item.set} />
@@ -303,7 +303,7 @@ const Step2_MemberDetails = () => {
             </View>
           ))}
         </View>
-        <Text style={{ fontSize: 12, fontFamily: 'Poppins_700Bold', color: '#4F46E5', textAlign: 'right', marginTop: 8 }}>Total Annual Fees: ₹{collegeTotal.toLocaleString('en-IN')}
+        <Text style={{ fontSize: 12, fontFamily: 'Poppins_700Bold', color: '#2563EB', textAlign: 'right', marginTop: 8 }}>Total Annual Fees: ₹{collegeTotal.toLocaleString('en-IN')}
         </Text>
       </View>
     </MotiView>
@@ -318,7 +318,7 @@ const Step2_MemberDetails = () => {
           </View>
           <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, color: C.sub }}>Go Back</Text>
         </TouchableOpacity>
-        <View style={{ backgroundColor: '#EEF2FF', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 10 }}>
+        <View style={{ backgroundColor: '#EFF6FF', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 10 }}>
           <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, color: C.accent }}>
             {mode === 'Family' ? `Member ${currentIndex + 1} of ${familySize}` : 'Your Profile'}
           </Text>
@@ -363,7 +363,7 @@ const Step2_MemberDetails = () => {
                 return (
                   <TouchableOpacity key={occ.id} onPress={() => updateMember(currentIndex, { occupation: occ.id })} activeOpacity={0.8}
                     style={{ width: '47%', padding: 20, borderRadius: 22, alignItems: 'center', backgroundColor: isActive ? C.accent : C.card, borderWidth: 1.5, borderColor: isActive ? C.accent : C.border, shadowColor: isActive ? C.accent : '#000', shadowOpacity: isActive ? 0.2 : 0.03, shadowRadius: 8, elevation: isActive ? 4 : 1 }}>
-                    <View style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: isActive ? 'rgba(255,255,255,0.2)' : '#EEF2FF', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
+                    <View style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: isActive ? 'rgba(255,255,255,0.2)' : '#EFF6FF', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
                       <occ.icon size={22} color={isActive ? '#ffffff' : C.accent} strokeWidth={2.5} />
                     </View>
                     <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 12, letterSpacing: 0.5, color: isActive ? '#ffffff' : C.muted }}>{occ.label}</Text>

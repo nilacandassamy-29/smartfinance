@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator, Dimensions, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ChevronLeft, CheckCircle2, TrendingUp, ShieldCheck, Wallet, ArrowRight, Bot } from 'lucide-react-native';
@@ -10,7 +10,7 @@ import { doc, setDoc, addDoc, collection, serverTimestamp, deleteDoc } from 'fir
 import { db } from '../../config/firebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const C = { text: '#0F172A', sub: '#64748B', muted: '#94A3B8', border: '#E2E8F0', card: '#F8FAFC', accent: '#6366f1' };
+const C = { text: '#0F172A', sub: '#64748B', muted: '#94A3B8', border: '#E2E8F0', card: '#F8FAFC', accent: '#2563EB' };
 
 const Step7_FinalSummary = () => {
   const { updateUserProfile, user } = useAuth();
@@ -31,7 +31,7 @@ const Step7_FinalSummary = () => {
     { label: 'Monthly Income',   value: totalIncome,       icon: TrendingUp,  ic: '#10b981', bg: '#ECFDF5', bd: '#BBF7D0' },
     { label: 'Monthly Expenses', value: totalExpenses,     icon: TrendingUp,  ic: '#f43f5e', bg: '#FFF1F2', bd: '#FECDD3' },
     { label: 'Emergency Fund',   value: reserveAmount,     icon: ShieldCheck, ic: '#3b82f6', bg: '#EFF6FF', bd: '#BFDBFE' },
-    { label: 'Ready to Invest',  value: investableSurplus, icon: Wallet,      ic: '#6366f1', bg: '#EEF2FF', bd: '#C7D2FE' },
+    { label: 'Ready to Invest',  value: investableSurplus, icon: Wallet,      ic: '#2563EB', bg: '#EFF6FF', bd: '#BFDBFE' },
   ];
 
   const handleFinalize = async () => {
@@ -216,7 +216,7 @@ const Step7_FinalSummary = () => {
 
           {/* Note */}
           <MotiView from={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 800 }}
-            style={{ backgroundColor: '#EEF2FF', padding: 18, borderRadius: 20, borderWidth: 1.5, borderColor: '#C7D2FE', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            style={{ backgroundColor: '#EFF6FF', padding: 18, borderRadius: 20, borderWidth: 1.5, borderColor: '#BFDBFE', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
             <View style={{ width: 50, height: 50, backgroundColor: C.accent, borderRadius: 16, alignItems: 'center', justifyContent: 'center', shadowColor: C.accent, shadowOpacity: 0.3, shadowRadius: 8, elevation: 4 }}>
               <Bot size={24} color="#ffffff" strokeWidth={2.5} />
             </View>

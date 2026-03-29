@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ChevronRight, ChevronLeft, TrendingUp, TrendingDown, Wallet, Bot, Cpu } from 'lucide-react-native';
@@ -6,7 +6,7 @@ import { useOnboarding } from '../../context/OnboardingContext';
 import { MotiView } from 'moti';
 import OnboardingLayout from '../../components/onboarding/OnboardingLayout';
 
-const C = { text: '#0F172A', sub: '#64748B', muted: '#94A3B8', border: '#E2E8F0', card: '#F8FAFC', accent: '#6366f1' };
+const C = { text: '#0F172A', sub: '#64748B', muted: '#94A3B8', border: '#E2E8F0', card: '#F8FAFC', accent: '#2563EB' };
 
 const Step4_Analysis = () => {
   const { width } = Dimensions.get('window');
@@ -18,7 +18,7 @@ const Step4_Analysis = () => {
   const cards = [
     { label: 'Total Income',    value: totalIncome,     icon: TrendingUp,   ic: '#10b981', tint: '#F0FDF4', border: '#BBF7D0' },
     { label: 'Total Expenses',  value: totalExpenses,   icon: TrendingDown, ic: '#f43f5e', tint: '#FFF1F2', border: '#FECDD3' },
-    { label: 'Money Available', value: initialSurplus,  icon: Wallet,       ic: '#6366f1', tint: '#EEF2FF', border: '#C7D2FE' },
+    { label: 'Money Available', value: initialSurplus,  icon: Wallet,       ic: '#2563EB', tint: '#EFF6FF', border: '#BFDBFE' },
   ];
 
   return (
@@ -72,13 +72,13 @@ const Step4_Analysis = () => {
 
       {/* Smart advice card */}
       <MotiView from={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 600 }}
-        style={{ borderRadius: 26, borderWidth: 1.5, borderColor: '#C7D2FE', backgroundColor: '#EEF2FF', marginBottom: 28, shadowColor: C.accent, shadowOpacity: 0.1, shadowRadius: 12, elevation: 3 }}>
+        style={{ borderRadius: 26, borderWidth: 1.5, borderColor: '#BFDBFE', backgroundColor: '#EFF6FF', marginBottom: 28, shadowColor: C.accent, shadowOpacity: 0.1, shadowRadius: 12, elevation: 3 }}>
         <View style={{ padding: 20, flexDirection: 'row', alignItems: 'flex-start', gap: 16 }}>
           <View style={{ width: 54, height: 54, borderRadius: 18, backgroundColor: C.accent, alignItems: 'center', justifyContent: 'center', shadowColor: C.accent, shadowOpacity: 0.4, shadowRadius: 8, elevation: 4 }}>
             <Bot size={26} color="#ffffff" strokeWidth={2.5} />
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 8, color: '#4f46e5' }}>Smart Advice</Text>
+            <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 8, color: '#2563EB' }}>Smart Advice</Text>
             <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 13, lineHeight: 22, letterSpacing: 0.2, color: C.sub }}>
               {initialSurplus > 0
                 ? `Great news! You have ₹${initialSurplus.toLocaleString('en-IN')} left each month after expenses. Let's put that money to work for you.`
