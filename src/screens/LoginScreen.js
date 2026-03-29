@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { MotiView } from 'moti';
+import { ChevronLeft } from 'lucide-react-native';
 
 export default function LoginScreen({ navigation }) {
     const [email, setEmail] = useState('');
@@ -34,8 +35,21 @@ export default function LoginScreen({ navigation }) {
                 <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
                     <ScrollView contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 28 }} showsVerticalScrollIndicator={false}>
                         <MotiView from={{ opacity: 0, translateY: 20 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 500 }}>
+                            {/* Back Button */}
+                            <TouchableOpacity 
+                                onPress={() => navigation.goBack()} 
+                                style={{
+                                    marginTop: 20, marginBottom: 20, width: 44, height: 44,
+                                    backgroundColor: theme.card, borderRadius: 22, borderWidth: 1, 
+                                    borderColor: theme.border, alignItems: 'center', justifyContent: 'center',
+                                    shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 8, elevation: 2
+                                }}
+                            >
+                                <ChevronLeft size={24} color={theme.text} />
+                            </TouchableOpacity>
+
                             {/* Header */}
-                            <View style={{ paddingTop: 40, marginBottom: 40 }}>
+                            <View style={{ marginBottom: 40 }}>
                                 <View style={{
                                     width: 52, height: 52, backgroundColor: '#2563eb',
                                     borderRadius: 16, alignItems: 'center', justifyContent: 'center', marginBottom: 24,
