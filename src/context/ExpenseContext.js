@@ -99,7 +99,8 @@ export const ExpenseProvider = ({ children }) => {
             
                 // Fetch previous month expenses
                 const prevSnap = await getDocs(query(
-                    collection(db, 'users', uid, 'expenses'),
+                    collection(db, 'expenses'),
+                    where('userId', '==', uid),
                     where('month', '==', prevMonth),
                     where('year', '==', prevYear)
                 ));

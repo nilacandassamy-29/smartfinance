@@ -36,7 +36,8 @@ export default function ExpenseHistoryScreen({ navigation }) {
             const currentYear = now.getFullYear();
 
             const currentSnap = await getDocs(query(
-                collection(db, 'users', uid, 'expenses'),
+                collection(db, 'expenses'),
+                where('userId', '==', uid),
                 where('month', '==', currentMonth),
                 where('year', '==', currentYear)
             ));
