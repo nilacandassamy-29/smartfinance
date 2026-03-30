@@ -183,7 +183,7 @@ export default function Expenses({ navigation }) {
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                                         <Text style={{ fontSize: 17, fontFamily: 'Poppins-Bold', color: theme.text }}>Add Expense</Text>
                                         <TouchableOpacity onPress={() => setIsAdding(false)} style={{ padding: 4 }}>
-                                            <X size={20} color={theme.subText} />
+                                            <Icons.X size={20} color={theme.subText} />
                                         </TouchableOpacity>
                                     </View>
                                     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
@@ -220,7 +220,7 @@ export default function Expenses({ navigation }) {
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                                         <Text style={{ fontSize: 17, fontFamily: 'Poppins-Bold', color: theme.text }}>Add Income</Text>
                                         <TouchableOpacity onPress={() => setIsAddingIncome(false)} style={{ padding: 4 }}>
-                                            <X size={20} color={theme.subText} />
+                                            <Icons.X size={20} color={theme.subText} />
                                         </TouchableOpacity>
                                     </View>
                                     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
@@ -257,7 +257,7 @@ export default function Expenses({ navigation }) {
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                                         <Text style={{ fontSize: 17, fontFamily: 'Poppins-Bold', color: theme.text }}>Edit Expense</Text>
                                         <TouchableOpacity onPress={() => setEditModalVisible(false)} style={{ padding: 4 }}>
-                                            <X size={20} color={theme.subText} />
+                                            <Icons.X size={20} color={theme.subText} />
                                         </TouchableOpacity>
                                     </View>
                                     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
@@ -297,7 +297,7 @@ export default function Expenses({ navigation }) {
                 <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 110 }} showsVerticalScrollIndicator={false}>
                     {sortedExpenses.length === 0 ? (
                         <View style={{ alignItems: 'center', paddingTop: 80, gap: 10 }}>
-                            <Receipt size={48} color={theme.subText} />
+                            <Icons.Receipt size={48} color={theme.subText} />
                             <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 16, color: theme.text }}>No expenses yet</Text>
                             <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: theme.subText }}>Tap + to add your first entry</Text>
                         </View>
