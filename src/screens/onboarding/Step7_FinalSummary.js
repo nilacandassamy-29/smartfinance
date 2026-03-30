@@ -30,7 +30,6 @@ const Step7_FinalSummary = () => {
   const summaries = [
     { label: 'Monthly Income',   value: totalIncome,       icon: TrendingUp,  ic: '#10b981', bg: '#ECFDF5', bd: '#BBF7D0' },
     { label: 'Monthly Expenses', value: totalExpenses,     icon: TrendingUp,  ic: '#f43f5e', bg: '#FFF1F2', bd: '#FECDD3' },
-    { label: 'Emergency Fund',   value: reserveAmount,     icon: ShieldCheck, ic: '#3b82f6', bg: '#EFF6FF', bd: '#BFDBFE' },
     { label: 'Ready to Invest',  value: investableSurplus, icon: Wallet,      ic: '#2563EB', bg: '#EFF6FF', bd: '#BFDBFE' },
   ];
 
@@ -196,18 +195,18 @@ const Step7_FinalSummary = () => {
       <MotiView from={{ opacity: 0, translateY: 20 }} animate={{ opacity: 1, translateY: 0 }}
         style={{ borderRadius: 26, borderWidth: 1.5, borderColor: C.border, backgroundColor: '#ffffff', marginBottom: 28, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 14, elevation: 3 }}>
         <View style={{ padding: 24 }}>
-          {/* 2×2 grid */}
+          {/* Stats grid */}
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 18 }}>
             {summaries.map((item, i) => (
               <MotiView key={i} from={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 200 + i * 100 }}
-                style={{ width: '50%', paddingRight: i % 2 === 0 ? 10 : 0, paddingLeft: i % 2 === 1 ? 10 : 0, marginBottom: 22 }}>
+                style={{ width: i === 2 ? '100%' : '50%', paddingRight: i === 0 ? 10 : 0, paddingLeft: i === 1 ? 10 : 0, marginBottom: i === 2 ? 0 : 22, alignItems: i === 2 ? 'center' : 'flex-start' }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                   <View style={{ width: 30, height: 30, borderRadius: 10, backgroundColor: item.bg, borderWidth: 1.5, borderColor: item.bd, alignItems: 'center', justifyContent: 'center' }}>
                     <item.icon size={15} color={item.ic} strokeWidth={2.5} style={i === 1 ? { transform: [{ rotate: '180deg' }] } : {}} />
                   </View>
                   <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 10, letterSpacing: 0.5, color: C.muted }}>{item.label}</Text>
                 </View>
-                <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 20, letterSpacing: -0.5, color: C.text }}>
+                <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 24, letterSpacing: -0.5, color: C.text }}>
                   ₹{safeNumber(item.value).toLocaleString('en-IN')}
                 </Text>
               </MotiView>
