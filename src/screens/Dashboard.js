@@ -65,6 +65,9 @@ export default function Dashboard({ navigation }) {
       })
       .slice(0, 4);
 
+    // Dynamic portfolio = Income - Expenses (updates instantly)
+    const dynamicPortfolio = Math.max(0, (monthlyIncome || 0) - (monthlyTotal || 0));
+
     let badgeText = "New";
     let badgeColor = isDarkMode ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.2)';
 
@@ -116,7 +119,7 @@ export default function Dashboard({ navigation }) {
                             <View style={{ width: 160, height: 38, borderRadius: 8, backgroundColor: 'rgba(255,255,255,0.28)', marginVertical: 6 }} />
                         ) : (
                             <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 32, color: '#ffffff', marginVertical: 4 }}>
-                                ₹{(totalPortfolioValue || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                ₹{dynamicPortfolio.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </Text>
                         )}
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 4 }}>
