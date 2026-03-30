@@ -30,12 +30,11 @@ const getGreeting = () => {
 export default function Dashboard({ navigation }) {
     const { userProfile, profileImageURL } = useAuth();
     const { theme, isDarkMode } = useTheme();
-    const { expenses, getLastMonthTotal, loading: expensesLoading } = useExpenses();
+    const { expenses, monthlyTotal, getLastMonthTotal, loading: expensesLoading } = useExpenses();
     const { monthlyIncome } = useIncome();
     const { totalPortfolioValue, loading: investmentsLoading } = useInvestments();
 
-    const [percentageChange, setPercentageChange] = useState(0);
-    const [lastMonthData, setLastMonthData] = useState(0);
+    const [percentageChange, setPercentageChange] = useState(null);
     const [greeting, setGreeting] = useState(getGreeting());
 
     useEffect(() => {
@@ -46,21 +45,38 @@ export default function Dashboard({ navigation }) {
         return () => clearInterval(interval);
     }, []);
 
-    const monthlyOut = expenses.reduce((s, e) => s + parseFloat(e.amount || 0), 0);
-
     useEffect(() => {
         const fetchChange = async () => {
             const last = await getLastMonthTotal();
-            setLastMonthData(last);
-            if (last === 0) setPercentageChange(0);
-            else setPercentageChange(((monthlyOut - last) / last) * 100);
+            if (last === 0) {
+                setPercentageChange(null);
+            } else {
+                setPercentageChange(((monthlyTotal - last) / last) * 100);
+            }
         };
         fetchChange();
-    }, [monthlyOut, getLastMonthTotal]);
+    }, [monthlyTotal, getLastMonthTotal]);
 
-    const recentTransactions = expenses.slice(0, 4);
-    const sign = percentageChange >= 0 ? '+' : '';
-    const badgeColor = percentageChange <= 0 ? '#10b981' : '#ef4444';
+    const recentTransactions = [...expenses]
+      .sort((a, b) => {
+        const dateA = a.createdAt instanceof Date ? a.createdAt : a.createdAt?.toDate?.() || new Date(0);
+        const dateB = b.createdAt instanceof Date ? b.createdAt : b.createdAt?.toDate?.() || new Date(0);
+        return dateB - dateA;
+      })
+      .slice(0, 4);
+
+    let badgeText = "New";
+    let badgeColor = isDarkMode ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.2)';
+
+    if (percentageChange !== null) {
+        if (percentageChange < 0) {
+            badgeText = `${percentageChange.toFixed(1)}%`;
+            badgeColor = 'rgba(16,185,129,0.3)';
+        } else {
+            badgeText = `+${percentageChange.toFixed(1)}%`;
+            badgeColor = 'rgba(239,68,68,0.3)';
+        }
+    }
 
     // Loading skeleton component
     const Skeleton = ({ w = 100, h = 18, radius = 8 }) => (
@@ -104,12 +120,14 @@ export default function Dashboard({ navigation }) {
                             </Text>
                         )}
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 4 }}>
-                            <View style={{ backgroundColor: isDarkMode ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.2)', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 }}>
+                            <View style={{ backgroundColor: badgeColor, borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 }}>
                                 <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 12, color: '#ffffff' }}>
-                                    {lastMonthData === 0 ? 'New' : `${sign}${percentageChange.toFixed(1)}%`}
+                                    {badgeText}
                                 </Text>
                             </View>
-                            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 12, color: 'rgba(255,255,255,0.65)' }}>vs last month</Text>
+                            {percentageChange !== null && (
+                                <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 12, color: 'rgba(255,255,255,0.65)' }}>vs last month</Text>
+                            )}
                         </View>
                     </View>
 
@@ -135,7 +153,7 @@ export default function Dashboard({ navigation }) {
                             {isLoadingData ? (
                                 <View style={{ width: 80, height: 24, borderRadius: 6, backgroundColor: isDarkMode ? '#334155' : '#E2E8F0', marginTop: 4 }} />
                             ) : (
-                                <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 20, color: theme.danger }}>₹{(monthlyOut || 0).toLocaleString('en-IN')}</Text>
+                                <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 20, color: theme.danger }}>₹{(monthlyTotal || 0).toLocaleString('en-IN')}</Text>
                             )}
                         </View>
                     </View>
@@ -157,12 +175,12 @@ export default function Dashboard({ navigation }) {
                                         <View style={{ width: 40, height: 40, borderRadius: 10, backgroundColor: isDarkMode ? theme.iconBg : catDetails.bg, alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
                                             {catDetails.icon}
                                         </View>
-                                        <View style={{ flex: 1 }}>
-                                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 14, color: theme.text }}>{exp.title}</Text>
-                                            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 12, color: theme.subText, textTransform: 'capitalize' }}>{exp.category}</Text>
+                                        <View style={{ flex: 1, marginRight: 8, overflow: 'hidden' }}>
+                                            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 14, color: theme.text }} numberOfLines={1}>{exp.title}</Text>
+                                            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 12, color: theme.subText, textTransform: 'capitalize' }} numberOfLines={1}>{exp.category}</Text>
                                         </View>
-                                        <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 14, color: theme.danger }}>
-                                            -₹{parseFloat(exp.amount).toFixed(0)}
+                                        <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 14, color: theme.danger, flexShrink: 0 }} numberOfLines={1}>
+                                            −₹{parseFloat(exp.amount).toLocaleString('en-IN')}
                                         </Text>
                                     </View>
                                 );

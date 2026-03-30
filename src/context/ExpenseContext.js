@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Alert } from 'react-native';
-import { collection, addDoc, query, where, onSnapshot, deleteDoc, doc, updateDoc, getDocs, setDoc, getDoc, writeBatch } from 'firebase/firestore';
+import { collection, addDoc, query, where, deleteDoc, doc, updateDoc, getDocs, setDoc, getDoc, writeBatch } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { useAuth } from './AuthContext';
 import { useUserProfileSettings } from './UserProfileContext';
@@ -8,17 +8,54 @@ import { useUserProfileSettings } from './UserProfileContext';
 const ExpenseContext = createContext();
 
 export const useExpenses = () => useContext(ExpenseContext);
+export const useExpense = useExpenses; // Alias for compatibility with user instructions
 
 export const ExpenseProvider = ({ children }) => {
     const { user } = useAuth();
     const { profileSettings } = useUserProfileSettings();
     const [expenses, setExpenses] = useState([]);
+    const [monthlyTotal, setMonthlyTotal] = useState(0);
     const [familyMembers, setFamilyMembers] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const now = new Date();
     const currentMonth = now.getMonth() + 1;
     const currentYear = now.getFullYear();
+
+    useEffect(() => {
+        const total = expenses.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
+        setMonthlyTotal(total);
+    }, [expenses]);
+
+    const fetchExpenses = async (uid) => {
+        setLoading(true);
+        try {
+            const snap = await getDocs(query(
+                collection(db, 'expenses'),
+                where('userId', '==', uid),
+                where('month', '==', currentMonth),
+                where('year', '==', currentYear)
+            ));
+            const data = snap.docs.map(d => ({
+                id: d.id,
+                ...d.data(),
+                createdAt: d.data().createdAt?.toDate ? d.data().createdAt.toDate() : new Date(d.data().createdAt || Date.now())
+            }));
+            data.sort((a, b) => b.createdAt - a.createdAt);
+            setExpenses(data);
+        } catch (e) {
+            console.error("fetchExpenses err:", e);
+        }
+        setLoading(false);
+    };
+
+    const fetchFamily = async (uid) => {
+        try {
+            const snap = await getDocs(query(collection(db, 'family'), where('userId', '==', uid)));
+            const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            setFamilyMembers(data);
+        } catch (e) {}
+    };
 
     useEffect(() => {
         if (!user) {
@@ -72,7 +109,6 @@ export const ExpenseProvider = ({ children }) => {
 
                 if (needsFix) await batch.commit();
                 await setDoc(metaRef, { isFixed: true }, { merge: true });
-                console.log('Fixed broken expenses data for user:', uid);
             } catch (err) {
                 console.error("Failed to fix expenses:", err);
             }
@@ -82,22 +118,16 @@ export const ExpenseProvider = ({ children }) => {
 
         // Auto-Archive verification
         const checkAndArchive = async (uid) => {
-            const now = new Date();
-            const currentMonth = now.getMonth() + 1;
-            const currentYear = now.getFullYear();
+            const currentMonth = new Date().getMonth() + 1;
+            const currentYear = new Date().getFullYear();
           
-            // Get last archived month from meta
             const metaDoc = await getDoc(doc(db, 'users', uid, 'meta', 'archive'));
-            
             const lastArchived = metaDoc.exists() ? metaDoc.data() : null;
           
-            // If last archived is different from current month, archive previous month
             if (!lastArchived || lastArchived.month !== currentMonth || lastArchived.year !== currentYear) {
-          
                 const prevMonth = currentMonth === 1 ? 12 : currentMonth - 1;
                 const prevYear = currentMonth === 1 ? currentYear - 1 : currentYear;
             
-                // Fetch previous month expenses
                 const prevSnap = await getDocs(query(
                     collection(db, 'expenses'),
                     where('userId', '==', uid),
@@ -109,7 +139,6 @@ export const ExpenseProvider = ({ children }) => {
                     const prevExpenses = prevSnap.docs.map(d => ({ id: d.id, ...d.data() }));
                     const prevTotal = prevExpenses.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
             
-                    // Save to expenseHistory
                     const archiveId = `${prevYear}-${String(prevMonth).padStart(2, '0')}`;
             
                     await setDoc(doc(db, 'users', uid, 'expenseHistory', archiveId), {
@@ -118,21 +147,19 @@ export const ExpenseProvider = ({ children }) => {
                         monthLabel: new Date(prevYear, prevMonth - 1, 1).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }),
                         total: prevTotal,
                         expenses: prevExpenses,
-                        archivedAt: now
+                        archivedAt: new Date()
                     });
             
-                    // Update archive meta
                     await setDoc(doc(db, 'users', uid, 'meta', 'archive'), { 
                         month: currentMonth, 
                         year: currentYear,
-                        lastArchivedAt: now
+                        lastArchivedAt: new Date()
                     });
                 } else {
-                    // Even if empty, update meta so it doesn't keep checking
                     await setDoc(doc(db, 'users', uid, 'meta', 'archive'), { 
                         month: currentMonth, 
                         year: currentYear,
-                        lastArchivedAt: now
+                        lastArchivedAt: new Date()
                     });
                 }
             }
@@ -140,57 +167,52 @@ export const ExpenseProvider = ({ children }) => {
 
         checkAndArchive(user.uid);
 
-        // Snapshot current month expenses
-        const qExpenses = query(
-            collection(db, 'expenses'),
-            where('userId', '==', user.uid),
-            where('month', '==', currentMonth),
-            where('year', '==', currentYear)
-        );
-        
-        const unsubscribeExpenses = onSnapshot(qExpenses, (snapshot) => {
-            const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            list.sort((a, b) => new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt));
-            setExpenses(list);
-            setLoading(false);
-        }, (error) => {
-            console.error("Expenses Snapshot Error:", error);
-            setLoading(false);
-        });
+        // Fetch manual data once on load
+        fetchExpenses(user.uid);
+        fetchFamily(user.uid);
 
-        const qFamily = query(collection(db, 'family'), where('userId', '==', user.uid));
-        const unsubscribeFamily = onSnapshot(qFamily, (snapshot) => {
-            const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setFamilyMembers(list);
-        });
+    }, [user]);
 
-        return () => {
-            unsubscribeExpenses();
-            unsubscribeFamily();
-        };
-    }, [user, currentMonth, currentYear]);
+    const addExpense = async (expenseData) => {
+        try {
+            const uid = user?.uid;
+            if (!uid) throw new Error('Not authenticated');
 
-    const addExpense = async (data) => {
-        const d = new Date(data.date || new Date().toISOString());
-        const expenseMonth = d.getMonth() + 1;
-        const expenseYear = d.getFullYear();
-        const numAmount = parseFloat(data.amount || 0);
+            const now = new Date();
+            const currentMonth = now.getMonth() + 1;
+            const currentYear = now.getFullYear();
 
-        const addedDoc = await addDoc(collection(db, 'expenses'), {
-            ...data,
-            userId: user.uid,
-            month: expenseMonth,
-            year: expenseYear,
-            createdAt: new Date().toISOString(),
-            type: 'expense'
-        });
+            const newExpense = {
+                userId: uid,
+                title: expenseData.title?.trim() || 'Expense',
+                amount: parseFloat(expenseData.amount) || 0,
+                category: expenseData.category || 'General',
+                date: now.toLocaleDateString('en-IN', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                }),
+                month: currentMonth,
+                year: currentYear,
+                type: 'expense',
+                createdAt: now.toISOString()
+            };
 
-        // Trigger Alert if applicable and if it's counting towards current month
-        if (expenseMonth === currentMonth && expenseYear === currentYear) {
+            const docRef = await addDoc(collection(db, 'expenses'), newExpense);
+
+            const savedExpense = { 
+                id: docRef.id, 
+                ...newExpense,
+                createdAt: now
+            };
+
+            setExpenses(prev => [savedExpense, ...prev]);
+            
+            // Check budget limits manually
             if (profileSettings?.alertPreference === 'Auto (AI)') {
                 const limit = (profileSettings.dailyTarget || 1000) * 30;
-                const currentTotal = expenses.reduce((s, e) => s + parseFloat(e.amount || 0), 0) + numAmount;
-                const usage = (currentTotal / limit) * 100;
+                const projectedTotal = monthlyTotal + savedExpense.amount;
+                const usage = (projectedTotal / limit) * 100;
 
                 if (usage >= 100) {
                     Alert.alert('🚨 Budget Exceeded', 'You have exceeded your monthly budget limit!');
@@ -198,29 +220,39 @@ export const ExpenseProvider = ({ children }) => {
                     Alert.alert('⚠️ Budget Warning', `You have used ${usage.toFixed(0)}% of your monthly budget.`);
                 }
             }
+
+            return savedExpense;
+
+        } catch (error) {
+            console.error('Add expense error:', error);
+            Alert.alert('Error', 'Could not save expense. Try again.');
+            throw error;
         }
-        return addedDoc;
     };
 
     const updateExpense = async (id, data) => {
         const docRef = doc(db, 'expenses', id);
         await updateDoc(docRef, data);
+        setExpenses(prev => prev.map(e => e.id === id ? { ...e, ...data } : e));
     };
 
     const deleteExpense = async (id) => {
         await deleteDoc(doc(db, 'expenses', id));
+        setExpenses(prev => prev.filter(e => e.id !== id));
     };
 
     const addFamilyMember = async (data) => {
-        await addDoc(collection(db, 'family'), {
+        const addedRef = await addDoc(collection(db, 'family'), {
             ...data,
             userId: user.uid,
             createdAt: new Date().toISOString()
         });
+        setFamilyMembers(prev => [...prev, { id: addedRef.id, ...data }]);
     };
 
     const deleteFamilyMember = async (id) => {
         await deleteDoc(doc(db, 'family', id));
+        setFamilyMembers(prev => prev.filter(f => f.id !== id));
     };
 
     const getLastMonthTotal = async () => {
@@ -240,21 +272,20 @@ export const ExpenseProvider = ({ children }) => {
             );
             const snap = await getDocs(q);
             let total = 0;
-            snap.forEach(d => total += parseFloat(d.data().amount || 0));
+            snap.forEach(d => total += (parseFloat(d.data().amount) || 0));
             return total;
         } catch(e) {
             return 0;
         }
     };
 
-    // To prevent breaking legacy method bindings during migration:
-    const getMonthlyExpenses = () => expenses.reduce((s, e) => s + parseFloat(e.amount || 0), 0);
-    // getMonthlyIncome is moved to IncomeContext but we return a stub if some old code explicitly depends on expenseContext's old method
+    const getMonthlyExpenses = () => monthlyTotal;
     const getMonthlyIncome = () => { console.warn("Use IncomeContext for fetching incomes."); return 0; };
 
     return (
         <ExpenseContext.Provider value={{
             expenses,
+            monthlyTotal, // EXPORTED NOW
             familyMembers,
             loading,
             addExpense,
@@ -264,7 +295,8 @@ export const ExpenseProvider = ({ children }) => {
             deleteFamilyMember,
             getLastMonthTotal,
             getMonthlyExpenses,
-            getMonthlyIncome
+            getMonthlyIncome,
+            fetchExpenses // EXPORTED NOW
         }}>
             {children}
         </ExpenseContext.Provider>

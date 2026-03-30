@@ -50,7 +50,7 @@ const formatExpenseDate = (expense) => {
 };
 
 export default function Expenses({ navigation }) {
-    const { expenses, addExpense, deleteExpense, updateExpense } = useExpenses();
+    const { expenses, monthlyTotal, loading, addExpense, deleteExpense, updateExpense } = useExpenses();
     const { addIncome } = useIncome();
     const { theme, isDarkMode } = useTheme();
     
@@ -81,14 +81,47 @@ export default function Expenses({ navigation }) {
         return `${String(d.getDate()).padStart(2, '0')} ${months[d.getMonth()]} ${d.getFullYear()}`;
     };
 
+    const categories = [
+      { label: 'Food', icon: 'UtensilsCrossed', color: '#F97316', bg: '#FFF7ED' },
+      { label: 'Bills', icon: 'Zap', color: '#EAB308', bg: '#FEFCE8' },
+      { label: 'Transport', icon: 'Car', color: '#0EA5E9', bg: '#F0F9FF' },
+      { label: 'Groceries', icon: 'ShoppingCart', color: '#16A34A', bg: '#F0FDF4' },
+      { label: 'Personal', icon: 'User', color: '#8B5CF6', bg: '#F5F3FF' },
+      { label: 'Subscriptions', icon: 'CreditCard', color: '#2563EB', bg: '#EFF6FF' },
+      { label: 'Insurance', icon: 'Shield', color: '#EC4899', bg: '#FDF2F8' },
+      { label: 'Rent/EMI', icon: 'Home', color: '#2563EB', bg: '#EFF6FF' },
+      { label: 'Health', icon: 'Heart', color: '#F43F5E', bg: '#FFF1F2' },
+      { label: 'Education', icon: 'GraduationCap', color: '#D97706', bg: '#FFFBEB' },
+      { label: 'General', icon: 'Wallet', color: '#64748B', bg: '#F8FAFC' },
+      { label: 'Other', icon: 'MoreHorizontal', color: '#64748B', bg: '#F8FAFC' },
+    ];
+
+    const [submitting, setSubmitting] = useState(false);
+
     const handleAdd = async () => {
-        if (!title.trim() || !amount.trim()) {
-            Alert.alert('Error', 'Please fill in title and amount.');
+        if (!title.trim()) {
+            Alert.alert('Error', 'Please enter a title');
             return;
         }
-        const formattedDate = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
-        await addExpense({ title, amount: parseFloat(amount).toString(), category, date: formattedDate, createdAt: new Date() });
-        setTitle(''); setAmount(''); setCategory('General'); setIsAdding(false);
+        if (!amount || parseFloat(amount) <= 0) {
+            Alert.alert('Error', 'Please enter a valid amount');
+            return;
+        }
+
+        setSubmitting(true);
+        try {
+            await addExpense({
+                title: title.trim(),
+                amount: parseFloat(amount),
+                category: category
+            });
+            
+            setTitle('');
+            setAmount('');
+            setCategory('General');
+            setIsAdding(false);
+        } catch (err) {}
+        setSubmitting(false);
     };
 
     const handleAddIncome = async () => {
@@ -141,10 +174,7 @@ export default function Expenses({ navigation }) {
         ]);
     };
 
-    const total = expenses.reduce((s, e) => s + parseFloat(e.amount || 0), 0);
     const sortedExpenses = [...expenses].sort((a,b) => new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt));
-
-    const headerTotal = expenses.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
     const monthName = new Date().toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
 
     const renderInputStyle = () => ({
@@ -163,7 +193,7 @@ export default function Expenses({ navigation }) {
                     <View>
                         <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 24, color: theme.text }}>Expenses</Text>
                         <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 13, color: theme.subText, marginTop: -2 }}>
-                            ₹{headerTotal.toLocaleString('en-IN', { maximumFractionDigits: 0 })} spent in {monthName}
+                            ₹{monthlyTotal.toLocaleString('en-IN', { maximumFractionDigits: 0 })} spent in {monthName}
                         </Text>
                     </View>
                     <TouchableOpacity
@@ -198,10 +228,32 @@ export default function Expenses({ navigation }) {
                                             </View>
                                             <View>
                                                 <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 12, color: theme.subText, marginBottom: 6 }}>Category</Text>
-                                                <TextInput value={category} onChangeText={setCategory} placeholder="Food, Transport, Bills..." placeholderTextColor={theme.placeholder} style={renderInputStyle()} />
+                                                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 10, gap: 10 }}>
+                                                    {categories.map((cat, idx) => {
+                                                        const isSelected = category === cat.label;
+                                                        const IconComp = Icons[cat.icon] || Icons['Receipt'];
+                                                        return (
+                                                            <TouchableOpacity
+                                                                key={idx}
+                                                                onPress={() => setCategory(cat.label)}
+                                                                style={{
+                                                                    flexDirection: 'row', alignItems: 'center', gap: 6,
+                                                                    paddingHorizontal: 12, paddingVertical: 8, borderRadius: 20,
+                                                                    borderWidth: 1.5, borderColor: isSelected ? '#2563EB' : theme.border,
+                                                                    backgroundColor: isSelected ? '#EFF6FF' : theme.inputBg,
+                                                                }}
+                                                            >
+                                                                <IconComp size={16} color={isSelected ? '#2563EB' : theme.subText} />
+                                                                <Text style={{ fontFamily: isSelected ? 'Poppins-SemiBold' : 'Poppins-Medium', fontSize: 13, color: isSelected ? '#2563EB' : theme.text }}>
+                                                                    {cat.label}
+                                                                </Text>
+                                                            </TouchableOpacity>
+                                                        );
+                                                    })}
+                                                </ScrollView>
                                             </View>
                                         </View>
-                                        <TouchableOpacity onPress={handleAdd} style={{ backgroundColor: '#2563eb', borderRadius: 12, paddingVertical: 14, alignItems: 'center', width: '100%' }}>
+                                        <TouchableOpacity disabled={submitting} onPress={handleAdd} style={{ backgroundColor: submitting ? theme.border : '#2563eb', borderRadius: 12, paddingVertical: 14, alignItems: 'center', width: '100%' }}>
                                             <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 15, color: '#ffffff' }}>Add Expense</Text>
                                         </TouchableOpacity>
                                     </KeyboardAvoidingView>
