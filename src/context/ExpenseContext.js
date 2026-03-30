@@ -81,61 +81,63 @@ export const ExpenseProvider = ({ children }) => {
         fixBrokenExpenses(user.uid);
 
         // Auto-Archive verification
-        const checkAutoArchive = async () => {
-            const metaRef = doc(db, 'users', user.uid, 'meta', 'archiveInfo');
-            const metaSnap = await getDoc(metaRef);
-            const currentPrefix = `${currentYear}-${String(currentMonth).padStart(2, '0')}`;
+        const checkAndArchive = async (uid) => {
+            const now = new Date();
+            const currentMonth = now.getMonth() + 1;
+            const currentYear = now.getFullYear();
+          
+            // Get last archived month from meta
+            const metaDoc = await getDoc(doc(db, 'users', uid, 'meta', 'archive'));
             
-            let lastArchiveMonth = null;
-            if (metaSnap.exists()) {
-                lastArchiveMonth = metaSnap.data().archiveMonth;
-            }
-
-            if (lastArchiveMonth !== currentPrefix) {
-                // Must archive previous month
-                let prevMonthIndex = currentMonth - 1;
-                let prevYear = currentYear;
-                if (prevMonthIndex < 1) {
-                    prevMonthIndex = 12;
-                    prevYear -= 1;
-                }
-                
-                const qPrev = query(
-                    collection(db, 'expenses'),
-                    where('userId', '==', user.uid),
-                    where('month', '==', prevMonthIndex),
+            const lastArchived = metaDoc.exists() ? metaDoc.data() : null;
+          
+            // If last archived is different from current month, archive previous month
+            if (!lastArchived || lastArchived.month !== currentMonth || lastArchived.year !== currentYear) {
+          
+                const prevMonth = currentMonth === 1 ? 12 : currentMonth - 1;
+                const prevYear = currentMonth === 1 ? currentYear - 1 : currentYear;
+            
+                // Fetch previous month expenses
+                const prevSnap = await getDocs(query(
+                    collection(db, 'users', uid, 'expenses'),
+                    where('month', '==', prevMonth),
                     where('year', '==', prevYear)
-                );
-                
-                try {
-                    const snap = await getDocs(qPrev);
-                    const prevItems = [];
-                    let prevTotal = 0;
-                    snap.forEach(d => {
-                        const data = d.data();
-                        prevItems.push({ id: d.id, ...data });
-                        prevTotal += parseFloat(data.amount || 0);
-                    });
-
-                    const prevPrefix = `${prevYear}-${String(prevMonthIndex).padStart(2, '0')}`;
-                    const historyRef = doc(db, 'users', user.uid, 'expenseHistory', prevPrefix);
-                    
-                    await setDoc(historyRef, {
-                        expenses: prevItems,
+                ));
+            
+                if (!prevSnap.empty) {
+                    const prevExpenses = prevSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    const prevTotal = prevExpenses.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
+            
+                    // Save to expenseHistory
+                    const archiveId = `${prevYear}-${String(prevMonth).padStart(2, '0')}`;
+            
+                    await setDoc(doc(db, 'users', uid, 'expenseHistory', archiveId), {
+                        month: prevMonth,
+                        year: prevYear,
+                        monthLabel: new Date(prevYear, prevMonth - 1, 1).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }),
                         total: prevTotal,
-                        month: prevMonthIndex,
-                        year: prevYear
+                        expenses: prevExpenses,
+                        archivedAt: now
                     });
-
-                    await setDoc(metaRef, { archiveMonth: currentPrefix }, { merge: true });
-                    console.log(`Archived ${prevItems.length} expenses for ${prevPrefix}`);
-                } catch (err) {
-                    console.error("Auto Archive failed:", err);
+            
+                    // Update archive meta
+                    await setDoc(doc(db, 'users', uid, 'meta', 'archive'), { 
+                        month: currentMonth, 
+                        year: currentYear,
+                        lastArchivedAt: now
+                    });
+                } else {
+                    // Even if empty, update meta so it doesn't keep checking
+                    await setDoc(doc(db, 'users', uid, 'meta', 'archive'), { 
+                        month: currentMonth, 
+                        year: currentYear,
+                        lastArchivedAt: now
+                    });
                 }
             }
         };
 
-        checkAutoArchive();
+        checkAndArchive(user.uid);
 
         // Snapshot current month expenses
         const qExpenses = query(

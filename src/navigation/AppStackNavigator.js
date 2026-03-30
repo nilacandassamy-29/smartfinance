@@ -25,7 +25,7 @@ export default function AppStackNavigator() {
       <Stack.Screen name="Settings" component={Settings} />
       <Stack.Screen name="SchemeDetails" component={SchemeDetails} />
       <Stack.Screen name="ExpenseHistory" component={ExpenseHistoryScreen} />
-      <Stack.Screen name="ExpenseHistoryDetail" component={ExpenseHistoryDetailScreen} />
+      <Stack.Screen name="ExpenseHistoryDetailScreen" component={ExpenseHistoryDetailScreen} options={{ headerShown: false }} />
       <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
       <Stack.Screen name="FAQScreen" component={FAQScreen} />
       <Stack.Screen name="ThemeScreen" component={ThemeScreen} options={{ headerShown: false }} />
