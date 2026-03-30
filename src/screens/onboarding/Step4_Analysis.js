@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ChevronRight, ChevronLeft, TrendingUp, TrendingDown, Wallet, Bot, Cpu } from 'lucide-react-native';
@@ -13,7 +13,7 @@ const Step4_Analysis = () => {
   const { totalIncome, totalExpenses, initialSurplus, safeNumber, mode, setSavingsAmount, setStep } = useOnboarding();
   const navigation = useNavigation();
 
-  const handleNext = () => { setSavingsAmount(initialSurplus); setStep(5); navigation.navigate('Step5_Reserve'); };
+  const handleNext = () => { setSavingsAmount(initialSurplus); setStep(5); navigation.navigate('Step6_Advice'); };
 
   const cards = [
     { label: 'Total Income',    value: totalIncome,     icon: TrendingUp,   ic: '#10b981', tint: '#F0FDF4', border: '#BBF7D0' },

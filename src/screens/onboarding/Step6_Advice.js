@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Dimensions, Modal, ScrollView, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import {
@@ -568,7 +568,7 @@ const Step6_Advice = () => {
 
   if (balance <= 0) {
     return (
-      <OnboardingLayout currentStep={6}>
+      <OnboardingLayout currentStep={5}>
         <View style={{ alignItems: 'center', paddingTop: 60, gap: 28 }}>
           <View style={{ width: 96, height: 96, borderRadius: 32, backgroundColor: '#FFF1F2', borderWidth: 1.5, borderColor: '#FECDD3', alignItems: 'center', justifyContent: 'center' }}>
             <AlertCircle size={46} color="#f43f5e" strokeWidth={2.5} />
@@ -590,10 +590,10 @@ const Step6_Advice = () => {
 
   return (
     <>
-      <OnboardingLayout currentStep={6}>
+      <OnboardingLayout currentStep={5}>
         {/* Header */}
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 36 }}>
-          <TouchableOpacity onPress={() => { setStep(5); navigation.navigate('Step5_Reserve'); }} style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+          <TouchableOpacity onPress={() => { setStep(4); navigation.navigate('Step4_Analysis'); }} style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
             <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: '#F1F5F9', borderWidth: 1.5, borderColor: C.border, alignItems: 'center', justifyContent: 'center' }}>
               <ChevronLeft size={16} color={C.sub} strokeWidth={3} />
             </View>

@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator, Dimensions, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ChevronLeft, CheckCircle2, TrendingUp, ShieldCheck, Wallet, ArrowRight, Bot } from 'lucide-react-native';
@@ -162,10 +162,10 @@ const Step7_FinalSummary = () => {
   };
 
   return (
-    <OnboardingLayout currentStep={7}>
+    <OnboardingLayout currentStep={6}>
       {/* Back */}
       <View style={{ marginBottom: 36 }}>
-        <TouchableOpacity onPress={() => { setStep(6); navigation.navigate('Step6_Advice'); }} style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+        <TouchableOpacity onPress={() => { setStep(5); navigation.navigate('Step6_Advice'); }} style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
           <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: '#F1F5F9', borderWidth: 1.5, borderColor: C.border, alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={16} color={C.sub} strokeWidth={3} />
           </View>

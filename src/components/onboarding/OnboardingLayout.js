@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { View, Text, ScrollView, ActivityIndicator, StatusBar as RNStatusBar } from 'react-native';
 import { LayoutDashboard, ShieldCheck, Lock } from 'lucide-react-native';
 import { useOnboarding } from '../../context/OnboardingContext';
@@ -30,8 +30,8 @@ const OnboardingLayout = ({ children, currentStep }) => {
     );
   }
 
-  const totalSteps = 7;
-  const steps = [1, 2, 3, 4, 5, 6, 7];
+  const totalSteps = 6;
+  const steps = [1, 2, 3, 4, 5, 6];
 
   return (
     <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
