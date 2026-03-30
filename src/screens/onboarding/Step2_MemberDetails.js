@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, TextInput, Dimensions, ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ChevronRight, ChevronLeft, User, GraduationCap, Briefcase, Home, Heart, Phone, Calendar, IndianRupee } from 'lucide-react-native';
@@ -46,6 +46,7 @@ const Step2_MemberDetails = () => {
 
   // Part 3: State Management
   const [studentType, setStudentType] = useState('SCHOOL');
+  const [studentName, setStudentName] = useState('');
   const [schoolName, setSchoolName] = useState('');
   const [collegeName, setCollegeName] = useState('');
   const [selectedClass, setSelectedClass] = useState(null);
@@ -63,6 +64,7 @@ const Step2_MemberDetails = () => {
 
   // Sync state when active member changes (so we don't bleed values between members)
   useEffect(() => {
+    setStudentName(activeMember.name || '');
     setStudentType(activeMember.studentType || 'SCHOOL');
     setSchoolName(activeMember.schoolName || '');
     setCollegeName(activeMember.collegeName || '');
@@ -74,7 +76,7 @@ const Step2_MemberDetails = () => {
     setSem1(activeMember.sem1 || '');
     setSem2(activeMember.sem2 || '');
     setSem3(activeMember.sem3 || '');
-  }, [currentIndex]);
+  }, [currentIndex, activeMember.name]);
 
   const handleStudentTypeSwitch = (type) => {
     if (studentType === type) return;
@@ -155,7 +157,7 @@ const Step2_MemberDetails = () => {
       
       // Update global context so other steps can access it
       updateMember(currentIndex, {
-        studentType, schoolName, collegeName, selectedClass, selectedYear,
+        studentType, studentName, schoolName, collegeName, selectedClass, selectedYear,
         term1, term2, term3, sem1, sem2, sem3, totalFees
       });
 
@@ -163,6 +165,7 @@ const Step2_MemberDetails = () => {
         if (user && user.uid) {
           const firestoreData = {
             studentType,
+            studentName,
             institutionName: studentType === 'SCHOOL' ? schoolName : collegeName,
             classOrYear: studentType === 'SCHOOL' ? selectedClass : selectedYear,
             term1Fees: parseFloat(term1) || 0,
@@ -235,7 +238,16 @@ const Step2_MemberDetails = () => {
 
   const renderSchoolFields = () => (
     <MotiView key="school" from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 250 }} style={{ gap: 20 }}>
-      {/* Field 1: School Name */}
+      {/* Field 1: Student Name */}
+      <View>
+        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 10, marginLeft: 2, color: C.sub }}>Student Name</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#F1F5F9', borderRadius: 14, padding: 14, gap: 12 }}>
+          <User size={18} color="#94A3B8" />
+          <TextInput placeholder="Enter student name" placeholderTextColor={C.placeholder} style={{ flex: 1, fontFamily: 'Poppins_400Regular', fontSize: 14, color: C.text }} value={studentName} onChangeText={setStudentName} />
+        </View>
+      </View>
+
+      {/* Field 2: School Name */}
       <View>
         <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 10, marginLeft: 2, color: C.sub }}>School Name</Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#F1F5F9', borderRadius: 14, padding: 14, gap: 12 }}>
@@ -273,7 +285,16 @@ const Step2_MemberDetails = () => {
 
   const renderCollegeFields = () => (
     <MotiView key="college" from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 250 }} style={{ gap: 20 }}>
-      {/* Field 1: College Name */}
+      {/* Field 1: Student Name */}
+      <View>
+        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 10, marginLeft: 2, color: C.sub }}>Student Name</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#F1F5F9', borderRadius: 14, padding: 14, gap: 12 }}>
+          <User size={18} color="#94A3B8" />
+          <TextInput placeholder="Enter student name" placeholderTextColor={C.placeholder} style={{ flex: 1, fontFamily: 'Poppins_400Regular', fontSize: 14, color: C.text }} value={studentName} onChangeText={setStudentName} />
+        </View>
+      </View>
+
+      {/* Field 2: College Name */}
       <View>
         <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 10, marginLeft: 2, color: C.sub }}>College Name</Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#F1F5F9', borderRadius: 14, padding: 14, gap: 12 }}>
