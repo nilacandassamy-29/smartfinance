@@ -5,18 +5,48 @@ import { useExpenses } from '../context/ExpenseContext';
 import { useIncome } from '../context/IncomeContext';
 import { useTheme } from '../context/ThemeContext';
 import { MotiView } from 'moti';
-import { Pencil, Trash2, X, Plus, ArrowDownLeft, UtensilsCrossed, Wallet, User, Receipt, Shield, Plane, Zap, ShoppingBag } from 'lucide-react-native';
+import * as Icons from 'lucide-react-native';
 
-const getCategoryDetails = (category, isDarkMode, theme) => {
-    const cat = (category || '').toLowerCase();
-    const bg = isDarkMode ? theme.iconBg : '#f8fafc';
-    if (cat.includes('food') || cat.includes('foof')) return { bg: isDarkMode ? theme.iconBg : '#fff7ed', icon: <UtensilsCrossed size={20} color="#f97316" /> };
-    if (cat.includes('general')) return { bg: isDarkMode ? theme.iconBg : '#eff6ff', icon: <Wallet size={20} color="#3b82f6" /> };
-    if (cat.includes('personal')) return { bg: isDarkMode ? theme.iconBg : '#faf5ff', icon: <User size={20} color="#a855f7" /> };
-    if (cat.includes('transport')) return { bg: isDarkMode ? theme.iconBg : '#f0f9ff', icon: <Plane size={20} color="#0ea5e9" /> };
-    if (cat.includes('bill')) return { bg: isDarkMode ? theme.iconBg : '#fefce8', icon: <Zap size={20} color="#eab308" /> };
-    if (cat.includes('shop')) return { bg: isDarkMode ? theme.iconBg : '#fdf2f8', icon: <ShoppingBag size={20} color="#ec4899" /> };
-    return { bg: isDarkMode ? theme.iconBg : '#f8fafc', icon: <Receipt size={20} color={theme.subText} /> };
+const getCategoryIcon = (category) => {
+  const cat = (category || '').toLowerCase().trim();
+
+  if (cat === 'food' || cat === 'foof') return { icon: 'UtensilsCrossed', bg: '#FFF7ED', color: '#F97316' };
+  if (cat === 'bills' || cat === 'utilities') return { icon: 'Zap', bg: '#FEFCE8', color: '#EAB308' };
+  if (cat === 'transport') return { icon: 'Car', bg: '#F0F9FF', color: '#0EA5E9' };
+  if (cat === 'personal' || cat === 'personal care') return { icon: 'User', bg: '#F5F3FF', color: '#8B5CF6' };
+  if (cat === 'shopping') return { icon: 'ShoppingBag', bg: '#FDF2F8', color: '#EC4899' };
+  if (cat === 'rent' || cat === 'rent/emi' || cat === 'emi') return { icon: 'Home', bg: '#EFF6FF', color: '#2563EB' };
+  if (cat === 'subscriptions' || cat === 'subscription') return { icon: 'CreditCard', bg: '#F0FDF4', color: '#16A34A' };
+  if (cat === 'health' || cat === 'medical') return { icon: 'Heart', bg: '#FFF1F2', color: '#F43F5E' };
+  if (cat === 'education') return { icon: 'GraduationCap', bg: '#FFFBEB', color: '#D97706' };
+  if (cat === 'general' || cat === 'miscellaneous') return { icon: 'Wallet', bg: '#EFF6FF', color: '#3B82F6' };
+  
+  return { icon: 'Receipt', bg: '#F8FAFC', color: '#64748B' };
+};
+
+const formatAmount = (amount) => {
+  const num = parseFloat(amount) || 0;
+  return '−₹' + num.toLocaleString('en-IN');
+};
+
+const formatExpenseDate = (expense) => {
+  try {
+    if (expense.date && typeof expense.date === 'string' && expense.date !== 'undefined') {
+      if (!expense.date.includes('NaN')) return expense.date;
+    }
+    if (expense.createdAt?.toDate) {
+      return expense.createdAt.toDate().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+    if (expense.createdAt instanceof Date) {
+      return expense.createdAt.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+    if (expense.month && expense.year) {
+      return `01 ${new Date(expense.year, expense.month - 1, 1).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}`;
+    }
+    return new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+  } catch {
+    return 'No date';
+  }
 };
 
 export default function Expenses({ navigation }) {
@@ -56,7 +86,8 @@ export default function Expenses({ navigation }) {
             Alert.alert('Error', 'Please fill in title and amount.');
             return;
         }
-        await addExpense({ title, amount: parseFloat(amount).toString(), category, date: dateText });
+        const formattedDate = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+        await addExpense({ title, amount: parseFloat(amount).toString(), category, date: formattedDate, createdAt: new Date() });
         setTitle(''); setAmount(''); setCategory('General'); setIsAdding(false);
     };
 
@@ -113,8 +144,8 @@ export default function Expenses({ navigation }) {
     const total = expenses.reduce((s, e) => s + parseFloat(e.amount || 0), 0);
     const sortedExpenses = [...expenses].sort((a,b) => new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt));
 
-    const currentMonthName = new Date().toLocaleString('default', { month: 'long' });
-    const currentYearNum = new Date().getFullYear();
+    const headerTotal = expenses.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
+    const monthName = new Date().toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
 
     const renderInputStyle = () => ({
         height: 48, borderRadius: 12, backgroundColor: theme.inputBg,
@@ -132,7 +163,7 @@ export default function Expenses({ navigation }) {
                     <View>
                         <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 24, color: theme.text }}>Expenses</Text>
                         <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 13, color: theme.subText, marginTop: -2 }}>
-                            ₹{total.toLocaleString('en-IN', { maximumFractionDigits: 0 })} spent in {currentMonthName} {currentYearNum}
+                            ₹{headerTotal.toLocaleString('en-IN', { maximumFractionDigits: 0 })} spent in {monthName}
                         </Text>
                     </View>
                     <TouchableOpacity
@@ -271,38 +302,41 @@ export default function Expenses({ navigation }) {
                             <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: theme.subText }}>Tap + to add your first entry</Text>
                         </View>
                     ) : sortedExpenses.map((exp, i) => {
-                        const cat = getCategoryDetails(exp.category, isDarkMode, theme);
+                        const { icon, bg, color } = getCategoryIcon(exp.category);
+                        const IconComponent = Icons[icon] || Icons['Receipt'];
+
                         return (
                         <MotiView key={exp.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ delay: i * 50, type: 'timing', duration: 350 }}>
                             <View style={{
-                                backgroundColor: theme.card, borderRadius: 14, padding: 16, marginBottom: 8,
-                                flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+                                flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12,
+                                backgroundColor: '#FFFFFF', borderRadius: 14, marginBottom: 8,
                                 shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.06, shadowRadius: 12, elevation: 3,
                             }}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
-                                    <View style={{ width: 40, height: 40, borderRadius: 10, backgroundColor: cat.bg, alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
-                                        {cat.icon}
-                                    </View>
-                                    <View style={{ flex: 1, paddingRight: 8 }}>
-                                        <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 14, color: theme.text, flexShrink: 1, flexWrap: 'wrap' }} numberOfLines={2}>{exp.title}</Text>
-                                        <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 11, color: theme.subText, textTransform: 'capitalize' }}>{exp.category}</Text>
-                                    </View>
+                                {/* LEFT - Icon Container */}
+                                <View style={{ width: 44, height: 44, borderRadius: 12, backgroundColor: bg, alignItems: 'center', justifyContent: 'center', marginRight: 12, flexShrink: 0 }}>
+                                    <IconComponent size={20} color={color} />
                                 </View>
-                                <View style={{ alignItems: 'flex-end', marginLeft: 8 }}>
-                                    <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 14, color: theme.danger }}>
-                                        -₹{parseFloat(exp.amount).toFixed(0)}
-                                    </Text>
-                                    <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 11, color: theme.subText, marginTop: 2 }}>
-                                        {formatDate(exp.date || exp.createdAt)}
-                                    </Text>
+
+                                {/* CENTER - Text Column */}
+                                <View style={{ flex: 1, marginRight: 8, overflow: 'hidden' }}>
+                                    <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 14, color: '#0F172A' }} numberOfLines={1} ellipsizeMode="tail">{exp.title}</Text>
+                                    <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 11, color: '#94A3B8' }} numberOfLines={1} ellipsizeMode="tail">{exp.category}</Text>
+                                    <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 11, color: '#94A3B8', marginTop: 2 }} numberOfLines={1}>{formatExpenseDate(exp)}</Text>
                                 </View>
-                                <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 16, gap: 16 }}>
-                                    <TouchableOpacity onPress={() => openEditModal(exp)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-                                        <Pencil size={18} color={theme.subText} />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => handleDelete(exp.id)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-                                        <Trash2 size={18} color={theme.subText} />
-                                    </TouchableOpacity>
+
+                                {/* RIGHT - Amount + Action Icons */}
+                                <View style={{ alignItems: 'flex-end', flexShrink: 0, minWidth: 90 }}>
+                                    <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 14, color: '#EF4444', textAlign: 'right' }} numberOfLines={1}>
+                                        {formatAmount(exp.amount)}
+                                    </Text>
+                                    <View style={{ flexDirection: 'row', gap: 8, marginTop: 4, alignItems: 'center' }}>
+                                        <TouchableOpacity onPress={() => openEditModal(exp)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                                            <Icons.Pencil size={15} color="#CBD5E1" />
+                                        </TouchableOpacity>
+                                        <TouchableOpacity onPress={() => handleDelete(exp.id)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                                            <Icons.Trash2 size={15} color="#CBD5E1" />
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
                             </View>
                         </MotiView>
@@ -310,18 +344,18 @@ export default function Expenses({ navigation }) {
                 </ScrollView>
 
                 {/* Floating Action Buttons */}
-                <View style={{ position: 'absolute', bottom: 24, right: 24, flexDirection: 'row', gap: 16 }}>
+                <View style={{ position: 'absolute', bottom: 24, right: 20, flexDirection: 'row', gap: 12, zIndex: 999 }}>
                     <TouchableOpacity 
                         onPress={() => setIsAddingIncome(true)}
-                        style={{ backgroundColor: '#10b981', width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', shadowColor: '#10b981', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 12, elevation: 5 }}
+                        style={{ backgroundColor: '#10B981', width: 52, height: 52, borderRadius: 26, alignItems: 'center', justifyContent: 'center', shadowColor: '#10B981', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 12, elevation: 6 }}
                     >
-                        <ArrowDownLeft size={24} color="#ffffff" />
+                        <Icons.ArrowDownLeft size={24} color="#ffffff" />
                     </TouchableOpacity>
                     <TouchableOpacity 
                         onPress={() => setIsAdding(true)}
-                        style={{ backgroundColor: '#2563eb', width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', shadowColor: '#2563eb', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 12, elevation: 5 }}
+                        style={{ backgroundColor: '#2563EB', width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', shadowColor: '#2563EB', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 12, elevation: 6 }}
                     >
-                        <Plus size={24} color="#ffffff" />
+                        <Icons.Plus size={24} color="#ffffff" />
                     </TouchableOpacity>
                 </View>
 

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Alert } from 'react-native';
-import { collection, addDoc, query, where, onSnapshot, deleteDoc, doc, updateDoc, getDocs, setDoc, getDoc } from 'firebase/firestore';
+import { collection, addDoc, query, where, onSnapshot, deleteDoc, doc, updateDoc, getDocs, setDoc, getDoc, writeBatch } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { useAuth } from './AuthContext';
 import { useUserProfileSettings } from './UserProfileContext';
@@ -27,6 +27,58 @@ export const ExpenseProvider = ({ children }) => {
             setLoading(false);
             return;
         }
+
+        // Fix broken existing expenses once
+        const fixBrokenExpenses = async (uid) => {
+            try {
+                const metaRef = doc(db, 'users', uid, 'meta', 'expensesFixed');
+                const metaSnap = await getDoc(metaRef);
+                if (metaSnap.exists() && metaSnap.data().isFixed === true) {
+                    return; // Already fixed
+                }
+
+                const snap = await getDocs(collection(db, 'expenses'));
+                const batch = writeBatch(db);
+                let needsFix = false;
+
+                snap.docs.forEach(docSnap => {
+                    const data = docSnap.data();
+                    if (data.userId !== uid) return;
+                    
+                    let updates = {};
+
+                    if (!data.date || data.date === 'undefined' || String(data.date).includes('NaN') || String(data.date).includes('undefined')) {
+                        let fixedDate;
+                        if (data.createdAt?.toDate) {
+                            fixedDate = data.createdAt.toDate().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+                        } else if (data.month && data.year) {
+                            fixedDate = `01 ${new Date(data.year, data.month - 1, 1).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}`;
+                        } else {
+                            fixedDate = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+                        }
+                        updates.date = fixedDate;
+                    }
+
+                    if (!data.month || !data.year) {
+                        updates.month = new Date().getMonth() + 1;
+                        updates.year = new Date().getFullYear();
+                    }
+
+                    if (Object.keys(updates).length > 0) {
+                        batch.update(docSnap.ref, updates);
+                        needsFix = true;
+                    }
+                });
+
+                if (needsFix) await batch.commit();
+                await setDoc(metaRef, { isFixed: true }, { merge: true });
+                console.log('Fixed broken expenses data for user:', uid);
+            } catch (err) {
+                console.error("Failed to fix expenses:", err);
+            }
+        };
+
+        fixBrokenExpenses(user.uid);
 
         // Auto-Archive verification
         const checkAutoArchive = async () => {
