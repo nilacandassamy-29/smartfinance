@@ -49,6 +49,7 @@ const Step2_MemberDetails = () => {
   const [studentName, setStudentName] = useState('');
   const [schoolName, setSchoolName] = useState('');
   const [collegeName, setCollegeName] = useState('');
+  const [courseName, setCourseName] = useState('');
   const [selectedClass, setSelectedClass] = useState(null);
   const [selectedYear, setSelectedYear] = useState(null);
   const [term1, setTerm1] = useState('');
@@ -68,6 +69,7 @@ const Step2_MemberDetails = () => {
     setStudentType(activeMember.studentType || 'SCHOOL');
     setSchoolName(activeMember.schoolName || '');
     setCollegeName(activeMember.collegeName || '');
+    setCourseName(activeMember.courseName || '');
     setSelectedClass(activeMember.selectedClass || null);
     setSelectedYear(activeMember.selectedYear || null);
     setTerm1(activeMember.term1 || '');
@@ -157,7 +159,7 @@ const Step2_MemberDetails = () => {
       
       // Update global context so other steps can access it
       updateMember(currentIndex, {
-        studentType, studentName, schoolName, collegeName, selectedClass, selectedYear,
+        studentType, studentName, schoolName, collegeName, courseName, selectedClass, selectedYear,
         term1, term2, term3, sem1, sem2, sem3, totalFees
       });
 
@@ -167,6 +169,7 @@ const Step2_MemberDetails = () => {
             studentType,
             studentName,
             institutionName: studentType === 'SCHOOL' ? schoolName : collegeName,
+            courseName: studentType === 'COLLEGE' ? courseName : null,
             classOrYear: studentType === 'SCHOOL' ? selectedClass : selectedYear,
             term1Fees: parseFloat(term1) || 0,
             term2Fees: parseFloat(term2) || 0,
@@ -294,12 +297,21 @@ const Step2_MemberDetails = () => {
         </View>
       </View>
 
-      {/* Field 2: College Name */}
+      {/* Field 2: College/University Name */}
       <View>
-        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 10, marginLeft: 2, color: C.sub }}>College Name</Text>
+        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 10, marginLeft: 2, color: C.sub }}>College/University Name</Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#F1F5F9', borderRadius: 14, padding: 14, gap: 12 }}>
           <GraduationCap size={18} color="#94A3B8" />
-          <TextInput placeholder="Enter your college name" placeholderTextColor={C.placeholder} style={{ flex: 1, fontFamily: 'Poppins_400Regular', fontSize: 14, color: C.text }} value={collegeName} onChangeText={setCollegeName} />
+          <TextInput placeholder="Enter college or university name" placeholderTextColor={C.placeholder} style={{ flex: 1, fontFamily: 'Poppins_400Regular', fontSize: 14, color: C.text }} value={collegeName} onChangeText={setCollegeName} />
+        </View>
+      </View>
+
+      {/* Field 3: Course/Degree */}
+      <View>
+        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 10, marginLeft: 2, color: C.sub }}>Course/Degree Name</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#F1F5F9', borderRadius: 14, padding: 14, gap: 12 }}>
+          <Briefcase size={18} color="#94A3B8" />
+          <TextInput placeholder="e.g. B.Tech, B.Com, MBBS" placeholderTextColor={C.placeholder} style={{ flex: 1, fontFamily: 'Poppins_400Regular', fontSize: 14, color: C.text }} value={courseName} onChangeText={setCourseName} />
         </View>
       </View>
 
