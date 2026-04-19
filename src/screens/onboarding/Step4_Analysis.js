@@ -1,24 +1,37 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useCallback } from 'react';
+import { View, Text, TouchableOpacity, Dimensions, BackHandler } from 'react-native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { ChevronRight, ChevronLeft, TrendingUp, TrendingDown, Wallet, Bot, Cpu } from 'lucide-react-native';
 import { useOnboarding } from '../../context/OnboardingContext';
 import { MotiView } from 'moti';
 import OnboardingLayout from '../../components/onboarding/OnboardingLayout';
 
-const C = { text: '#0F172A', sub: '#64748B', muted: '#94A3B8', border: '#E2E8F0', card: '#F8FAFC', accent: '#2563EB' };
+const C = { text: '#0F172A', sub: '#64748B', muted: '#94A3B8', border: '#E2E8F0', card: '#F8FAFC', accent: '#3D5AFE' };
 
 const Step4_Analysis = () => {
   const { width } = Dimensions.get('window');
   const { totalIncome, totalExpenses, initialSurplus, safeNumber, mode, setSavingsAmount, setStep } = useOnboarding();
   const navigation = useNavigation();
 
+  // Handle Android hardware back button
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        setStep(3);
+        navigation.navigate('Step3_Expenses');
+        return true;
+      };
+      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => subscription.remove();
+    }, [])
+  );
+
   const handleNext = () => { setSavingsAmount(initialSurplus); setStep(5); navigation.navigate('Step6_Advice'); };
 
   const cards = [
     { label: 'Total Income',    value: totalIncome,     icon: TrendingUp,   ic: '#10b981', tint: '#F0FDF4', border: '#BBF7D0' },
     { label: 'Total Expenses',  value: totalExpenses,   icon: TrendingDown, ic: '#f43f5e', tint: '#FFF1F2', border: '#FECDD3' },
-    { label: 'Money Available', value: initialSurplus,  icon: Wallet,       ic: '#2563EB', tint: '#EFF6FF', border: '#BFDBFE' },
+    { label: 'Money Available', value: initialSurplus,  icon: Wallet,       ic: '#3D5AFE', tint: '#EFF6FF', border: '#BFDBFE' },
   ];
 
   return (
@@ -31,8 +44,8 @@ const Step4_Analysis = () => {
           </View>
           <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.3, color: C.sub }}>Go Back</Text>
         </TouchableOpacity>
-        <View style={{ backgroundColor: '#ECFDF5', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 10, borderWidth: 1, borderColor: '#BBF7D0' }}>
-          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.3, color: '#16a34a' }}>Your Summary</Text>
+        <View style={{ backgroundColor: '#EFF6FF', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 10, borderWidth: 1, borderColor: '#BFDBFE' }}>
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.3, color: '#3D5AFE' }}>Your Summary</Text>
         </View>
       </View>
 
@@ -78,7 +91,7 @@ const Step4_Analysis = () => {
             <Bot size={26} color="#ffffff" strokeWidth={2.5} />
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 8, color: '#2563EB' }}>Smart Advice</Text>
+            <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 8, color: '#3D5AFE' }}>Smart Advice</Text>
             <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 13, lineHeight: 22, letterSpacing: 0.2, color: C.sub }}>
               {initialSurplus > 0
                 ? `Great news! You have ₹${initialSurplus.toLocaleString('en-IN')} left each month after expenses. Let's put that money to work for you.`

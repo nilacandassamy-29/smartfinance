@@ -38,7 +38,7 @@ export default function AuthChoiceScreen({ navigation }) {
                         alignItems: 'center', justifyContent: 'center',
                         marginBottom: 20
                     }}>
-                        <Wallet size={56} color="#2563EB" />
+                        <Wallet size={56} color="#3D5AFE" />
                     </View>
                     <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, color: theme.text, letterSpacing: 0 }}>
                         SmartFinance
@@ -72,7 +72,7 @@ export default function AuthChoiceScreen({ navigation }) {
                                 shadowRadius: 10,
                                 elevation: 3,
                                 borderWidth: 2,
-                                borderColor: selected === 'login' ? '#2563EB' : theme.border,
+                                borderColor: selected === 'login' ? '#3D5AFE' : theme.border,
                             }}
                         >
                             <View style={{
@@ -80,7 +80,7 @@ export default function AuthChoiceScreen({ navigation }) {
                                 backgroundColor: isDarkMode ? '#1e3a8a' : '#EFF6FF',
                                 alignItems: 'center', justifyContent: 'center'
                             }}>
-                                <LogIn size={28} color="#2563EB" />
+                                <LogIn size={28} color="#3D5AFE" />
                             </View>
                             <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 16, color: theme.text, marginTop: 12 }}>
                                 Login
@@ -133,11 +133,11 @@ export default function AuthChoiceScreen({ navigation }) {
                         activeOpacity={0.85}
                         onPress={handleContinue}
                         style={{
-                            backgroundColor: selected === 'login' ? '#2563EB' : '#10B981',
+                             backgroundColor: selected === 'login' ? '#3D5AFE' : '#10B981',
                             borderRadius: 14,
                             paddingVertical: 16,
                             alignItems: 'center',
-                            shadowColor: selected === 'login' ? '#2563EB' : '#10B981',
+                            shadowColor: selected === 'login' ? '#3D5AFE' : '#10B981',
                             shadowOffset: { width: 0, height: 8 },
                             shadowOpacity: 0.3,
                             shadowRadius: 12,

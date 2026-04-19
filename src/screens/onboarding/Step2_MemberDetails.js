@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, TextInput, Dimensions, ScrollView, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, TouchableOpacity, TextInput, Dimensions, ScrollView, Alert, BackHandler } from 'react-native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { ChevronRight, ChevronLeft, User, GraduationCap, Briefcase, Home, Heart, Phone, Calendar, IndianRupee } from 'lucide-react-native';
 import { useOnboarding } from '../../context/OnboardingContext';
 import { useAuth } from '../../context/AuthContext';
@@ -13,7 +13,7 @@ import { db } from '../../config/firebase';
 const C = {
   text: '#0F172A', sub: '#64748B', muted: '#94A3B8',
   border: '#E2E8F0', card: '#F8FAFC', input: '#F1F5F9',
-  placeholder: '#CBD5E1', accent: '#2563EB',
+  placeholder: '#CBD5E1', accent: '#3D5AFE',
 };
 
 const InputField = ({ label, icon, value, onChangeText, placeholder, keyboardType = 'default', error }) => (
@@ -32,7 +32,7 @@ const InputField = ({ label, icon, value, onChangeText, placeholder, keyboardTyp
         onChangeText={onChangeText}
       />
     </View>
-    {error && <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 10, color: '#f43f5e', letterSpacing: 0.3, marginTop: 5, marginLeft: 2 }}>Please check this field</Text>}
+    {!!error && <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 10, color: '#f43f5e', letterSpacing: 0.3, marginTop: 5, marginLeft: 2 }}>Please check this field</Text>}
   </View>
 );
 
@@ -46,7 +46,6 @@ const Step2_MemberDetails = () => {
 
   // Part 3: State Management
   const [studentType, setStudentType] = useState('SCHOOL');
-  const [studentName, setStudentName] = useState('');
   const [schoolName, setSchoolName] = useState('');
   const [collegeName, setCollegeName] = useState('');
   const [courseName, setCourseName] = useState('');
@@ -65,7 +64,6 @@ const Step2_MemberDetails = () => {
 
   // Sync state when active member changes (so we don't bleed values between members)
   useEffect(() => {
-    setStudentName(activeMember.name || '');
     setStudentType(activeMember.studentType || 'SCHOOL');
     setSchoolName(activeMember.schoolName || '');
     setCollegeName(activeMember.collegeName || '');
@@ -77,12 +75,24 @@ const Step2_MemberDetails = () => {
     setTerm3(activeMember.term3 || '');
     setSem1(activeMember.sem1 || '');
     setSem2(activeMember.sem2 || '');
-    setSem3(activeMember.sem3 || '');
-  }, [currentIndex, activeMember.name]);
+  }, [currentIndex]); // ONLY depend on index, not name, to prevent reset while typing
+
+  // Handle Android hardware back button to cycle members
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        handleBack();
+        return true; // Always return true to prevent GO_BACK error
+      };
+      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => subscription.remove();
+    }, [currentIndex])
+  );
 
   const handleStudentTypeSwitch = (type) => {
     if (studentType === type) return;
     setStudentType(type);
+    updateMember(currentIndex, { studentType: type }); // Sync to context
     setSchoolName('');
     setCollegeName('');
     setSelectedClass(null);
@@ -124,7 +134,9 @@ const Step2_MemberDetails = () => {
   };
   
   const isContactValid = () => {
-    if (activeMember.occupation === 'Student') return true;
+    if (activeMember.occupation === 'Student' && studentType === 'SCHOOL') {
+      return (activeMember.contact || '').length === 0 || (activeMember.contact || '').length === 10;
+    }
     return (activeMember.contact || '').length === 10;
   };
 
@@ -144,13 +156,13 @@ const Step2_MemberDetails = () => {
     // Part 4: Save to Firestore on Next
     if (activeMember.occupation === 'Student') {
       if (studentType === 'SCHOOL') {
-        if (!schoolName || !selectedClass || !term1) {
-          Alert.alert('Incomplete', 'Please fill in all required fields (School Name, Class, and at least Term 1).');
+        if (!schoolName || !selectedClass) {
+          Alert.alert('Incomplete', 'Please fill in all required fields (School Name and Class).');
           return;
         }
       } else {
-        if (!collegeName || !selectedYear || !sem1) {
-          Alert.alert('Incomplete', 'Please fill in all required fields (College Name, Year, and at least Sem 1).');
+        if (!collegeName || !selectedYear) {
+          Alert.alert('Incomplete', 'Please fill in all required fields (College Name and Year).');
           return;
         }
       }
@@ -159,7 +171,7 @@ const Step2_MemberDetails = () => {
       
       // Update global context so other steps can access it
       updateMember(currentIndex, {
-        studentType, studentName, schoolName, collegeName, courseName, selectedClass, selectedYear,
+        studentType, schoolName, collegeName, courseName, selectedClass, selectedYear,
         term1, term2, term3, sem1, sem2, sem3, totalFees
       });
 
@@ -167,7 +179,7 @@ const Step2_MemberDetails = () => {
         if (user && user.uid) {
           const firestoreData = {
             studentType,
-            studentName,
+            studentName: activeMember.name,
             institutionName: studentType === 'SCHOOL' ? schoolName : collegeName,
             courseName: studentType === 'COLLEGE' ? courseName : null,
             classOrYear: studentType === 'SCHOOL' ? selectedClass : selectedYear,
@@ -205,6 +217,7 @@ const Step2_MemberDetails = () => {
   }
 
   // Helper renderers
+// Class and Year selector remain as helper functions for cleanliness
   const renderClassPills = () => {
     const classes = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th', '11th', '12th'];
     return (
@@ -212,8 +225,8 @@ const Step2_MemberDetails = () => {
         <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 10, marginLeft: 2, color: C.sub }}>Class</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingRight: 20 }}>
           {classes.map(cls => (
-            <TouchableOpacity key={cls} onPress={() => setSelectedClass(cls)}
-              style={{ borderRadius: 20, paddingHorizontal: 16, paddingVertical: 8, backgroundColor: selectedClass === cls ? '#2563EB' : '#F1F5F9' }}>
+            <TouchableOpacity key={cls} onPress={() => { setSelectedClass(cls); updateMember(currentIndex, { selectedClass: cls }); }}
+              style={{ borderRadius: 20, paddingHorizontal: 16, paddingVertical: 8, backgroundColor: selectedClass === cls ? C.accent : '#F1F5F9' }}>
               <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 12, color: selectedClass === cls ? '#FFFFFF' : '#64748B' }}>{cls}</Text>
             </TouchableOpacity>
           ))}
@@ -223,15 +236,21 @@ const Step2_MemberDetails = () => {
   };
 
   const renderYearPills = () => {
-    const years = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
+    const years = ['1st', '2nd', '3rd', '4th'];
     return (
       <View>
-        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 10, marginLeft: 2, color: C.sub }}>Year</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingRight: 20 }}>
+        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 12, marginLeft: 2, color: C.sub }}>Year</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingRight: 20 }}>
           {years.map(yr => (
-            <TouchableOpacity key={yr} onPress={() => setSelectedYear(yr)}
-              style={{ borderRadius: 20, paddingHorizontal: 16, paddingVertical: 8, backgroundColor: selectedYear === yr ? '#2563EB' : '#F1F5F9' }}>
-              <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 12, color: selectedYear === yr ? '#FFFFFF' : '#64748B' }}>{yr}</Text>
+            <TouchableOpacity 
+              key={yr} 
+              onPress={() => { setSelectedYear(yr); updateMember(currentIndex, { selectedYear: yr }); }}
+              style={{ 
+                width: 60, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', 
+                backgroundColor: selectedYear === yr ? C.accent : '#F1F5F9',
+                borderWidth: selectedYear === yr ? 0 : 1, borderColor: '#E2E8F0'
+              }}>
+              <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, color: selectedYear === yr ? '#FFFFFF' : '#64748B' }}>{yr}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -239,108 +258,6 @@ const Step2_MemberDetails = () => {
     );
   };
 
-  const renderSchoolFields = () => (
-    <MotiView key="school" from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 250 }} style={{ gap: 20 }}>
-      {/* Field 1: Student Name */}
-      <View>
-        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 10, marginLeft: 2, color: C.sub }}>Student Name</Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#F1F5F9', borderRadius: 14, padding: 14, gap: 12 }}>
-          <User size={18} color="#94A3B8" />
-          <TextInput placeholder="Enter student name" placeholderTextColor={C.placeholder} style={{ flex: 1, fontFamily: 'Poppins_400Regular', fontSize: 14, color: C.text }} value={studentName} onChangeText={setStudentName} />
-        </View>
-      </View>
-
-      {/* Field 2: School Name */}
-      <View>
-        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 10, marginLeft: 2, color: C.sub }}>School Name</Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#F1F5F9', borderRadius: 14, padding: 14, gap: 12 }}>
-          <GraduationCap size={18} color="#94A3B8" />
-          <TextInput placeholder="Enter your school name" placeholderTextColor={C.placeholder} style={{ flex: 1, fontFamily: 'Poppins_400Regular', fontSize: 14, color: C.text }} value={schoolName} onChangeText={setSchoolName} />
-        </View>
-      </View>
-
-      {/* Field 2: Class */}
-      {renderClassPills()}
-
-      {/* Field 3: Annual Education Fees */}
-      <View style={{ backgroundColor: '#EFF6FF', borderRadius: 16, padding: 16 }}>
-        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 12, color: C.sub }}>Annual Education Fees</Text>
-        <View style={{ flexDirection: 'row', gap: 8 }}>
-          {[
-            { label: 'Term 1', val: term1, set: setTerm1 },
-            { label: 'Term 2', val: term2, set: setTerm2 },
-            { label: 'Term 3', val: term3, set: setTerm3 }
-          ].map((item, idx) => (
-            <View key={idx} style={{ flex: 1 }}>
-              <Text style={{ fontSize: 10, fontFamily: 'Poppins_600SemiBold', color: '#2563EB', marginBottom: 6 }}>{item.label}</Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', borderRadius: 10, padding: 10 }}>
-                <IndianRupee size={12} color={C.text} style={{ marginRight: 4 }} />
-                <TextInput placeholder="0" keyboardType="numeric" style={{ flex: 1, fontSize: 14, fontFamily: 'Poppins_500Medium', color: C.text, padding: 0 }} value={item.val} onChangeText={item.set} />
-              </View>
-            </View>
-          ))}
-        </View>
-        <Text style={{ fontSize: 12, fontFamily: 'Poppins_700Bold', color: '#2563EB', textAlign: 'right', marginTop: 8 }}>Total Annual Fees: ₹{schoolTotal.toLocaleString('en-IN')}
-        </Text>
-      </View>
-    </MotiView>
-  );
-
-  const renderCollegeFields = () => (
-    <MotiView key="college" from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 250 }} style={{ gap: 20 }}>
-      {/* Field 1: Student Name */}
-      <View>
-        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 10, marginLeft: 2, color: C.sub }}>Student Name</Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#F1F5F9', borderRadius: 14, padding: 14, gap: 12 }}>
-          <User size={18} color="#94A3B8" />
-          <TextInput placeholder="Enter student name" placeholderTextColor={C.placeholder} style={{ flex: 1, fontFamily: 'Poppins_400Regular', fontSize: 14, color: C.text }} value={studentName} onChangeText={setStudentName} />
-        </View>
-      </View>
-
-      {/* Field 2: College/University Name */}
-      <View>
-        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 10, marginLeft: 2, color: C.sub }}>College/University Name</Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#F1F5F9', borderRadius: 14, padding: 14, gap: 12 }}>
-          <GraduationCap size={18} color="#94A3B8" />
-          <TextInput placeholder="Enter college or university name" placeholderTextColor={C.placeholder} style={{ flex: 1, fontFamily: 'Poppins_400Regular', fontSize: 14, color: C.text }} value={collegeName} onChangeText={setCollegeName} />
-        </View>
-      </View>
-
-      {/* Field 3: Course/Degree */}
-      <View>
-        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 10, marginLeft: 2, color: C.sub }}>Course/Degree Name</Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#F1F5F9', borderRadius: 14, padding: 14, gap: 12 }}>
-          <Briefcase size={18} color="#94A3B8" />
-          <TextInput placeholder="e.g. B.Tech, B.Com, MBBS" placeholderTextColor={C.placeholder} style={{ flex: 1, fontFamily: 'Poppins_400Regular', fontSize: 14, color: C.text }} value={courseName} onChangeText={setCourseName} />
-        </View>
-      </View>
-
-      {/* Field 2: Year */}
-      {renderYearPills()}
-
-      {/* Field 3: Annual Education Fees */}
-      <View style={{ backgroundColor: '#EFF6FF', borderRadius: 16, padding: 16 }}>
-        <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 12, color: C.sub }}>Annual Education Fees</Text>
-        <View style={{ flexDirection: 'row', gap: 8 }}>
-          {[
-            { label: 'Sem 1', val: sem1, set: setSem1 },
-            { label: 'Sem 2', val: sem2, set: setSem2 },
-            { label: 'Sem 3', val: sem3, set: setSem3 }
-          ].map((item, idx) => (
-            <View key={idx} style={{ flex: 1 }}>
-              <Text style={{ fontSize: 10, fontFamily: 'Poppins_600SemiBold', color: '#2563EB', marginBottom: 6 }}>{item.label}</Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', borderRadius: 10, padding: 10 }}>
-                <IndianRupee size={12} color={C.text} style={{ marginRight: 4 }} />
-                <TextInput placeholder="0" keyboardType="numeric" style={{ flex: 1, fontSize: 14, fontFamily: 'Poppins_500Medium', color: C.text, padding: 0 }} value={item.val} onChangeText={item.set} />
-              </View>
-            </View>
-          ))}
-        </View>
-        <Text style={{ fontSize: 12, fontFamily: 'Poppins_700Bold', color: '#2563EB', textAlign: 'right', marginTop: 8 }}>Total Annual Fees: ₹{collegeTotal.toLocaleString('en-IN')}
-        </Text>
-      </View>
-    </MotiView>
-  );
 
   return (
     <OnboardingLayout currentStep={2}>
@@ -367,8 +284,8 @@ const Step2_MemberDetails = () => {
         </Text>
       </View>
 
-      <AnimatePresence exitBeforeEnter>
-        <MotiView key={currentIndex} from={{ opacity: 0, translateX: 20 }} animate={{ opacity: 1, translateX: 0 }} exit={{ opacity: 0, translateX: -20 }}>
+      <View key={currentIndex}>
+        <View>
           <View style={{ gap: 20, marginBottom: 24 }}>
             <InputField label="Full Name *" icon={<User size={16} color={C.muted} />} placeholder="Enter full name" value={activeMember.name} onChangeText={(v) => handleInputChange('name', v)} />
 
@@ -384,8 +301,8 @@ const Step2_MemberDetails = () => {
               </View>
             </View>
 
-            <InputField label="Date of Birth (DD-MM-YYYY) *" icon={<Calendar size={16} color={C.muted} />} placeholder="DD-MM-YYYY" keyboardType="numeric" value={activeMember.dob} onChangeText={handleDobChange} error={activeMember.dob && !isDobValid()} />
-            <InputField label="Mobile Number *" icon={<Phone size={16} color={C.muted} />} placeholder="10-digit mobile number" keyboardType="numeric" value={activeMember.contact} onChangeText={(v) => handleInputChange('contact', v)} error={activeMember.contact && !isContactValid()} />
+            <InputField label="Date of Birth (DD-MM-YYYY) *" icon={<Calendar size={16} color={C.muted} />} placeholder="DD-MM-YYYY" keyboardType="numeric" value={activeMember.dob} onChangeText={handleDobChange} error={!!activeMember.dob && !isDobValid()} />
+            <InputField label={`Mobile Number ${activeMember.occupation === 'Student' && studentType === 'SCHOOL' ? '(Optional)' : '*'}`} icon={<Phone size={16} color={C.muted} />} placeholder="10-digit mobile number" keyboardType="numeric" value={activeMember.contact} onChangeText={(v) => handleInputChange('contact', v)} error={!!activeMember.contact && !isContactValid()} />
           </View>
 
           <View style={{ marginBottom: 24 }}>
@@ -422,9 +339,70 @@ const Step2_MemberDetails = () => {
                 </View>
               </View>
 
-              <AnimatePresence exitBeforeEnter>
-                {studentType === 'SCHOOL' ? renderSchoolFields() : renderCollegeFields()}
-              </AnimatePresence>
+              <View>
+                {studentType === 'SCHOOL' ? (
+                  <MotiView key="school" from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 250 }} style={{ gap: 20 }}>
+                    <View>
+                      <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 10, marginLeft: 2, color: C.sub }}>School Name</Text>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#F1F5F9', borderRadius: 18, paddingHorizontal: 18, height: 52, borderWidth: 1.5, borderColor: '#E2E8F0' }}>
+                        <GraduationCap size={18} color="#94A3B8" />
+                        <TextInput placeholder="Enter your school name" placeholderTextColor={C.placeholder} style={{ flex: 1, fontFamily: 'Poppins_500Medium', fontSize: 14, color: C.text, marginLeft: 12 }} value={schoolName} onChangeText={setSchoolName} />
+                      </View>
+                    </View>
+                    {renderClassPills()}
+                    <View style={{ backgroundColor: '#EFF6FF', borderRadius: 16, padding: 16 }}>
+                      <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 12, color: C.sub }}>Annual Education Fees</Text>
+                      <View style={{ flexDirection: 'row', gap: 8 }}>
+                        {[{ label: 'Term 1', val: term1, set: setTerm1 }, { label: 'Term 2', val: term2, set: setTerm2 }, { label: 'Term 3', val: term3, set: setTerm3 }].map((item, idx) => (
+                          <View key={idx} style={{ flex: 1 }}>
+                            <Text style={{ fontSize: 10, fontFamily: 'Poppins_600SemiBold', color: C.accent, marginBottom: 6 }}>{item.label}</Text>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', borderRadius: 10, padding: 10 }}>
+                              <IndianRupee size={12} color={C.text} style={{ marginRight: 4 }} />
+                              <TextInput placeholder="0" keyboardType="numeric" style={{ flex: 1, fontSize: 14, fontFamily: 'Poppins_500Medium', color: C.text, padding: 0 }} value={item.val} onChangeText={item.set} />
+                            </View>
+                          </View>
+                        ))}
+                      </View>
+                      <Text style={{ fontSize: 12, fontFamily: 'Poppins_700Bold', color: C.accent, textAlign: 'right', marginTop: 8 }}>Total Annual Fees: ₹{schoolTotal.toLocaleString('en-IN')}</Text>
+                    </View>
+                  </MotiView>
+                ) : (
+                  <MotiView key="college" from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 250 }} style={{ gap: 24 }}>
+                    <View>
+                      <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 10, marginLeft: 2, color: C.sub }}>College Name</Text>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#F1F5F9', borderRadius: 18, paddingHorizontal: 18, height: 52, borderWidth: 1.5, borderColor: '#E2E8F0' }}>
+                        <GraduationCap size={18} color="#94A3B8" />
+                        <TextInput placeholder="Enter your college name" placeholderTextColor={C.placeholder} style={{ flex: 1, fontFamily: 'Poppins_500Medium', fontSize: 14, color: C.text, marginLeft: 12 }} value={collegeName} onChangeText={(v) => { setCollegeName(v); updateMember(currentIndex, { collegeName: v }); }} />
+                      </View>
+                    </View>
+                    <View>
+                      <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 10, marginLeft: 2, color: C.sub }}>Course Name</Text>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#F1F5F9', borderRadius: 18, paddingHorizontal: 18, height: 52, borderWidth: 1.5, borderColor: '#E2E8F0' }}>
+                        <GraduationCap size={18} color="#94A3B8" />
+                        <TextInput placeholder="e.g. B.Tech, BCA, MBA" placeholderTextColor={C.placeholder} style={{ flex: 1, fontFamily: 'Poppins_500Medium', fontSize: 14, color: C.text, marginLeft: 12 }} value={courseName} onChangeText={(v) => { setCourseName(v); updateMember(currentIndex, { courseName: v }); }} />
+                      </View>
+                    </View>
+                    {renderYearPills()}
+                    <View style={{ backgroundColor: '#F8FAFC', borderRadius: 20, padding: 20, borderWidth: 1, borderColor: '#E2E8F0' }}>
+                      <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, marginBottom: 16, color: C.sub }}>Annual Education Fees</Text>
+                      <View style={{ flexDirection: 'row', gap: 10 }}>
+                        {[{ label: 'Sem 1', val: sem1, set: (v) => { setSem1(v); updateMember(currentIndex, { sem1: v }); } }, { label: 'Sem 2', val: sem2, set: (v) => { setSem2(v); updateMember(currentIndex, { sem2: v }); } }, { label: 'Sem 3', val: sem3, set: (v) => { setSem3(v); updateMember(currentIndex, { sem3: v }); } }].map((item, idx) => (
+                          <View key={idx} style={{ flex: 1 }}>
+                            <Text style={{ fontSize: 10, fontFamily: 'Poppins_600SemiBold', color: C.accent, marginBottom: 8, marginLeft: 2 }}>{item.label}</Text>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', borderRadius: 12, paddingHorizontal: 12, height: 48, borderWidth: 1, borderColor: '#E2E8F0' }}>
+                              <Text style={{ fontSize: 14, fontFamily: 'Poppins_500Medium', color: C.text, marginRight: 2 }}>₹</Text>
+                              <TextInput placeholder="0" placeholderTextColor={C.placeholder} keyboardType="numeric" style={{ flex: 1, fontSize: 14, fontFamily: 'Poppins_500Medium', color: C.text, padding: 0 }} value={item.val} onChangeText={item.set} />
+                            </View>
+                          </View>
+                        ))}
+                      </View>
+                      <View style={{ marginTop: 16, alignItems: 'flex-end' }}>
+                        <Text style={{ fontSize: 13, fontFamily: 'Poppins_700Bold', color: C.accent }}>Total Annual Fees: ₹{collegeTotal.toLocaleString('en-IN')}</Text>
+                      </View>
+                    </View>
+                  </MotiView>
+                )}
+              </View>
             </MotiView>
           )}
 
@@ -459,8 +437,8 @@ const Step2_MemberDetails = () => {
             </Text>
             <ChevronRight size={20} color={isStepValid() ? '#ffffff' : C.muted} strokeWidth={3} />
           </TouchableOpacity>
-        </MotiView>
-      </AnimatePresence>
+        </View>
+      </View>
     </OnboardingLayout>
   );
 };

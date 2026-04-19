@@ -4,7 +4,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { MotiView } from 'moti';
-import { ChevronLeft } from 'lucide-react-native';
 
 export default function LoginScreen({ navigation }) {
     const [email, setEmail] = useState('');
@@ -35,23 +34,10 @@ export default function LoginScreen({ navigation }) {
                 <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
                     <ScrollView contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 28 }} showsVerticalScrollIndicator={false}>
                         <MotiView from={{ opacity: 0, translateY: 20 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 500 }}>
-                            {/* Back Button */}
-                            <TouchableOpacity 
-                                onPress={() => navigation.goBack()} 
-                                style={{
-                                    marginTop: 20, marginBottom: 20, width: 44, height: 44,
-                                    backgroundColor: theme.card, borderRadius: 22, borderWidth: 1, 
-                                    borderColor: theme.border, alignItems: 'center', justifyContent: 'center',
-                                    shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 8, elevation: 2
-                                }}
-                            >
-                                <ChevronLeft size={24} color={theme.text} />
-                            </TouchableOpacity>
-
                             {/* Header */}
-                            <View style={{ marginBottom: 40 }}>
+                            <View style={{ paddingTop: 40, marginBottom: 40 }}>
                                 <View style={{
-                                    width: 52, height: 52, backgroundColor: '#2563eb',
+                                    width: 52, height: 52, backgroundColor: '#3D5AFE',
                                     borderRadius: 16, alignItems: 'center', justifyContent: 'center', marginBottom: 24,
                                 }}>
                                     <Text style={{ color: '#fff', fontFamily: 'Poppins_700Bold', fontSize: 22 }}>S</Text>
@@ -96,10 +82,10 @@ export default function LoginScreen({ navigation }) {
                             <TouchableOpacity
                                 onPress={handleLogin} activeOpacity={0.85} disabled={loading}
                                 style={{
-                                    backgroundColor: loading ? '#93c5fd' : '#2563eb',
+                                    backgroundColor: loading ? '#93c5fd' : '#3D5AFE',
                                     borderRadius: 14, height: 56,
                                     alignItems: 'center', justifyContent: 'center', marginBottom: 16,
-                                    shadowColor: '#2563eb', shadowOffset: { width: 0, height: 6 },
+                                    shadowColor: '#3D5AFE', shadowOffset: { width: 0, height: 6 },
                                     shadowOpacity: 0.25, shadowRadius: 10, elevation: 6,
                                 }}
                             >
@@ -111,7 +97,7 @@ export default function LoginScreen({ navigation }) {
                             <TouchableOpacity onPress={() => navigation.navigate('Register')} style={{ alignItems: 'center', paddingVertical: 16 }}>
                                 <Text style={{ fontFamily: 'Poppins_400Regular', fontSize: 14, color: theme.subText }}>
                                     Don't have an account?{' '}
-                                    <Text style={{ fontFamily: 'Poppins_600SemiBold', color: '#2563eb' }}>Create one</Text>
+                                    <Text style={{ fontFamily: 'Poppins_600SemiBold', color: '#3D5AFE' }}>Create one</Text>
                                 </Text>
                             </TouchableOpacity>
                         </MotiView>

@@ -1,6 +1,6 @@
-﻿import React from 'react';
-import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useCallback } from 'react';
+import { View, Text, TouchableOpacity, Dimensions, BackHandler } from 'react-native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Users, User, ChevronRight, Minus, Plus, ChevronLeft } from 'lucide-react-native';
 import { useOnboarding } from '../../context/OnboardingContext';
 import { useAuth } from '../../context/AuthContext';
@@ -11,7 +11,7 @@ import OnboardingLayout from '../../components/onboarding/OnboardingLayout';
 const C = {
   text: '#0F172A', sub: '#64748B', muted: '#94A3B8',
   border: '#E2E8F0', card: '#F8FAFC', input: '#F1F5F9',
-  accent: '#2563EB',
+  accent: '#3D5AFE',
 };
 
 const Step1_FamilySize = () => {
@@ -22,6 +22,15 @@ const Step1_FamilySize = () => {
 
   const handleNext = () => { setStep(2); navigation.navigate('Step2_MemberDetails'); };
   const adjustSize = (delta) => updateFamilySize(Math.max(1, Math.min(10, familySize + delta)));
+
+  // Prevent Android hardware back button from triggering GO_BACK error on the root onboarding screen
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => true;
+      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => subscription.remove();
+    }, [])
+  );
 
   return (
     <OnboardingLayout currentStep={1}>
@@ -43,26 +52,28 @@ const Step1_FamilySize = () => {
           </Text>
         </TouchableOpacity>
 
-        {/* Hero */}
-        <View style={{ alignItems: 'center', gap: 20, marginBottom: 48 }}>
-          <MotiView
-            from={{ scale: 0.5, opacity: 0, rotate: '-45deg' }}
-            animate={{ scale: 1, opacity: 1, rotate: '0deg' }}
-            style={{ width: 96, height: 96, backgroundColor: '#EFF6FF', borderRadius: 32, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: '#BFDBFE' }}
-          >
-            <Users size={40} color={C.accent} strokeWidth={2.5} />
-          </MotiView>
-
-          <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 28, letterSpacing: 0.3, textAlign: 'center', color: C.text }}>
+        {/* Full-width Blue Hero Card */}
+        <MotiView
+          from={{ opacity: 0, translateY: -20 }}
+          animate={{ opacity: 1, translateY: 0 }}
+          style={{
+            backgroundColor: '#3D5AFE',
+            borderRadius: 24,
+            padding: 28,
+            marginBottom: 40,
+            shadowColor: '#3D5AFE',
+            shadowOpacity: 0.3,
+            shadowRadius: 15,
+            elevation: 8,
+          }}
+        >
+          <Text style={{ fontFamily: 'Poppins_800ExtraBold', fontSize: 24, color: '#ffffff', marginBottom: 10 }}>
             Who Is This For?
           </Text>
-
-          <View style={{ paddingHorizontal: 24, paddingVertical: 16, borderRadius: 20, borderWidth: 1.5, borderColor: C.border, backgroundColor: C.card, marginHorizontal: 8 }}>
-            <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, letterSpacing: 0.2, textAlign: 'center', color: C.sub, lineHeight: 20 }}>
-              Tell us if you are managing finances for yourself or your entire family.
-            </Text>
-          </View>
-        </View>
+          <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 13, color: 'rgba(255,255,255,0.85)', lineHeight: 22 }}>
+            Tell us if you are managing finances for yourself or your entire family.
+          </Text>
+        </MotiView>
 
         {/* Counter + selector */}
         <View style={{ alignItems: 'center', gap: 28 }}>

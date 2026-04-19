@@ -68,9 +68,9 @@ export default function GetStartedScreen({ navigation }) {
                             onPress={() => navigation.navigate('AuthChoiceScreen')}
                             activeOpacity={0.85}
                             style={{
-                                backgroundColor: '#2563eb', borderRadius: 14,
+                                backgroundColor: '#3D5AFE', borderRadius: 14,
                                 height: 56, alignItems: 'center', justifyContent: 'center',
-                                shadowColor: '#2563eb', shadowOffset: { width: 0, height: 8 },
+                                shadowColor: '#3D5AFE', shadowOffset: { width: 0, height: 8 },
                                 shadowOpacity: 0.3, shadowRadius: 12, elevation: 8,
                             }}
                         >

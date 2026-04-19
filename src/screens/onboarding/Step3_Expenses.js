@@ -1,6 +1,6 @@
-﻿import React from 'react';
-import { View, Text, TouchableOpacity, TextInput, Dimensions } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useCallback } from 'react';
+import { View, Text, TouchableOpacity, TextInput, Dimensions, BackHandler } from 'react-native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { ChevronRight, ChevronLeft, ShoppingCart, Zap, Droplets, Flame, Wifi, Smartphone, Home, Car, Shield, HeartPulse, GraduationCap, CreditCard, Wrench, Youtube, User, MoreHorizontal, Activity, TrendingUp } from 'lucide-react-native';
 import { useOnboarding } from '../../context/OnboardingContext';
 import { MotiView } from 'moti';
@@ -9,7 +9,7 @@ import OnboardingLayout from '../../components/onboarding/OnboardingLayout';
 const C = {
   text: '#0F172A', sub: '#64748B', muted: '#94A3B8',
   border: '#E2E8F0', card: '#F8FAFC', input: '#F1F5F9',
-  placeholder: '#CBD5E1', accent: '#2563EB',
+  placeholder: '#CBD5E1', accent: '#3D5AFE',
 };
 
 const Step3_Expenses = () => {
@@ -17,15 +17,28 @@ const Step3_Expenses = () => {
   const { expenses, updateExpenses, totalExpenses, totalIncome, setStep, mode } = useOnboarding();
   const navigation = useNavigation();
 
+  // Handle Android hardware back button
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        setStep(2);
+        navigation.navigate('Step2_MemberDetails');
+        return true;
+      };
+      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => subscription.remove();
+    }, [])
+  );
+
   const cats = [
     { id: 'groceries',     label: 'Groceries',     icon: ShoppingCart, ic: '#f97316', bg: '#FFF7ED', bd: '#FED7AA' },
     { id: 'electricity',   label: 'Electricity',   icon: Zap,          ic: '#eab308', bg: '#FEFCE8', bd: '#FDE68A' },
-    { id: 'water',         label: 'Water Bill',    icon: Droplets,     ic: '#3b82f6', bg: '#EFF6FF', bd: '#BFDBFE' },
+    { id: 'water',         label: 'Water Bill',    icon: Droplets,     ic: '#3D5AFE', bg: '#EFF6FF', bd: '#BFDBFE' },
     { id: 'gas',           label: 'Gas Bill',      icon: Flame,        ic: '#f97316', bg: '#FFF7ED', bd: '#FED7AA' },
-    { id: 'internet',      label: 'Internet',      icon: Wifi,         ic: '#2563EB', bg: '#EFF6FF', bd: '#BFDBFE' },
+    { id: 'internet',      label: 'Internet',      icon: Wifi,         ic: '#3D5AFE', bg: '#EFF6FF', bd: '#BFDBFE' },
     { id: 'mobile',        label: 'Mobile',        icon: Smartphone,   ic: '#64748b', bg: '#F8FAFC', bd: '#E2E8F0' },
     { id: 'rent',          label: 'Rent / EMI',    icon: Home,         ic: '#a855f7', bg: '#FAF5FF', bd: '#E9D5FF' },
-    { id: 'transport',     label: 'Transport',     icon: Car,          ic: '#0ea5e9', bg: '#F0F9FF', bd: '#BAE6FD' },
+    { id: 'transport',     label: 'Transport',     icon: Car,          ic: '#3D5AFE', bg: '#EFF6FF', bd: '#BFDBFE' },
     { id: 'insurance',     label: 'Insurance',     icon: Shield,       ic: '#f43f5e', bg: '#FFF1F2', bd: '#FECDD3' },
     { id: 'medical',       label: 'Medical',       icon: HeartPulse,   ic: '#ef4444', bg: '#FEF2F2', bd: '#FECACA' },
     { id: 'education',     label: 'Education',     icon: GraduationCap,ic: '#a855f7', bg: '#FAF5FF', bd: '#E9D5FF' },
@@ -51,7 +64,7 @@ const Step3_Expenses = () => {
           <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.5, color: C.sub }}>Go Back</Text>
         </TouchableOpacity>
         <View style={{ backgroundColor: '#EFF6FF', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 10 }}>
-          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.3, color: C.accent }}>Monthly Expenses</Text>
+          <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 11, letterSpacing: 0.3, color: '#3D5AFE' }}>Monthly Expenses</Text>
         </View>
       </View>
 

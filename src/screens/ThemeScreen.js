@@ -3,9 +3,29 @@ import { View, Text, ScrollView, TouchableOpacity, StatusBar } from 'react-nativ
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChevronLeft, Check } from 'lucide-react-native';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
+import { useExpenses } from '../context/ExpenseContext';
+import { useIncome } from '../context/IncomeContext';
+import { useInvestments } from '../context/InvestmentContext';
 
 export default function ThemeScreen({ navigation }) {
     const { isDarkMode, setThemeMode, theme } = useTheme();
+    const { userProfile } = useAuth();
+    const { monthlyTotal } = useExpenses();
+    const { monthlyIncome } = useIncome();
+    const { totalPortfolioValue } = useInvestments();
+
+    const userName = userProfile?.name || 'Investor';
+    const firstLetter = userName.charAt(0).toUpperCase();
+
+    const getGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour >= 5 && hour < 12) return 'Good morning,';
+        if (hour >= 12 && hour < 17) return 'Good afternoon,';
+        if (hour >= 17 && hour < 21) return 'Good evening,';
+        return 'Good night,';
+    };
+    const greeting = getGreeting();
 
     return (
         <View style={{ flex: 1, backgroundColor: theme.pageBg || theme.background }}>
@@ -110,11 +130,11 @@ export default function ThemeScreen({ navigation }) {
                         {/* Row 1 */}
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: '#2563EB', alignItems: 'center', justifyContent: 'center', marginRight: 10 }}>
-                                <Text style={{ color: '#ffffff', fontFamily: 'Poppins_700Bold', fontSize: 14 }}>S</Text>
+                                <Text style={{ color: '#ffffff', fontFamily: 'Poppins_700Bold', fontSize: 14 }}>{firstLetter}</Text>
                             </View>
                             <View>
-                                <Text style={{ fontFamily: 'Poppins_400Regular', fontSize: 11, color: theme.subText }}>Good morning,</Text>
-                                <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, color: theme.text }}>smartfinance</Text>
+                                <Text style={{ fontFamily: 'Poppins_400Regular', fontSize: 11, color: theme.subText }}>{greeting}</Text>
+                                <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 13, color: theme.text }}>{userName}</Text>
                             </View>
                         </View>
 
@@ -123,7 +143,7 @@ export default function ThemeScreen({ navigation }) {
                         {/* Row 2 */}
                         <View>
                             <Text style={{ fontFamily: 'Poppins_400Regular', fontSize: 11, color: theme.subText }}>Total Portfolio</Text>
-                            <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 20, color: theme.text, marginTop: 2 }}>₹24,500</Text>
+                            <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 20, color: theme.text, marginTop: 2 }}>₹{(totalPortfolioValue || 0).toLocaleString('en-IN')}</Text>
                         </View>
 
                         <View style={{ height: 1, backgroundColor: theme.divider, marginVertical: 12 }} />
@@ -132,11 +152,11 @@ export default function ThemeScreen({ navigation }) {
                         <View style={{ flexDirection: 'row', gap: 12 }}>
                             <View style={{ flex: 1, backgroundColor: theme.inputBg, borderRadius: 10, padding: 10 }}>
                                 <Text style={{ fontFamily: 'Poppins_400Regular', fontSize: 10, color: theme.subText }}>Monthly In</Text>
-                                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 13, color: theme.text, marginTop: 2 }}>₹0</Text>
+                                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 13, color: theme.text, marginTop: 2 }}>₹{(monthlyIncome || 0).toLocaleString('en-IN')}</Text>
                             </View>
                             <View style={{ flex: 1, backgroundColor: theme.inputBg, borderRadius: 10, padding: 10 }}>
                                 <Text style={{ fontFamily: 'Poppins_400Regular', fontSize: 10, color: theme.subText }}>Monthly Out</Text>
-                                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 13, color: theme.text, marginTop: 2 }}>₹0</Text>
+                                <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 13, color: theme.text, marginTop: 2 }}>₹{(monthlyTotal || 0).toLocaleString('en-IN')}</Text>
                             </View>
                         </View>
                     </View>

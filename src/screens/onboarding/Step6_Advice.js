@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Dimensions, Modal, ScrollView, Linking } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, TouchableOpacity, Dimensions, Modal, ScrollView, Linking, BackHandler } from 'react-native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import {
   ChevronRight, ChevronLeft, Bot, Shield, TrendingUp, Wallet, Banknote, Landmark,
   HeartPulse, CircleDollarSign, Coins, AlertCircle, Calculator, CheckCircle2, ExternalLink, X
@@ -10,7 +10,7 @@ import { MotiView } from 'moti';
 import OnboardingLayout from '../../components/onboarding/OnboardingLayout';
 import Slider from '@react-native-community/slider';
 
-const C = { text: '#0F172A', sub: '#64748B', muted: '#94A3B8', border: '#E2E8F0', card: '#F8FAFC', accent: '#2563EB' };
+const C = { text: '#0F172A', sub: '#64748B', muted: '#94A3B8', border: '#E2E8F0', card: '#F8FAFC', accent: '#3D5AFE' };
 
 // ─── Complete Scheme Data ────────────────────────────────────────────────────
 const SCHEME_DATA = {
@@ -37,7 +37,7 @@ const SCHEME_DATA = {
     riskLevel: 'High Risk',
     riskColor: '#EF4444',
     tagColor: '#EFF6FF',
-    tagTextColor: '#2563EB',
+    tagTextColor: '#3D5AFE',
     officialLink: 'https://www.amfiindia.com',
   },
   'Gold Savings Bond': {
@@ -118,7 +118,7 @@ const SCHEME_DATA = {
     riskLevel: 'No Risk',
     riskColor: '#22C55E',
     tagColor: '#EFF6FF',
-    tagTextColor: '#2563EB',
+    tagTextColor: '#3D5AFE',
     officialLink: 'https://www.sbi.co.in',
   },
   'Bluechip Mutual Fund': {
@@ -145,7 +145,7 @@ const SCHEME_DATA = {
     riskLevel: 'Moderate Risk',
     riskColor: '#F59E0B',
     tagColor: '#EFF6FF',
-    tagTextColor: '#2563EB',
+    tagTextColor: '#3D5AFE',
     officialLink: 'https://www.amfiindia.com',
   },
   'Savings Account': {
@@ -199,7 +199,7 @@ const SCHEME_DATA = {
     riskLevel: 'No Risk',
     riskColor: '#22C55E',
     tagColor: '#EFF6FF',
-    tagTextColor: '#2563EB',
+    tagTextColor: '#3D5AFE',
     officialLink: 'https://www.indiapost.gov.in',
   },
   'Emergency Reserve': {
@@ -253,7 +253,7 @@ const SCHEME_DATA = {
     riskLevel: 'Moderate-High Risk',
     riskColor: '#F59E0B',
     tagColor: '#EFF6FF',
-    tagTextColor: '#2563EB',
+    tagTextColor: '#3D5AFE',
     officialLink: 'https://www.amfiindia.com',
   },
   'Sukanya Samriddhi': {
@@ -361,7 +361,7 @@ const SchemeDetailModal = ({ scheme, visible, onClose }) => {
           {/* Badges */}
           <View style={{ flexDirection: 'row', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
             <View style={{ backgroundColor: scheme.tagColor || '#EFF6FF', borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6 }}>
-              <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 12, color: scheme.tagTextColor || '#2563EB' }}>
+              <Text style={{ fontFamily: 'Poppins_600SemiBold', fontSize: 12, color: scheme.tagTextColor || '#3D5AFE' }}>
                 {scheme.category}
               </Text>
             </View>
@@ -389,13 +389,13 @@ const SchemeDetailModal = ({ scheme, visible, onClose }) => {
           {/* ── Yield Calculator Card ──────────────────────────── */}
           <View style={{
             backgroundColor: '#ffffff', borderRadius: 20, padding: 20, marginBottom: 16,
-            shadowColor: '#2563EB', shadowOpacity: 0.08, shadowRadius: 16, elevation: 4,
+            shadowColor: '#3D5AFE', shadowOpacity: 0.08, shadowRadius: 16, elevation: 4,
             borderWidth: 1.5, borderColor: '#E2E8F0',
           }}>
             {/* Card Header */}
             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
               <View style={{ width: 38, height: 38, borderRadius: 12, backgroundColor: '#EFF6FF', alignItems: 'center', justifyContent: 'center', marginRight: 10 }}>
-                <Calculator size={18} color="#2563EB" strokeWidth={2.5} />
+                <Calculator size={18} color="#3D5AFE" strokeWidth={2.5} />
               </View>
               <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 16, color: '#0F172A' }}>Yield Calculator</Text>
             </View>
@@ -414,9 +414,9 @@ const SchemeDetailModal = ({ scheme, visible, onClose }) => {
                 value={investmentAmount}
                 onValueChange={(v) => setInvestmentAmount(Math.round(v / 500) * 500)}
                 step={500}
-                minimumTrackTintColor="#2563EB"
+                minimumTrackTintColor="#3D5AFE"
                 maximumTrackTintColor="#E2E8F0"
-                thumbTintColor="#2563EB"
+                thumbTintColor="#3D5AFE"
                 style={{ height: 36 }}
               />
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -441,9 +441,9 @@ const SchemeDetailModal = ({ scheme, visible, onClose }) => {
                 value={tenure}
                 onValueChange={(v) => setTenure(Math.round(v))}
                 step={1}
-                minimumTrackTintColor="#2563EB"
+                minimumTrackTintColor="#3D5AFE"
                 maximumTrackTintColor="#E2E8F0"
-                thumbTintColor="#2563EB"
+                thumbTintColor="#3D5AFE"
                 style={{ height: 36 }}
               />
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -460,7 +460,7 @@ const SchemeDetailModal = ({ scheme, visible, onClose }) => {
                   +₹{returnsGained.toLocaleString('en-IN')}
                 </Text>
               </View>
-              <View style={{ flex: 1, backgroundColor: '#2563EB', borderRadius: 14, padding: 16 }}>
+              <View style={{ flex: 1, backgroundColor: '#3D5AFE', borderRadius: 14, padding: 16 }}>
                 <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 12, color: '#BFDBFE', marginBottom: 4 }}>Maturity Value</Text>
                 <Text style={{ fontFamily: 'Poppins_700Bold', fontSize: 20, color: '#ffffff' }}>
                   ₹{maturityValue.toLocaleString('en-IN')}
@@ -496,10 +496,10 @@ const SchemeDetailModal = ({ scheme, visible, onClose }) => {
             onPress={() => Linking.openURL(scheme.officialLink)}
             activeOpacity={0.85}
             style={{
-              width: '100%', backgroundColor: '#2563EB', borderRadius: 16,
+              width: '100%', backgroundColor: '#3D5AFE', borderRadius: 16,
               paddingVertical: 16, flexDirection: 'row', alignItems: 'center',
               justifyContent: 'center', gap: 10,
-              shadowColor: '#2563EB', shadowOpacity: 0.35, shadowRadius: 14, elevation: 6,
+              shadowColor: '#3D5AFE', shadowOpacity: 0.35, shadowRadius: 14, elevation: 6,
               marginBottom: 8,
             }}
           >
@@ -519,6 +519,19 @@ const Step6_Advice = () => {
   const { width } = Dimensions.get('window');
   const { investableSurplus, reserveAmount, setStep, safeNumber, members } = useOnboarding();
   const navigation = useNavigation();
+
+  // Handle Android hardware back button
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        setStep(4);
+        navigation.navigate('Step4_Analysis');
+        return true;
+      };
+      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => subscription.remove();
+    }, [])
+  );
 
   const [selectedScheme, setSelectedScheme] = useState(null);
   const [showSchemeDetail, setShowSchemeDetail] = useState(false);
@@ -540,24 +553,24 @@ const Step6_Advice = () => {
 
     if (b <= 2000) return mke('Ultra-Safe Savings Plan', 'Your savings amount is small right now. We suggest keeping your money safe and easy to access.', 'No Risk', '#10b981', '#ECFDF5', '#BBF7D0', [
       { name: 'Savings Account', target: 'Easy to Access', portion: '70%', icon: Wallet, ic: '#3b82f6', bg: '#EFF6FF', bd: '#BFDBFE' },
-      { name: 'Recurring Deposit', target: 'Regular Saving', portion: '30%', icon: Landmark, ic: '#2563EB', bg: '#EFF6FF', bd: '#BFDBFE' },
+      { name: 'Recurring Deposit', target: 'Regular Saving', portion: '30%', icon: Landmark, ic: '#3D5AFE', bg: '#EFF6FF', bd: '#BFDBFE' },
     ]);
     if (b <= 10000) return mke('Safe Growth Plan', 'A good mix to protect your money and help it grow a little each month.', 'Low Risk', '#d97706', '#FFFBEB', '#FDE68A', [
       { name: 'Fixed Deposit', target: 'Safe & Secure', portion: '60%', icon: Shield, ic: '#10b981', bg: '#ECFDF5', bd: '#BBF7D0' },
-      { name: 'Bluechip Mutual Fund', target: 'Steady Growth', portion: '40%', icon: TrendingUp, ic: '#2563EB', bg: '#EFF6FF', bd: '#BFDBFE' },
+      { name: 'Bluechip Mutual Fund', target: 'Steady Growth', portion: '40%', icon: TrendingUp, ic: '#3D5AFE', bg: '#EFF6FF', bd: '#BFDBFE' },
     ]);
     if (b <= 25000) {
       const recs = [
         { name: 'Emergency Reserve', target: 'Safety First', portion: '40%', icon: Banknote, ic: '#10b981', bg: '#ECFDF5', bd: '#BBF7D0' },
-        { name: 'Flexi Mutual Fund', target: 'Wealth Growth', portion: '40%', icon: TrendingUp, ic: '#2563EB', bg: '#EFF6FF', bd: '#BFDBFE' },
+        { name: 'Flexi Mutual Fund', target: 'Wealth Growth', portion: '40%', icon: TrendingUp, ic: C.accent, bg: '#EFF6FF', bd: '#BFDBFE' },
         hasGirl
           ? { name: 'Sukanya Samriddhi', target: 'Girl Child Fund', portion: '20%', icon: HeartPulse, ic: '#f43f5e', bg: '#FFF1F2', bd: '#FECDD3' }
-          : { name: 'PPF Account', target: 'Tax-Free Savings', portion: '20%', icon: Landmark, ic: '#2563EB', bg: '#EFF6FF', bd: '#BFDBFE' },
+          : { name: 'PPF Account', target: 'Tax-Free Savings', portion: '20%', icon: Landmark, ic: '#3D5AFE', bg: '#EFF6FF', bd: '#BFDBFE' },
       ];
       return mke('Balanced Investment Plan', 'Save tax and grow your wealth at the same time with this balanced mix.', 'Moderate Risk', '#d97706', '#FFFBEB', '#FDE68A', recs);
     }
-    return mke('Growth Investment Plan', 'You have a strong savings amount. This plan helps your money grow faster across different investments.', 'Growth', '#2563EB', '#EFF6FF', '#BFDBFE', [
-      { name: 'Mid-Cap Mutual Fund', target: 'High Growth', portion: '40%', icon: TrendingUp, ic: '#2563EB', bg: '#EFF6FF', bd: '#BFDBFE' },
+    return mke('Growth Investment Plan', 'You have a strong savings amount. This plan helps your money grow faster across different investments.', 'Growth', C.accent, '#EFF6FF', '#BFDBFE', [
+      { name: 'Mid-Cap Mutual Fund', target: 'High Growth', portion: '40%', icon: TrendingUp, ic: '#3D5AFE', bg: '#EFF6FF', bd: '#BFDBFE' },
       { name: 'Gold Savings Bond', target: 'Protect Value', portion: '30%', icon: Coins, ic: '#d97706', bg: '#FFFBEB', bd: '#FDE68A' },
       { name: 'Index Fund', target: 'Safe + Growth', portion: '30%', icon: CircleDollarSign, ic: '#10b981', bg: '#ECFDF5', bd: '#BBF7D0' },
     ]);

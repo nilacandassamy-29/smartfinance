@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ActivityIndicator, Dimensions, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, TouchableOpacity, ActivityIndicator, Dimensions, Alert, BackHandler } from 'react-native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { ChevronLeft, CheckCircle2, TrendingUp, ShieldCheck, Wallet, ArrowRight, Bot } from 'lucide-react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useOnboarding } from '../../context/OnboardingContext';
@@ -10,7 +10,7 @@ import { doc, setDoc, addDoc, collection, serverTimestamp, deleteDoc } from 'fir
 import { db } from '../../config/firebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const C = { text: '#0F172A', sub: '#64748B', muted: '#94A3B8', border: '#E2E8F0', card: '#F8FAFC', accent: '#2563EB' };
+const C = { text: '#0F172A', sub: '#64748B', muted: '#94A3B8', border: '#E2E8F0', card: '#F8FAFC', accent: '#3D5AFE' };
 
 const Step7_FinalSummary = () => {
   const { updateUserProfile, user } = useAuth();
@@ -20,6 +20,20 @@ const Step7_FinalSummary = () => {
     setStep, safeNumber, members, expenses, familySize
   } = useOnboarding();
   const navigation = useNavigation();
+
+  // Handle Android hardware back button
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        setStep(5);
+        navigation.navigate('Step6_Advice');
+        return true;
+      };
+      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => subscription.remove();
+    }, [])
+  );
+
   const [isFinalizing, setIsFinalizing] = useState(false);
 
   const now = new Date();
@@ -30,7 +44,7 @@ const Step7_FinalSummary = () => {
   const summaries = [
     { label: 'Monthly Income',   value: totalIncome,       icon: TrendingUp,  ic: '#10b981', bg: '#ECFDF5', bd: '#BBF7D0' },
     { label: 'Monthly Expenses', value: totalExpenses,     icon: TrendingUp,  ic: '#f43f5e', bg: '#FFF1F2', bd: '#FECDD3' },
-    { label: 'Ready to Invest',  value: investableSurplus, icon: Wallet,      ic: '#2563EB', bg: '#EFF6FF', bd: '#BFDBFE' },
+    { label: 'Ready to Invest',  value: investableSurplus, icon: Wallet,      ic: '#3D5AFE', bg: '#EFF6FF', bd: '#BFDBFE' },
   ];
 
   const handleFinalize = async () => {

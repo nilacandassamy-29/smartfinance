@@ -25,11 +25,11 @@ export default function WelcomeScreen({ navigation }) {
                     {/* Logo Mark */}
                     <View style={{
                         width: 88, height: 88,
-                        backgroundColor: '#2563eb',
+                        backgroundColor: '#3D5AFE',
                         borderRadius: 28,
                         alignItems: 'center', justifyContent: 'center',
                         marginBottom: 28,
-                        shadowColor: '#2563eb',
+                        shadowColor: '#3D5AFE',
                         shadowOffset: { width: 0, height: 12 },
                         shadowOpacity: 0.35,
                         shadowRadius: 20,
@@ -57,7 +57,7 @@ export default function WelcomeScreen({ navigation }) {
                                 from={{ scale: 0.6, opacity: 0.3 }}
                                 animate={{ scale: 1, opacity: 1 }}
                                 transition={{ loop: true, type: 'timing', duration: 600, delay: i * 200 }}
-                                style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: '#2563eb' }}
+                                style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: '#3D5AFE' }}
                             />
                         ))}
                     </MotiView>
